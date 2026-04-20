@@ -107,15 +107,26 @@ const incrementViews = async (id) => {
   await supabase.from('complaints').update({ views: post.views }).eq('id', id);
 };
 
+const getFixedPublicUrl = (url) => {
+  if (!url || typeof url !== 'string') return '';
+  if (url.includes('/storage/v1/object/') && !url.includes('/storage/v1/object/public/')) {
+    return url.replace('/storage/v1/object/', '/storage/v1/object/public/');
+  }
+  return url;
+};
+
 const uploadBase64Image = async (dataUrl) => {
   try {
     const res = await fetch(dataUrl);
     const blob = await res.blob();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-    const { data, error } = await supabase.storage.from('images').upload(fileName, blob, { contentType: 'image/jpeg' });
+    const { data, error } = await supabase.storage.from('images').upload(fileName, blob, { 
+      contentType: 'image/jpeg',
+      upsert: true 
+    });
     if (error) return null;
     const { data: publicUrlData } = supabase.storage.from('images').getPublicUrl(fileName);
-    return publicUrlData.publicUrl;
+    return getFixedPublicUrl(publicUrlData.publicUrl);
   } catch(e) {
     return null;
   }
@@ -218,7 +229,7 @@ const renderPosts = () => {
 
         ${post.images && post.images.length > 0 ? `
           <div class="card-images-preview">
-            <img src="${post.images[0]}" class="card-image" alt="첨부 이미지" style="cursor: pointer;">
+            <img src="${getFixedPublicUrl(post.images[0])}" class="card-image" alt="첨부 이미지" style="cursor: pointer;">
           </div>
         ` : ''}
       </div>
@@ -285,7 +296,7 @@ const openDetail = (post) => {
       <p style="white-space: pre-wrap;">${post.description}</p>
       ${post.images && post.images.length > 0 ? `
         <div class="detail-images" style="margin-top: 4rem; display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-          ${post.images.map(img => `<img src="${img}" style="width: 100%; border-radius: 2.5rem; box-shadow: var(--shadow-lg);" alt="첨부 이미지">`).join('')}
+          ${post.images.map(img => `<img src="${getFixedPublicUrl(img)}" style="width: 100%; border-radius: 2.5rem; box-shadow: var(--shadow-lg);" alt="첨부 이미지">`).join('')}
         </div>
       ` : ''}
     </div>
@@ -639,32 +650,32 @@ const generateReportHtml = (posts, type) => {
               const imgStyle = "object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);";
               
               if (imgs.length === 1) {
-                layoutHtml = `<img src="${imgs[0]}" style="width: 100%; max-height: 350px; ${imgStyle}">`;
+                layoutHtml = `<img src="${getFixedPublicUrl(imgs[0])}" style="width: 100%; max-height: 350px; ${imgStyle}">`;
               } else if (imgs.length === 2) {
                 layoutHtml = `<div style="display: flex; gap: 15px;">
-                  <img src="${imgs[0]}" style="width: calc(50% - 7.5px); height: 250px; ${imgStyle}">
-                  <img src="${imgs[1]}" style="width: calc(50% - 7.5px); height: 250px; ${imgStyle}">
+                  <img src="${getFixedPublicUrl(imgs[0])}" style="width: calc(50% - 7.5px); height: 250px; ${imgStyle}">
+                  <img src="${getFixedPublicUrl(imgs[1])}" style="width: calc(50% - 7.5px); height: 250px; ${imgStyle}">
                 </div>`;
               } else if (imgs.length === 3) {
                 layoutHtml = `<div style="display: flex; gap: 15px;">
-                  <img src="${imgs[0]}" style="width: calc(50% - 7.5px); height: 300px; ${imgStyle}">
+                  <img src="${getFixedPublicUrl(imgs[0])}" style="width: calc(50% - 7.5px); height: 300px; ${imgStyle}">
                   <div style="width: calc(50% - 7.5px); display: flex; flex-direction: column; gap: 15px;">
-                    <img src="${imgs[1]}" style="width: 100%; height: calc(150px - 7.5px); ${imgStyle}">
-                    <img src="${imgs[2]}" style="width: 100%; height: calc(150px - 7.5px); ${imgStyle}">
+                    <img src="${getFixedPublicUrl(imgs[1])}" style="width: 100%; height: calc(150px - 7.5px); ${imgStyle}">
+                    <img src="${getFixedPublicUrl(imgs[2])}" style="width: 100%; height: calc(150px - 7.5px); ${imgStyle}">
                   </div>
                 </div>`;
               } else if (imgs.length === 4) {
                 layoutHtml = `<div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                  ${imgs.map(img => `<img src="${img}" style="width: calc(50% - 7.5px); height: 180px; ${imgStyle}">`).join('')}
+                  ${imgs.map(img => `<img src="${getFixedPublicUrl(img)}" style="width: calc(50% - 7.5px); height: 180px; ${imgStyle}">`).join('')}
                 </div>`;
               } else {
                 layoutHtml = `<div style="display: flex; flex-direction: column; gap: 15px;">
                   <div style="display: flex; gap: 15px;">
-                    <img src="${imgs[0]}" style="width: calc(60% - 7.5px); height: 200px; ${imgStyle}">
-                    <img src="${imgs[1]}" style="width: calc(40% - 7.5px); height: 200px; ${imgStyle}">
+                    <img src="${getFixedPublicUrl(imgs[0])}" style="width: calc(60% - 7.5px); height: 200px; ${imgStyle}">
+                    <img src="${getFixedPublicUrl(imgs[1])}" style="width: calc(40% - 7.5px); height: 200px; ${imgStyle}">
                   </div>
                   <div style="display: flex; gap: 15px;">
-                    ${imgs.slice(2).map(img => `<img src="${img}" style="width: calc(33.333% - 10px); height: 130px; ${imgStyle}">`).join('')}
+                    ${imgs.slice(2).map(img => `<img src="${getFixedPublicUrl(img)}" style="width: calc(33.333% - 10px); height: 130px; ${imgStyle}">`).join('')}
                   </div>
                 </div>`;
               }
