@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>안산유통상가 추진위원회 - 민원소통센터</title>
+    <style>
+      /* Mobile 2nd Line Force Override */
+      @media (max-width: 768px) {
+        header { display: block !important; text-align: center !important; padding: 1.5rem 1rem !important; }
+        .logo-section { display: block !important; width: 100% !important; margin-bottom: 1.2rem !important; }
+        .logo-section h1 { display: block !important; font-size: 1.1rem !important; line-height: 1.5 !important; margin: 0 !important; }
+        .logo-line-1, .logo-line-2 { display: block !important; width: 100% !important; white-space: nowrap !important; clear: both !important; }
+        .logo-dot { display: none !important; }
+        .nav-actions { display: flex !important; justify-content: center !important; gap: 0.5rem !important; width: 100% !important; flex-wrap: wrap !important; }
+        #open-modal-btn { width: 100% !important; margin-bottom: 0.5rem !important; order: -1; }
+      }
+    </style>
+    <meta name="description" content="안산유통상가의 쾌적한 환경과 발전을 위해 상인 여러분의 소중한 의견을 듣는 민원소통센터입니다.">
+  </head>
+  <body>
+    <div id="app">
+      <div class="app-container">
+        <!-- Header -->
+        <header>
+          <div class="logo-section">
+            <h1>
+              <div class="logo-dot"></div>
+              <span class="logo-line-1">안산유통상가 <span class="logo-text-accent">추진위원회</span></span>
+              <span class="logo-line-2">민원소통센터</span>
+            </h1>
+          </div>
+          <div class="nav-actions">
+            <button id="admin-toggle-btn" class="btn btn-secondary">🔒 관리자 모드</button>
+            <button id="print-report-btn" class="btn btn-primary" style="display: none; background: var(--accent-primary) !important;">📊 보고서 출력</button>
+            <button id="open-modal-btn" class="btn btn-primary">민원 등록</button>
+          </div>
+        </header>
+
+        <!-- Hero Slider -->
+        <section class="hero-slider">
+          <div id="slider-container" class="slider-container">
+            <div class="slide" style="background-image: url('/ansan_industrial_complex_management_1776644359434.png')">
+              <div class="slide-content">
+                <span class="badge">운영 목적</span>
+                <h1>상가 관리 정상화를 위한 전문 통합 창구</h1>
+                <p>방치된 구역과 시설 결함을 정밀하게 파악하여, 실질적인 개선을 위해 관리단에 제출할 공인 리포트를 생성합니다.</p>
+              </div>
+            </div>
+            <div class="slide" style="background-image: url('/ansan_wholesale_biz_center_1776644377725.png')">
+              <div class="slide-content">
+                <span class="badge">시설 개선</span>
+                <h1>쾌적한 유통 환경 조성</h1>
+                <p>상인 여러분의 목소리가 모여 더 나은 상가 환경을 만듭니다.</p>
+              </div>
+            </div>
+            <div class="slide" style="background-image: url('/ansan_industrial_maintenance_safety_1776644397815.png')">
+              <div class="slide-content">
+                <h1>자생하는 비즈니스 허브</h1>
+                <p>민원 해결을 넘어 상가 가치 상승을 위한 소통을 지원합니다.</p>
+              </div>
+            </div>
+            <div class="slide" style="background-image: url('/ansan_industrial_complex_management_1776644359434.png')">
+              <div class="slide-content">
+                <h1>365일 안전한 비즈니스 환경</h1>
+                <p>노후 시설 점검 및 안전 사각지대 해소를 위해 노력합니다.</p>
+              </div>
+            </div>
+            <div class="slide" style="background-image: url('/ansan_wholesale_biz_center_1776644377725.png')">
+              <div class="slide-content">
+                <h1>깨끗하고 정돈된 안산의 현장</h1>
+                <p>미화 작업과 조경 관리를 통해 활력 넘치는 현장을 구축합니다.</p>
+              </div>
+            </div>
+            <div class="slide" style="background-image: url('/ansan_industrial_maintenance_safety_1776644397815.png')">
+              <div class="slide-content">
+                <h1>내일을 기약하는 안산유통상가</h1>
+                <p>정확한 데이터 수집으로 투명한 상가 운영의 기초를 다집니다.</p>
+              </div>
+            </div>
+          </div>
+          <div class="slider-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </section>
+
+        <div id="admin-controls" class="admin-filter-bar" style="display: none;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <label style="font-weight: 600; color: var(--text-primary);">📅 기간별 조회</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="date" id="start-date" class="date-input">
+              <span style="color: var(--text-muted);">~</span>
+              <input type="date" id="end-date" class="date-input">
+            </div>
+          </div>
+          <div class="filter-actions" style="margin-left: auto; display: flex; gap: 0.75rem;">
+            <button id="select-all-btn" class="btn btn-secondary" style="height: 42px; padding: 0 1.25rem; font-size: 0.9rem; border-radius: 0.75rem;">✅ 전체 선택</button>
+          </div>
+        </div>
+
+        <!-- Main Complaints Grid -->
+        <main id="complaints-list" class="complaints-grid"></main>
+
+        <!-- Submission Modal -->
+        <div id="complaint-modal" class="modal-backdrop">
+          <div class="modal-content">
+            <h2>민원 등록</h2>
+            <form id="complaint-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="title">제목</label>
+                  <input type="text" id="title" placeholder="민원 제목을 입력해주세요" required>
+                </div>
+                <div class="form-group">
+                  <label for="category">분류</label>
+                  <select id="category" required>
+                    <option value="" disabled selected>분류를 선택하세요</option>
+                    <option value="공용시설 보수">공용시설 보수 (상강도, 포장 등)</option>
+                    <option value="전기/조명">전기/조명 시설</option>
+                    <option value="소방/안전">소방/안전 점검</option>
+                    <option value="냉난방/공조">냉난방/공조 시스템</option>
+                    <option value="주차/교통">주차/교통 관리</option>
+                    <option value="청소/미화">청소/미화 서비스</option>
+                    <option value="보안/CCTV">보안/CCTV 확인</option>
+                    <option value="관리비/행정">관리비/행정 문의</option>
+                    <option value="기타 건의사항">기타 건의사항</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="password">게시글 비밀번호 (4자리)</label>
+                  <input type="password" id="password" placeholder="수정/삭제 시 필요합니다" required>
+                </div>
+                <div class="form-group full-width">
+                  <label for="description">상세 내용</label>
+                  <textarea id="description" rows="5" placeholder="불편 사항을 상세히 적어주세요" required></textarea>
+                </div>
+                <div class="form-group full-width">
+                  <label>이미지 첨부 (최대 5장)</label>
+                  <div id="dropzone" class="dropzone">
+                    <p>창을 클릭하거나 이미지를 드래그하세요</p>
+                  </div>
+                  <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
+                  <div id="preview-container"></div>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" id="close-modal-btn" class="btn btn-secondary">취소</button>
+                <button type="submit" class="btn btn-primary">제출하기</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="detail-modal" class="modal-backdrop">
+          <div class="modal-content">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: start;">
+              <div></div>
+              <button id="close-detail-top-btn" class="btn-close" style="font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
+            </div>
+            <div id="detail-content"></div>
+            <div style="margin-top: 2rem;">
+              <button id="close-detail-btn" class="btn btn-secondary" style="width: 100%;">닫기</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="print-option-modal" class="modal-backdrop">
+          <div class="modal-content" style="max-width: 600px; text-align: center;">
+            <h2 style="margin-bottom: 1rem;">🖨️ 보고서 출력 설정</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 3rem;">목적에 맞는 인쇄 형식을 선택해 주세요.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 3rem;">
+              <div id="print-table-type" style="padding: 2rem; border: 2px solid var(--border-color); border-radius: 1.5rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.background='rgba(30,64,175,0.02)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.background='white'">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">📊</div>
+                <h3 style="margin-bottom: 0.5rem;">요약형 (표)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">전체 리스트 파악 및<br>기록용에 적합</p>
+              </div>
+              <div id="print-card-type" style="padding: 2rem; border: 2px solid var(--border-color); border-radius: 1.5rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.background='rgba(30,64,175,0.02)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.background='white'">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🖼️</div>
+                <h3 style="margin-bottom: 0.5rem;">상세형 (카드)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">현장 사진 확인 및<br>증거 제출용에 적합</p>
+              </div>
+            </div>
+
+            <div class="form-actions" style="justify-content: center;">
+              <button id="close-print-modal" class="btn btn-secondary" style="padding: 0 3rem;">닫기</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="verify-modal" class="modal-backdrop">
+          <div class="modal-content">
+            <h2>비밀번호 확인</h2>
+            <p>보안을 위해 비밀번호를 입력해주세요.</p>
+            <div class="form-group" style="margin-top: 2rem;">
+              <input type="password" id="verify-password-input" placeholder="비밀번호 입력">
+              <p id="caps-warning" style="display: none; color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; font-weight: bold;">⚠️ 소문자로 입력해 주세요.</p>
+            </div>
+            <div class="form-actions">
+              <button id="cancel-verify-btn" class="btn btn-secondary">취소</button>
+              <button id="confirm-verify-btn" class="btn btn-primary">확정</button>
+            </div>
+          </div>
+        </div>
+
+        <footer class="main-footer">
+          <p>&copy; 2026 COPYRIGHT <span class="footer-brand">KUKDONG SYSTEM</span>. ALL RIGHTS RESERVED.</p>
+        </footer>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
