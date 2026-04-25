@@ -5,14 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>안산유통상가 추진위원회 - 민원소통센터</title>
     <meta name="description" content="안산유통상가의 쾌적한 환경과 발전을 위해 상인 여러분의 소중한 의견을 듣는 민원소통센터입니다.">
-    <link rel="stylesheet" href="/src/style.css?v=20260426_01">
+    <link rel="stylesheet" href="/src/style.css?v=20260426_FINAL">
   </head>
   <body>
     <div id="app">
-      <!-- FORCE NEW VERSION BANNER -->
-      <div id="version-banner" style="background: #fbbf24; color: #000; text-align: center; padding: 0.5rem; font-weight: bold; font-size: 0.9rem; position: sticky; top: 0; z-index: 9999;">
-        ✅ 민원 소통 센터 - 최신 버전 (v2.0.2) 적용됨
+      <!-- v2.0.3 CACHE BUSTER & BANNER -->
+      <div id="version-banner" style="background: #ef4444; color: #fff; text-align: center; padding: 0.75rem; font-weight: bold; font-size: 1rem; position: sticky; top: 0; z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        🚨 민원 소통 센터 (최신 버전 v2.0.3) - 업데이트 완료
       </div>
+      <script>
+        // Force refresh if version is old
+        const VERSION = '2.0.3';
+        if (localStorage.getItem('app_version') !== VERSION) {
+          localStorage.setItem('app_version', VERSION);
+          window.location.reload(true);
+        }
+      </script>
       <div class="app-container">
         <!-- Header -->
         <header>
@@ -220,7 +228,7 @@
 
         <footer class="main-footer">
           <p>&copy; 2026 COPYRIGHT <span class="footer-brand">KUKDONG SYSTEM</span>. ALL RIGHTS RESERVED.</p>
-          <p style="font-size: 0.7rem; opacity: 0.3; margin-top: 0.5rem;">UI Version: 2.0.2 (Final Wide Fix)</p>
+          <p style="font-size: 0.7rem; opacity: 0.3; margin-top: 0.5rem;">UI Version: 2.0.3 (Fold 4 Optimized)</p>
         </footer>
       </div>
     </div>
