@@ -911,26 +911,33 @@ textarea::-webkit-scrollbar {
 
 .modal-content::-webkit-scrollbar-track,
 textarea::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f1f5f9;
+  border-radius: 10px;
 }
 
 .modal-content::-webkit-scrollbar-thumb,
 textarea::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
+  background: #cbd5e1;
   border-radius: 10px;
-  border: 4px solid white;
-  background-clip: content-box;
+  border: 3px solid #f1f5f9;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover,
 textarea::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.8);
-  border: 4px solid white;
-  background-clip: content-box;
+  background: #94a3b8;
 }
 
 /* Firefox Scrollbar Support */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Helper Text Style */
+.form-helper-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+  padding-left: 0.5rem;
+  line-height: 1.4;
 }
