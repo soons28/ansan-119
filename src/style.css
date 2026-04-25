@@ -665,14 +665,17 @@ header {
   .slide-content p { font-size: 0.95rem; }
 
   .modal-content { 
-    border-radius: 1.5rem; 
+    border-radius: 1rem; 
     width: 98% !important;
-    margin: 0 auto;
-    max-width: 100vw;
+    min-width: 98% !important;
+    max-width: 98vw !important;
+    margin: 0.5rem auto !important;
+    padding: 0 !important; /* 패딩 제거 */
   }
 
   .modal-scroll-area {
-    padding: 1.5rem 0.75rem !important; /* 좌우 여백을 더 줄임 */
+    padding: 1.5rem 0.75rem !important; /* 좌우 여백을 최소한(12px)으로 줄임 */
+    width: 100% !important;
   }
 
   .modal-content h2 { font-size: 1.5rem; margin-bottom: 1.25rem; }
