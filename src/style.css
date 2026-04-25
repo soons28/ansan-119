@@ -880,35 +880,38 @@ header {
   }
 }
 
-/* Custom Scrollbar Styling (Webkit) */
+/* Custom Scrollbar Styling (Global) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
 }
 
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
 
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
-  border-radius: 10px;
-  border: 2px solid #f1f5f9;
+  background: #cbd5e1;
+  border-radius: 20px;
+  border: 4px solid #f1f5f9;
 }
 
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-/* Hide scrollbar buttons (arrows) for a cleaner look */
-::-webkit-scrollbar-button {
-  display: none;
+  background: #94a3b8;
 }
 
 /* Specific scrollbar for modal content and textareas */
 .modal-content::-webkit-scrollbar,
 textarea::-webkit-scrollbar {
-  width: 10px;
+  width: 14px;
 }
 
 .modal-content::-webkit-scrollbar-track,
@@ -919,14 +922,14 @@ textarea::-webkit-scrollbar-track {
 
 .modal-content::-webkit-scrollbar-thumb,
 textarea::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: #cbd5e1;
   border-radius: 10px;
-  border: 2px solid #f1f5f9;
+  border: 3px solid #f1f5f9;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover,
 textarea::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #94a3b8;
 }
 
 /* Firefox Scrollbar Support */
