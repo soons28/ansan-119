@@ -709,6 +709,45 @@ header {
   .card-content h3 { font-size: 1.25rem; }
   
   .main-footer { margin-top: 4rem; padding: 3rem 1rem; }
+
+  /* Detail Modal Mobile Fixes */
+  .detail-header h2 {
+    font-size: 1.5rem !important;
+    line-height: 1.3;
+    margin-top: 1rem !important;
+  }
+
+  .card-author-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.5rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  .card-author-info span {
+    white-space: nowrap; /* 글자 쪼개짐 방지 */
+  }
+
+  .card-author-info span[style*="opacity: 0.3"] {
+    display: none; /* 모바일에서는 구분선(|) 제거 */
+  }
+
+  .detail-body p {
+    padding: 1.25rem !important; /* 기존 2.5rem에서 절반으로 축소 */
+    font-size: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .detail-images {
+    margin-top: 2rem !important;
+    grid-template-columns: 1fr !important; /* 이미지 한 줄씩 */
+    gap: 1rem !important;
+  }
+
+  .detail-images img {
+    border-radius: 1.25rem !important;
+  }
 }
 
 /* Admin Specific UI */
