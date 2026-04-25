@@ -115,19 +115,84 @@ const getFixedPublicUrl = (url) => {
   return url;
 };
 
+const getExtFromMime = (mime) => {
+  if (!mime || typeof mime !== 'string') return 'jpg';
+  const m = mime.toLowerCase();
+  if (m === 'image/jpeg' || m === 'image/jpg') return 'jpg';
+  if (m === 'image/png') return 'png';
+  if (m === 'image/webp') return 'webp';
+  if (m === 'image/gif') return 'gif';
+  return 'jpg';
+};
+
+const dataUrlToBlob = (dataUrl) => {
+  const match = /^data:([^;]+);base64,(.*)$/.exec(dataUrl || '');
+  if (!match) return null;
+  const mime = match[1];
+  const base64 = match[2];
+  const binStr = atob(base64);
+  const len = binStr.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) bytes[i] = binStr.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+};
+
+const downscaleImageDataUrlToJpeg = async (dataUrl, { maxSide = 1600, quality = 0.82 } = {}) => {
+  return await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const w = img.naturalWidth || img.width;
+      const h = img.naturalHeight || img.height;
+      if (!w || !h) return reject(new Error('Invalid image dimensions'));
+
+      const scale = Math.min(1, maxSide / Math.max(w, h));
+      const targetW = Math.max(1, Math.round(w * scale));
+      const targetH = Math.max(1, Math.round(h * scale));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+
+      const ctx = canvas.getContext('2d', { alpha: false });
+      if (!ctx) return reject(new Error('Canvas not supported'));
+
+      ctx.drawImage(img, 0, 0, targetW, targetH);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => reject(new Error('Image decode failed'));
+    img.src = dataUrl;
+  });
+};
+
 const uploadBase64Image = async (dataUrl) => {
   try {
+    // base64 dataUrl → Blob 변환 (MIME 타입 자동 감지)
     const res = await fetch(dataUrl);
     const blob = await res.blob();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-    const { data, error } = await supabase.storage.from('images').upload(fileName, blob, { 
-      contentType: 'image/jpeg',
-      upsert: true 
-    });
-    if (error) return null;
+
+    const mimeType = blob.type || 'image/jpeg';
+    const extMap = {
+      'image/jpeg': 'jpg', 'image/jpg': 'jpg',
+      'image/png': 'png', 'image/gif': 'gif',
+      'image/webp': 'webp', 'image/heic': 'heic',
+      'image/heif': 'heif', 'image/bmp': 'bmp',
+    };
+    const ext = extMap[mimeType] || 'jpg';
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from('images')
+      .upload(fileName, blob, { contentType: mimeType, upsert: true });
+
+    if (error) {
+      console.error('이미지 업로드 오류:', error.message);
+      return null;
+    }
+
     const { data: publicUrlData } = supabase.storage.from('images').getPublicUrl(fileName);
     return getFixedPublicUrl(publicUrlData.publicUrl);
   } catch(e) {
+    console.error('이미지 업로드 예외:', e);
     return null;
   }
 };
@@ -321,7 +386,12 @@ const addPost = async (title, category, description, password) => {
         uploadedImageUrls.push(imgSrc);
       } else {
         const url = await uploadBase64Image(imgSrc);
-        if (url) uploadedImageUrls.push(url);
+        if (url) {
+          uploadedImageUrls.push(url);
+        } else {
+          alert('이미지 업로드에 실패했습니다. (파일 형식/용량 문제일 수 있어요)\nJPG/PNG로 다시 시도해주세요.');
+          throw new Error('Image upload failed');
+        }
       }
     }
 
@@ -518,11 +588,21 @@ const renderPreviews = () => {
 const handleFiles = (files) => {
   const fileArray = Array.from(files);
   const remainingSlots = 5 - state.images.length;
-  fileArray.slice(0, remainingSlots).forEach(file => {
+  fileArray.slice(0, remainingSlots).forEach(async (file) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      state.images.push(e.target.result);
-      renderPreviews();
+    reader.onload = async (e) => {
+      try {
+        const src = e.target.result;
+        // 모바일 원본 사진(고해상도)은 업로드 실패/느림이 잦아서, 브라우저에서 디코딩 가능한 경우 JPG로 리사이즈+압축합니다.
+        const optimized = await downscaleImageDataUrlToJpeg(src, { maxSide: 1600, quality: 0.82 });
+        state.images.push(optimized);
+      } catch {
+        // 디코딩 불가(예: HEIC) 등인 경우 원본을 그대로 유지합니다.
+        // 이 경우 브라우저/환경에 따라 표시가 안 될 수 있으므로, 업로드 시 실패하면 안내합니다.
+        state.images.push(e.target.result);
+      } finally {
+        renderPreviews();
+      }
     };
     reader.readAsDataURL(file);
   });
@@ -788,3 +868,37 @@ complaintForm.onsubmit = (e) => {
 // Initial Render
 fetchPosts();
 updateSlider(0);
+
+// Prevent background scrolling when modals are open (Robust Mobile & PC Scroll Lock)
+let scrollPosition = 0;
+const modalObserver = new MutationObserver(() => {
+  const hasActiveModal = document.querySelector('.modal-backdrop.active') !== null;
+  const isLocked = document.body.style.overflow === 'hidden';
+  
+  if (hasActiveModal && !isLocked) {
+    scrollPosition = window.scrollY;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    
+    // Only apply fixed positioning for mobile/touch to prevent scroll chaining
+    if (window.innerWidth <= 768 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0) {
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollPosition}px`;
+      document.body.style.width = '100%';
+    } else {
+      // For PC, use padding to prevent layout shift when scrollbar disappears
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    document.body.style.overflow = 'hidden';
+    
+  } else if (!hasActiveModal && isLocked) {
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('position');
+    document.body.style.removeProperty('top');
+    document.body.style.removeProperty('width');
+    document.body.style.removeProperty('padding-right');
+    window.scrollTo(0, scrollPosition);
+  }
+});
+document.querySelectorAll('.modal-backdrop').forEach(modal => {
+  modalObserver.observe(modal, { attributes: true, attributeFilter: ['class'] });
+});
