@@ -1022,13 +1022,14 @@ textarea::-webkit-scrollbar-thumb {
    MOBILE OPTIMIZATIONS (Aggressive Overrides)
    --------------------------------------------------------- */
 @media (max-width: 768px) {
-  /* DEBUG: If you see a RED BORDER, this CSS is loading correctly */
+  /* DEBUG: If you see a BLUE BORDER, this CSS is loading correctly (v2.0.1) */
   .modal-content {
-    border: 5px solid #ef4444 !important;
-    padding: 1.5rem !important;
-    width: 95% !important;
-    max-width: 95% !important;
-    margin: 1rem auto !important;
+    border: 8px solid #3b82f6 !important; /* Thick Blue Border */
+    padding: 2rem 1.5rem !important;
+    width: 98% !important;
+    max-width: 98% !important;
+    margin: 0.5rem auto !important;
+    border-radius: 20px !important;
   }
 
   .form-grid {
@@ -1038,20 +1039,29 @@ textarea::-webkit-scrollbar-thumb {
   }
 
   /* KILL THE PILL SHAPE & FORCE FULL WIDTH */
-  input, 
+  /* We target all possible form elements and their containers */
+  input[type="text"],
+  input[type="password"],
+  input[type="date"],
   select, 
   textarea, 
-  .btn, 
+  button.btn,
   .form-group, 
   .form-group.full-width {
     width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-    border-radius: 8px !important; /* NO PILLS */
-    font-size: 16px !important; /* Prevent iOS zoom */
-    padding: 1rem !important;
+    border-radius: 8px !important; /* SQUARE CORNERS, NOT PILLS */
+    font-size: 16px !important; /* Fix iOS zoom-in behavior */
+    padding: 1.2rem 1rem !important;
     margin: 0 !important;
+    display: block !important;
+  }
+
+  /* Specific fix for inputs that might be shrinking */
+  .form-group input {
+    height: 3.5rem !important;
   }
 
   /* SPECIFIC BUTTON OVERRIDES */
@@ -1060,10 +1070,15 @@ textarea::-webkit-scrollbar-thumb {
     flex-direction: column !important;
     gap: 1rem !important;
     width: 100% !important;
+    margin-top: 1.5rem !important;
   }
 
-  .btn {
-    height: 3.5rem !important;
+  .btn-primary, .btn-secondary {
+    height: 4rem !important;
+    width: 100% !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1073,16 +1088,6 @@ textarea::-webkit-scrollbar-thumb {
   .modal-scroll-area {
     padding: 0 !important;
     overflow-x: hidden !important;
-  }
-
-  /* PREVIEW IMAGES */
-  #preview-container {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.5rem !important;
-  }
-  
-  .preview-item {
-    height: 80px !important;
   }
 }
 
