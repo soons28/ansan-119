@@ -83,16 +83,28 @@ const sliderDots = document.querySelectorAll('.dot');
 const fetchPosts = async () => {
   const { data, error } = await supabase.from('complaints').select('*').order('created_at', { ascending: false });
   if (!error && data) {
-    state.posts = data.map(p => ({
-      id: p.id,
-      title: p.title,
-      category: p.category,
-      description: p.description,
-      password: p.password,
-      images: p.images || [],
-      views: p.views || 0,
-      createdAt: p.created_at
-    }));
+    state.posts = data.map(p => {
+      // 작성자 추출 (형식: [작성자:이름] 내용)
+      let author = '익명';
+      let cleanDesc = p.description || '';
+      const authorMatch = cleanDesc.match(/^\[작성자:(.*?)\]/);
+      if (authorMatch) {
+        author = authorMatch[1];
+        cleanDesc = cleanDesc.replace(/^\[작성자:.*?\]\s*/, '');
+      }
+
+      return {
+        id: p.id,
+        title: p.title,
+        author: author,
+        category: p.category,
+        description: cleanDesc,
+        password: p.password,
+        images: p.images || [],
+        views: p.views || 0,
+        createdAt: p.created_at
+      };
+    });
     renderPosts();
   }
 };
@@ -288,6 +300,9 @@ const renderPosts = () => {
         </div>
         
         <div class="card-content" style="cursor: pointer; margin-top: 1rem;">
+          <div class="card-author-info">
+            <span>작성자: ${post.author}</span>
+          </div>
           <h3>${post.title}</h3>
           <p>${post.description}</p>
         </div>
@@ -355,10 +370,16 @@ const openDetail = (post) => {
     <div class="detail-header">
       <span class="category-tag" style="background: ${colors.bg} !important; color: ${colors.text} !important; border: 1px solid rgba(0,0,0,0.05);">${post.category}</span>
       <h2 style="margin-top: 1.5rem;">${post.title}</h2>
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 3rem;">작성일시: ${formatDate(post.createdAt)} &nbsp;|&nbsp; 조회수: ${post.views || 0}</p>
+      <div class="card-author-info" style="margin-bottom: 2.5rem; font-size: 1rem;">
+        <span>작성자: <strong>${post.author}</strong></span>
+        <span style="margin: 0 0.75rem; opacity: 0.3;">|</span>
+        <span>작성일시: ${formatDate(post.createdAt)}</span>
+        <span style="margin: 0 0.75rem; opacity: 0.3;">|</span>
+        <span>조회수: ${post.views || 0}</span>
+      </div>
     </div>
     <div class="detail-body">
-      <p style="white-space: pre-wrap;">${post.description}</p>
+      <p style="white-space: pre-wrap; line-height: 1.8; color: var(--text-primary); font-size: 1.1rem; background: #f8fafc; padding: 2.5rem; border-radius: 1.5rem;">${post.description}</p>
       ${post.images && post.images.length > 0 ? `
         <div class="detail-images" style="margin-top: 4rem; display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
           ${post.images.map(img => `<img src="${getFixedPublicUrl(img)}" style="width: 100%; border-radius: 2.5rem; box-shadow: var(--shadow-lg);" alt="첨부 이미지">`).join('')}
@@ -373,7 +394,7 @@ const closeDetail = () => {
   detailModal.classList.remove('active');
 };
 
-const addPost = async (title, category, description, password) => {
+const addPost = async (title, author, category, description, password) => {
   const submitBtn = document.querySelector('#complaint-form button[type="submit"]');
   const originalText = submitBtn.textContent;
   submitBtn.textContent = '업로드 중...';
@@ -395,13 +416,16 @@ const addPost = async (title, category, description, password) => {
       }
     }
 
+    // 작성자 정보를 설명 앞에 태그 형식으로 저장 (DB 컬럼 추가 전 임시 방편)
+    const wrappedDescription = `[작성자:${author}] ${description}`;
+
     if (state.editingId) {
       await supabase.from('complaints').update({
-        title, category, description, password, images: uploadedImageUrls
+        title, category, description: wrappedDescription, password, images: uploadedImageUrls
       }).eq('id', state.editingId);
     } else {
       await supabase.from('complaints').insert([{
-        title, category, description, password, images: uploadedImageUrls
+        title, category, description: wrappedDescription, password, images: uploadedImageUrls
       }]);
     }
   } catch (error) {
@@ -464,6 +488,7 @@ const openModal = () => {
 const openEditModal = (post) => {
   state.editingId = post.id;
   document.getElementById('title').value = post.title;
+  document.getElementById('author').value = post.author === '익명' ? '' : post.author;
   document.getElementById('category').value = post.category;
   document.getElementById('description').value = post.description;
   document.getElementById('password').value = post.password;
@@ -626,7 +651,8 @@ const generateReportHtml = (posts, type) => {
               <th style="border: 1px solid #ddd; padding: 12px; text-align: center; width: 50px;">번호</th>
               <th style="border: 1px solid #ddd; padding: 12px; text-align: center; width: 130px;">현장사진</th>
               <th style="border: 1px solid #ddd; padding: 12px; text-align: center; width: 100px;">날짜</th>
-              <th style="border: 1px solid #ddd; padding: 12px; text-align: center; width: 120px;">분류</th>
+              <th style="border: 1px solid #ddd; padding: 12px; text-align: center; width: 100px;">분류</th>
+              <th style="border: 1px solid #ddd; padding: 12px; text-align: center; width: 80px;">작성자</th>
               <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">민원 제목 및 내용</th>
             </tr>
           </thead>
@@ -644,6 +670,7 @@ const generateReportHtml = (posts, type) => {
                 </td>
                 <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${formatDate(post.createdAt, false)}</td>
                 <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${post.category}</td>
+                <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${post.author}</td>
                 <td style="border: 1px solid #ddd; padding: 15px; text-align: left;">
                   <div style="font-weight: bold; font-size: 11pt; margin-bottom: 5px;">${post.title}</div>
                   <div style="font-size: 9pt; color: #444; white-space: pre-wrap;">${post.description}</div>
@@ -668,6 +695,7 @@ const generateReportHtml = (posts, type) => {
                 </td>
                 <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${formatDate(post.createdAt, false)}</td>
                 <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${post.category}</td>
+                <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${post.author}</td>
                 <td style="border: 1px solid #ddd; padding: 15px; text-align: left;">
                   <div style="font-weight: bold; font-size: 11pt; margin-bottom: 5px;">${post.title}</div>
                   <div style="font-size: 9pt; color: #444; white-space: pre-wrap;">${post.description}</div>
@@ -718,6 +746,11 @@ const generateReportHtml = (posts, type) => {
           <div style="padding: 40px; display: flex; flex-direction: row; gap: 40px; align-items: stretch; flex: 1; box-sizing: border-box;">
             <!-- Left Side: Text Content -->
             <div style="${!post.images || post.images.length === 0 ? 'width: 100%;' : 'flex: 1; min-width: 0;'}">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <span style="font-size: 11pt; color: #64748b; font-weight: bold;">작성자: ${post.author}</span>
+                <span style="font-size: 11pt; color: #64748b;">|</span>
+                <span style="font-size: 11pt; color: #64748b;">${formatDate(post.createdAt)}</span>
+              </div>
               <h3 style="font-size: 18pt; color: #0f172a; margin: 0 0 20px 0; border-left: 6px solid #3b82f6; padding-left: 20px; line-height: 1.4;">${post.title}</h3>
               <div style="background: #fdfdfd; border: 1.5px solid #f1f5f9; padding: 25px; border-radius: 12px; font-size: 11pt; color: #334155; line-height: 1.8; white-space: pre-wrap;">${post.description}</div>
             </div>
@@ -859,6 +892,7 @@ complaintForm.onsubmit = (e) => {
   e.preventDefault();
   addPost(
     document.getElementById('title').value,
+    document.getElementById('author').value,
     document.getElementById('category').value,
     document.getElementById('description').value,
     document.getElementById('password').value

@@ -118,51 +118,57 @@
         <!-- Submission Modal -->
         <div id="complaint-modal" class="modal-backdrop">
           <div class="modal-content">
-            <h2>민원 등록</h2>
-            <form id="complaint-form">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="title">제목</label>
-                  <input type="text" id="title" placeholder="민원 제목을 입력해주세요" required>
-                </div>
-                <div class="form-group">
-                  <label for="category">분류</label>
-                  <select id="category" required>
-                    <option value="" disabled selected>분류를 선택하세요</option>
-                    <option value="공용시설 보수">공용시설 보수 (상강도, 포장 등)</option>
-                    <option value="전기/조명">전기/조명 시설</option>
-                    <option value="소방/안전">소방/안전 점검</option>
-                    <option value="냉난방/공조">냉난방/공조 시스템</option>
-                    <option value="주차/교통">주차/교통 관리</option>
-                    <option value="청소/미화">청소/미화 서비스</option>
-                    <option value="보안/CCTV">보안/CCTV 확인</option>
-                    <option value="관리비/행정">관리비/행정 문의</option>
-                    <option value="기타 건의사항">기타 건의사항</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="password">게시글 비밀번호 (4자리)</label>
-                  <input type="password" id="password" placeholder="수정/삭제 시 필요합니다" required>
-                </div>
-                <div class="form-group full-width">
-                  <label for="description">불편사항을 상세히 적어주세요 (장소, 문제점, 처리상황 등)</label>
-                  <textarea id="description" rows="5" placeholder="명확한 확인을 위해 장소, 문제점, 처리상황 등을 상세히 기재해 주시면 감사하겠습니다." required></textarea>
-                  <p class="form-helper-text">※ 정확한 위치와 현장 상황을 적어주시면 더 신속한 처리가 가능합니다.</p>
-                </div>
-                <div class="form-group full-width">
-                  <label>이미지 첨부 (최대 5장)</label>
-                  <div id="dropzone" class="dropzone">
-                    <p>창을 클릭하거나 이미지를 드래그하세요</p>
+            <div class="modal-scroll-area">
+              <h2>민원 등록</h2>
+              <form id="complaint-form">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" placeholder="민원 제목을 입력해주세요" required>
                   </div>
-                  <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
-                  <div id="preview-container"></div>
+                  <div class="form-group">
+                    <label for="author">작성자</label>
+                    <input type="text" id="author" placeholder="작성자 성함을 입력해주세요" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="category">분류</label>
+                    <select id="category" required>
+                      <option value="" disabled selected>분류를 선택하세요</option>
+                      <option value="공용시설 보수">공용시설 보수 (상강도, 포장 등)</option>
+                      <option value="전기/조명">전기/조명 시설</option>
+                      <option value="소방/안전">소방/안전 점검</option>
+                      <option value="냉난방/공조">냉난방/공조 시스템</option>
+                      <option value="주차/교통">주차/교통 관리</option>
+                      <option value="청소/미화">청소/미화 서비스</option>
+                      <option value="보안/CCTV">보안/CCTV 확인</option>
+                      <option value="관리비/행정">관리비/행정 문의</option>
+                      <option value="기타 건의사항">기타 건의사항</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="password">게시글 비밀번호 (4자리)</label>
+                    <input type="password" id="password" placeholder="수정/삭제 시 필요합니다" required>
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="description">불편사항을 상세히 적어주세요 (장소, 문제점, 처리상황 등)</label>
+                    <textarea id="description" rows="5" placeholder="명확한 확인을 위해 장소, 문제점, 처리상황 등을 상세히 기재해 주시면 감사하겠습니다." required></textarea>
+                    <p class="form-helper-text">※ 정확한 위치와 현장 상황을 적어주시면 더 신속한 처리가 가능합니다.</p>
+                  </div>
+                  <div class="form-group full-width">
+                    <label>이미지 첨부 (최대 5장)</label>
+                    <div id="dropzone" class="dropzone">
+                      <p>창을 클릭하거나 이미지를 드래그하세요</p>
+                    </div>
+                    <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
+                    <div id="preview-container"></div>
+                  </div>
                 </div>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">제출하기</button>
-                <button type="button" id="close-modal-btn" class="btn btn-secondary">취소</button>
-              </div>
-            </form>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">제출하기</button>
+                  <button type="button" id="close-modal-btn" class="btn btn-secondary">취소</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
 
@@ -172,9 +178,11 @@
               <div></div>
               <button id="close-detail-top-btn" class="btn-close" style="font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
             </div>
-            <div id="detail-content"></div>
-            <div style="margin-top: 2rem;">
-              <button id="close-detail-btn" class="btn btn-secondary" style="width: 100%;">닫기</button>
+            <div class="modal-scroll-area">
+              <div id="detail-content"></div>
+              <div style="margin-top: 2rem;">
+                <button id="close-detail-btn" class="btn btn-secondary" style="width: 100%;">닫기</button>
+              </div>
             </div>
           </div>
         </div>
