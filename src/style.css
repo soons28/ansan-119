@@ -664,115 +664,6 @@ header {
   .slide-content h1 { font-size: 1.5rem; margin-bottom: 1rem; }
   .slide-content p { font-size: 0.95rem; }
 
-  .modal-content { 
-    border-radius: 1.5rem; 
-    width: 96% !important;
-    min-width: 96% !important;
-    max-width: 96vw !important;
-    margin: 1rem auto !important;
-    padding: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    transform: none !important;
-  }
-
-  .modal-scroll-area {
-    padding: 2rem 1rem !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-
-  .modal-content h2 { 
-    font-size: 1.5rem; 
-    margin-bottom: 1.5rem;
-    text-align: center !important; 
-  }
-
-  #complaint-form {
-    width: 100% !important;
-    display: block !important;
-  }
-  
-  .form-grid { 
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1.25rem !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    align-items: stretch !important;
-  }
-  
-  .form-group {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-bottom: 0;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    text-align: left !important;
-  }
-
-  .form-group label {
-    text-align: left !important;
-    padding-left: 0.1rem !important;
-    margin-bottom: 0.4rem !important;
-    font-size: 0.9rem !important;
-    width: 100% !important;
-  }
-
-  .form-group input, 
-  .form-group select, 
-  .form-group textarea {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 100% !important;
-    padding: 1rem 1.25rem !important;
-    font-size: 1rem !important;
-    border-radius: 12px !important; 
-    display: block !important;
-    box-sizing: border-box !important;
-  }
-
-  .dropzone { 
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 2rem 1rem !important; 
-    border-radius: 1rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-height: 100px !important;
-  } 
-  
-  .dropzone p { 
-    font-size: 0.9rem !important;
-    width: 100% !important;
-    text-align: center !important;
-  }
-  
-  .form-actions { 
-    display: flex !important;
-    flex-direction: column !important; 
-    gap: 0.75rem !important; 
-    margin-top: 2rem !important; 
-    width: 100% !important;
-    align-items: stretch !important;
-  }
-  
-  .form-actions .btn { 
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 56px !important;
-    padding: 0 !important; 
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 12px !important;
-    font-size: 1.1rem !important;
-  }
-  
   .complaint-card { padding: 1.75rem; border-radius: 1.75rem; gap: 1.5rem; }
   .card-images-preview { height: 200px; margin: 1.5rem -1.75rem -1.75rem; border-radius: 0 0 1.75rem 1.75rem; }
   .card-content h3 { font-size: 1.25rem; }
@@ -1060,7 +951,135 @@ textarea::-webkit-scrollbar-track {
 textarea::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
-  border: 3px solid #f1f5f9;
+  border: 4px solid #f1f5f9;
+}
+
+/* ============================================================
+   NUCLEAR MOBILE UI FIX (v2.0)
+   Consolidated at the end for maximum specificity
+   ============================================================ */
+@media (max-width: 768px) {
+  /* 1. Header & Layout */
+  header { 
+    flex-direction: column !important; 
+    gap: 1rem !important; 
+    padding: 1.25rem !important; 
+    border-radius: 1rem !important; /* Pill -> Rounded */
+    margin: 1rem 0 2rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .nav-actions { 
+    width: 100% !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .app-container { padding: 0 0.75rem 2rem !important; }
+  .hero-slider { height: 300px !important; border-radius: 1rem !important; }
+
+  /* 2. Modal - NUCLEAR BORDER FOR DEBUGGING */
+  .modal-content { 
+    border: 4px solid #ef4444 !important; /* Visible change to confirm CSS loads */
+    border-radius: 1rem !important; 
+    width: 96% !important;
+    max-width: 96vw !important;
+    margin: 1rem auto !important;
+    padding: 0 !important;
+    left: 2% !important;
+    transform: none !important;
+    height: auto !important;
+    max-height: 90vh !important;
+  }
+
+  .modal-scroll-area {
+    padding: 1.5rem !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important; /* FORCE expansion */
+  }
+
+  /* 3. Form Inputs - FORCE FULL WIDTH */
+  .form-grid { 
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+  
+  .form-group {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .form-group input, 
+  .form-group select, 
+  .form-group textarea {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    padding: 0.85rem 1rem !important;
+    font-size: 1rem !important;
+    border-radius: 8px !important; /* NO MORE PILLS */
+    display: block !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  /* 4. Dropzone Fix */
+  .dropzone { 
+    width: 100% !important;
+    min-height: 120px !important;
+    padding: 1rem !important;
+    border-radius: 8px !important;
+  }
+  
+  .dropzone p {
+    font-size: 0.85rem !important;
+    white-space: normal !important;
+    line-height: 1.4 !important;
+    word-break: keep-all !important;
+  }
+
+  /* 5. Buttons Fix */
+  .form-actions { 
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .btn {
+    width: 100% !important;
+    min-width: 100% !important;
+    padding: 1rem !important;
+    border-radius: 8px !important; /* NO MORE PILLS */
+    font-size: 1rem !important;
+    height: auto !important;
+  }
+
+  /* 6. Admin Bar Fix */
+  #admin-controls {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    padding: 1rem !important;
+  }
+  
+  .filter-actions {
+    margin-left: 0 !important;
+    width: 100% !important;
+    flex-direction: column !important;
+  }
+
+  #live-users-badge, #select-all-btn {
+    width: 100% !important;
+  }
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover,
