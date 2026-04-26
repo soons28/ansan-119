@@ -836,7 +836,7 @@ header {
 
 /* Admin Filter Bar - Professional Dashboard Style */
 .admin-filter-bar {
-  display: flex !important;
+  display: none; /* Default hidden, shown by JS */
   align-items: center;
   justify-content: center;
   gap: 2rem;
@@ -848,6 +848,19 @@ header {
   border: 1px solid var(--border-color);
   max-width: 800px;
   animation: slideDown 0.4s ease-out;
+}
+
+/* Strictly hide admin elements when not in admin mode */
+.admin-only-btn {
+  display: none !important;
+}
+
+.admin-mode .admin-only-btn {
+  display: block !important;
+}
+
+.admin-mode .admin-filter-bar {
+  display: flex !important;
 }
 
 .filter-group {
@@ -1074,9 +1087,11 @@ textarea::-webkit-scrollbar-thumb {
 
   .header-admin-group {
     width: 100% !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     flex-direction: row !important;
+    flex-wrap: wrap !important;
     justify-content: space-between !important;
+    gap: 0.75rem !important;
     border-top: 1px solid #f1f5f9;
     padding-top: 1rem;
   }
@@ -1256,19 +1271,27 @@ textarea::-webkit-scrollbar-thumb {
   #admin-controls {
     flex-direction: column !important;
     gap: 1rem !important;
-    padding: 1rem !important;
+    padding: 1.5rem 1rem !important;
+    align-items: center !important;
   }
   
+  .filter-group {
+    flex-direction: column !important;
+    width: 100% !important;
+    align-items: center !important;
+  }
+
   .filter-actions {
     margin-left: 0 !important;
     width: 100% !important;
     flex-direction: column !important;
+    gap: 0.75rem !important;
   }
 
   #live-users-badge, #select-all-btn {
     width: 100% !important;
+    justify-content: center !important;
   }
-}
 
 .modal-content::-webkit-scrollbar-thumb:hover,
 textarea::-webkit-scrollbar-thumb:hover {
