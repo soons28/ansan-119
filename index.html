@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>안산유통상가 추진위원회 - 민원소통센터</title>
     <meta name="description" content="안산유통상가의 쾌적한 환경과 발전을 위해 상인 여러분의 소중한 의견을 듣는 민원소통센터입니다.">
-    <link rel="stylesheet" href="./src/style.css?v=2.0.9_FINAL">
+    <link rel="stylesheet" href="./src/style.css?v=2.1.0">
   </head>
   <body>
     <div id="app">
-    <!-- VERSION BANNER (v2.0.9 ULTIMATE MOBILE FIX) -->
+    <!-- VERSION BANNER (v2.1.0 LIGHT MODE LOCK) -->
     <div id="version-banner" style="background: #ef4444; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #b91c1c;">
-        🔥 v2.0.9 - 모바일 글씨 안보임 및 관리자 버튼 긴급 수정 (반드시 확인)
+        🟢 v2.1.0 - 라이트 모드 완전 차단 (페이지 닫고 다시 여세요)
     </div>
 
     <script>
         // FORCED REFRESH SCRIPT (Maximum Power)
-        const CURRENT_VERSION = "2.0.9";
+        const CURRENT_VERSION = "2.1.0";
         if (localStorage.getItem("app_version") !== CURRENT_VERSION) {
             localStorage.clear();
             localStorage.setItem("app_version", CURRENT_VERSION);
-            console.log("Upgrading to v2.0.9. Bypassing cache...");
+            console.log("Upgrading to v2.1.0. Clearing all cache...");
             window.location.replace(window.location.origin + window.location.pathname + '?v=' + Date.now());
         }
         setTimeout(() => {
@@ -236,11 +236,11 @@
 
         <footer class="main-footer">
           <p>&copy; 2026 COPYRIGHT <span class="footer-brand">KUKDONG SYSTEM</span>. ALL RIGHTS RESERVED.</p>
-          <p style="font-size: 0.7rem; opacity: 0.3; margin-top: 0.5rem;">UI Version: 2.0.9 (Admin & Contrast Fix)</p>
+          <p style="font-size: 0.7rem; opacity: 0.3; margin-top: 0.5rem;">UI Version: 2.1.0 (Light Mode Lock)</p>
         </footer>
       </div>
     </div>
-    <script type="module" src="/src/main.js?v=2.0.9_FINAL"></script>
+    <script type="module" src="/src/main.js?v=2.1.0"></script>
   </body>
 </html>
    

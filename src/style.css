@@ -2,6 +2,7 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 :root {
+  color-scheme: light; /* FORCE LIGHT MODE — prevents mobile dark mode override */
   --bg-main: #fcfcfd;
   --bg-sub: #f3f4f6;
   --bg-card: #ffffff;
@@ -12,78 +13,78 @@
   --text-secondary: #475569;
   --text-muted: #94a3b8;
   --border-color: rgba(0, 0, 0, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(255, 255, 255, 0.9);
   --container-max: 1300px;
   --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   --shadow-sm: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 30px 60px -12px rgba(0, 0, 0, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-main: #0f172a;
-    --bg-card: #1e293b;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --glass-bg: rgba(30, 41, 59, 0.7);
-  }
-  .modal-content { background: #1e293b !important; color: #f8fafc !important; }
-  .form-group label { color: #f8fafc !important; }
-  .modal-content h2 { color: #f8fafc !important; }
-  .modal-title-custom { color: #f8fafc !important; }
-  .form-group input, .form-group select, .form-group textarea { background: #0f172a !important; color: white !important; border-color: #334155 !important; }
-  .complaint-card { background: #1e293b; }
+/* ============================================
+   GLOBAL LIGHT MODE LOCK (v2.1.0)
+   Dark mode is fully disabled site-wide.
+   All colors are hardcoded to prevent any
+   OS/browser dark mode cascade from applying.
+   ============================================ */
+
+/* Force white background on the entire page */
+html, body {
+  background-color: #fcfcfd !important;
+  color: #0f172a !important;
 }
 
-/* ULTIMATE CONTRAST FIX (v2.0.8) */
-.modal-content, 
-.verify-modal .modal-content,
-#complaint-modal .modal-content,
-#detail-modal .modal-content,
-#print-option-modal .modal-content {
-    background-color: #ffffff !important;
-    color: #0f172a !important;
-}
+/* Placeholders always visible */
+::placeholder { color: #94a3b8 !important; opacity: 1 !important; }
+:-ms-input-placeholder { color: #94a3b8 !important; }
+::-ms-input-placeholder { color: #94a3b8 !important; }
 
-.modal-content h2, 
+/* All modals: always white background, dark text */
+.modal-content {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+.modal-content h2,
 .modal-content h3,
-.modal-content label,
 .modal-content p,
-.modal-content span,
-.modal-content .form-helper-text,
-#detail-content *,
-.admin-filter-bar label,
-.admin-filter-bar #live-users-badge {
-    color: #0f172a !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+.modal-content label,
+.modal-content span {
+  color: #0f172a !important;
 }
 
-/* Fix placeholders */
-::placeholder { color: #64748b !important; opacity: 1 !important; }
-:-ms-input-placeholder { color: #64748b !important; }
-::-ms-input-placeholder { color: #64748b !important; }
+/* All form inputs: always white background, dark text */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
 
-/* Filter Bar Specific */
+/* Admin filter bar: always white */
 .admin-filter-bar {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
 }
-.admin-filter-bar label {
-    color: #0f172a !important;
-    font-weight: 800 !important;
+.admin-filter-bar label,
+.admin-filter-bar #live-users-badge,
+.admin-filter-bar span {
+  color: #0f172a !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  /* In dark mode, we still want the MODALS to be white/dark-text for maximum legibility as requested */
-  /* unless the user specifically wants a dark theme. Given the 'invisible' complaint, we force contrast. */
-  .modal-content, .admin-filter-bar {
-      background: #ffffff !important;
-  }
-  .modal-content h2, .modal-content label, .admin-filter-bar label {
-      color: #0f172a !important;
-  }
+/* Complaint cards: always white */
+.complaint-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+.card-content h3, .card-content p, .timestamp, .view-count {
+  color: #0f172a !important;
 }
 
 * {
@@ -120,12 +121,12 @@ header {
   padding: 1.5rem 3rem;
   position: relative;
   z-index: 1000;
-  background: var(--glass-bg);
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 100px;
-  margin: 5rem 0 3rem; /* Increased top margin for banner */
+  margin: 5rem 0 3rem;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
 }
 
@@ -160,8 +161,8 @@ header {
 }
 
 #open-modal-btn {
-  background: var(--text-primary);
-  color: white;
+  background: #0f172a !important;
+  color: #ffffff !important;
   border-radius: 100px;
   padding: 0.75rem 1.75rem;
   font-weight: 800;
@@ -173,21 +174,25 @@ header {
   background: var(--accent-primary);
 }
 
-#admin-toggle-btn, #print-report-btn {
+#admin-toggle-btn {
   font-size: 0.85rem;
   font-weight: 700;
   padding: 0.65rem 1.25rem;
   border-radius: 100px;
-  border: 1px solid var(--border-color);
-  background: white;
-  color: var(--text-secondary);
+  border: 1px solid #cbd5e1 !important;
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
 }
 
 #print-report-btn {
   display: none;
-  background: var(--accent-secondary);
-  color: white;
+  background: #4f46e5 !important;
+  color: #ffffff !important;
   border: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: 100px;
 }
 
 /* Hero Slider */
@@ -617,21 +622,21 @@ header {
 }
 
 .btn-primary {
-  background: var(--text-primary);
-  color: white;
+  background: #0f172a !important;
+  color: #ffffff !important;
   border: none;
 }
 
 .btn-primary:hover {
-  background: var(--accent-primary);
+  background: #2563eb !important;
   transform: translateY(-4px);
   box-shadow: 0 15px 30px rgba(37, 99, 235, 0.25);
 }
 
 .btn-secondary {
-  background: var(--bg-sub);
-  color: var(--text-secondary);
-  border: none;
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 /* Footer Styling */
