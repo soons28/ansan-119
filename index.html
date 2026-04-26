@@ -9,14 +9,14 @@
   </head>
   <body>
     <div id="app">
-    <!-- VERSION BANNER (v2.0.6 FINAL FIX) -->
-    <div id="version-banner" style="background: #f59e0b; color: black; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #b45309;">
-        ⚠️ v2.0.6 - 모바일 최적화 패치 적용 중 (새로고침 확인용)
+    <!-- VERSION BANNER (v2.0.7 FINAL FIX) -->
+    <div id="version-banner" style="background: #ef4444; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #b91c1c;">
+        🔥 v2.0.7 - 관리자 보고서 및 색상 대비 긴급 패치 완료 (반드시 확인)
     </div>
 
     <script>
         // FORCED REFRESH SCRIPT (Maximum Power)
-        const CURRENT_VERSION = "2.0.6";
+        const CURRENT_VERSION = "2.0.7";
         if (localStorage.getItem("app_version") !== CURRENT_VERSION) {
             localStorage.clear();
             localStorage.setItem("app_version", CURRENT_VERSION);
@@ -40,7 +40,7 @@
           </div>
           <div class="nav-actions">
             <button id="admin-toggle-btn" class="btn btn-secondary">🔒 관리자 모드</button>
-            <button id="print-report-btn" class="btn btn-primary" style="display: none; background: var(--accent-primary) !important;">📊 보고서 출력</button>
+            <button id="print-report-btn" class="btn btn-primary admin-only-btn" style="display: none; background: var(--accent-primary) !important;">📊 보고서 출력</button>
             <button id="open-modal-btn" class="btn btn-primary">민원 등록</button>
           </div>
         </header>
@@ -111,7 +111,8 @@
               <span class="live-dot"></span>
               접속자: <span id="online-count">1</span>명
             </div>
-            <button id="select-all-btn" class="btn btn-secondary">✅ 전체 선택</button>
+            <button id="select-all-btn" class="btn btn-secondary" style="display: none;">✅ 전체 선택</button>
+            <button id="print-report-btn-2" class="btn btn-primary admin-only-btn" style="display: none; background: var(--accent-secondary) !important;">📊 선택 보고서 출력</button>
           </div>
         </div>
 

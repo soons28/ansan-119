@@ -29,7 +29,7 @@ userStatus
 // Initial State
 let state = {
   posts: [],
-  isAdmin: false,
+  isAdmin: localStorage.getItem('isAdmin_v2') === 'true', // Use a versioned key to avoid confusion
   editingId: null,
   images: [],
   selectedIds: [], 
@@ -45,6 +45,7 @@ const openModalBtn = document.getElementById('open-modal-btn');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const complaintModal = document.getElementById('complaint-modal');
 const printReportBtn = document.getElementById('print-report-btn');
+const printReportBtn2 = document.getElementById('print-report-btn-2');
 const detailModal = document.getElementById('detail-modal');
 const detailContent = document.getElementById('detail-content');
 const complaintForm = document.getElementById('complaint-form');
@@ -250,12 +251,14 @@ const renderPosts = () => {
     adminToggleBtn.classList.add('active');
     adminToggleBtn.innerHTML = '🔓 관리자 모드 활성';
     printReportBtn.style.display = 'block';
+    if (printReportBtn2) printReportBtn2.style.display = 'block';
     selectAllBtn.style.display = 'block';
   } else {
     document.body.classList.remove('admin-mode');
     adminToggleBtn.classList.remove('active');
     adminToggleBtn.innerHTML = '🔒 관리자 모드';
     printReportBtn.style.display = 'none';
+    if (printReportBtn2) printReportBtn2.style.display = 'none';
     selectAllBtn.style.display = 'none';
     state.selectedIds = [];
   }
@@ -507,6 +510,7 @@ const closeModal = () => {
 const handleAdminToggle = () => {
   if (state.isAdmin) {
     state.isAdmin = false;
+    localStorage.removeItem('isAdmin_v2');
     renderPosts();
   } else {
     openVerifyModal('admin_login');
@@ -553,6 +557,7 @@ const handleVerify = () => {
   if (action === 'admin_login') {
     if (verifyInput.value.trim() === state.ADMIN_PASSWORD) {
       state.isAdmin = true;
+      localStorage.setItem('isAdmin_v2', 'true');
       closeVerifyModal();
       renderPosts();
     } else {
@@ -861,9 +866,13 @@ if (closeDetailTopBtn) closeDetailTopBtn.onclick = closeDetail;
 adminToggleBtn.onclick = handleAdminToggle;
 
 // Print Report UI logic
-printReportBtn.onclick = () => {
+const openPrintOption = () => {
   printOptionModal.classList.add('active');
 };
+
+printReportBtn.onclick = openPrintOption;
+if (printReportBtn2) printReportBtn2.onclick = openPrintOption;
+
 closePrintModalBtn.onclick = () => {
   printOptionModal.classList.remove('active');
 };

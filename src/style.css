@@ -28,9 +28,33 @@
     --border-color: rgba(255, 255, 255, 0.1);
     --glass-bg: rgba(30, 41, 59, 0.7);
   }
-  .modal-content { background: #1e293b; color: #f8fafc; }
-  .form-group input, .form-group select, .form-group textarea { background: #0f172a; color: white; border-color: #334155; }
+  .modal-content { background: #1e293b !important; color: #f8fafc !important; }
+  .form-group label { color: #f8fafc !important; }
+  .modal-content h2 { color: #f8fafc !important; }
+  .modal-title-custom { color: #f8fafc !important; }
+  .form-group input, .form-group select, .form-group textarea { background: #0f172a !important; color: white !important; border-color: #334155 !important; }
   .complaint-card { background: #1e293b; }
+}
+
+/* NUCLEAR TEXT COLOR FIX */
+.modal-content h2, 
+.modal-content .modal-title,
+.modal-content label,
+.verify-modal h2,
+.verify-modal p {
+  color: var(--text-primary) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-content h2, 
+  .modal-content .modal-title,
+  .modal-content label,
+  .verify-modal h2,
+  .verify-modal p {
+    color: #f8fafc !important;
+  }
 }
 
 * {
@@ -72,7 +96,7 @@ header {
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 100px;
-  margin: 2rem 0 3rem;
+  margin: 5rem 0 3rem; /* Increased top margin for banner */
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
 }
 
@@ -427,9 +451,11 @@ header {
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 3.5rem;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   letter-spacing: -0.04em;
   text-align: center;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .form-grid {
@@ -452,8 +478,9 @@ header {
 .form-group label {
   font-size: 1rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   padding-left: 0.5rem;
+  opacity: 1 !important;
 }
 
 .form-group input, 
@@ -896,7 +923,7 @@ header {
     gap: 0.75rem;
   }
 
-  #live-users-badge, #select-all-btn {
+  #live-users-badge, #select-all-btn, #print-report-btn-2 {
     width: 100% !important;
     justify-content: center;
   }
@@ -1106,6 +1133,15 @@ textarea::-webkit-scrollbar-thumb {
     display: block !important;
     margin-bottom: 0.5rem !important;
     text-align: left !important;
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+  }
+
+  /* Force modal content visibility */
+  .modal-content h2 {
+    color: var(--text-primary) !important;
+    margin-bottom: 2rem !important;
+    font-size: 1.75rem !important;
   }
 }
 
