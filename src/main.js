@@ -250,17 +250,11 @@ const renderPosts = () => {
     document.body.classList.add('admin-mode');
     adminToggleBtn.classList.add('active');
     adminToggleBtn.innerHTML = '🔓 관리자 모드 활성';
-    printReportBtn.style.display = 'block';
-    if (printReportBtn2) printReportBtn2.style.display = 'block';
-    selectAllBtn.style.display = 'block';
     if (adminControls) adminControls.style.display = 'flex';
   } else {
     document.body.classList.remove('admin-mode');
     adminToggleBtn.classList.remove('active');
     adminToggleBtn.innerHTML = '🔒 관리자 모드';
-    printReportBtn.style.display = 'none';
-    if (printReportBtn2) printReportBtn2.style.display = 'none';
-    selectAllBtn.style.display = 'none';
     if (adminControls) adminControls.style.display = 'none';
     state.selectedIds = [];
   }
@@ -300,16 +294,18 @@ const renderPosts = () => {
               <button class="btn btn-icon edit-btn" style="cursor: pointer;">수정</button>
               <button class="btn btn-icon delete-btn" style="color: #ef4444; cursor: pointer;">삭제</button>
             </div>
-            <span class="view-count">조회수 ${post.views || 0}</span>
           </div>
         </div>
         
         <div class="card-content" style="cursor: pointer; margin-top: 1rem;">
-          <div class="card-author-info">
-            <span>작성자: ${post.author}</span>
-          </div>
           <h3>${post.title}</h3>
           <p>${post.description}</p>
+          <div class="card-meta-row">
+            <div class="card-author-info">
+              <span>작성자: ${post.author}</span>
+            </div>
+            <span class="view-count-badge">조회 ${post.views || 0}</span>
+          </div>
         </div>
 
         ${post.images && post.images.length > 0 ? `

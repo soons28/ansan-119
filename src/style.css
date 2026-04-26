@@ -1322,3 +1322,48 @@ textarea::-webkit-scrollbar-thumb:hover {
   color: var(--text-muted);
   font-weight: 600;
 }
+
+/* Admin visibility helpers */
+.admin-only-btn {
+  display: none !important;
+}
+
+.admin-mode .admin-only-btn {
+  display: inline-flex !important;
+}
+
+/* Card layout refactor for mobile overlap fix */
+.card-meta-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px dashed #f1f5f9;
+}
+
+.view-count-badge {
+  background: #f8fafc;
+  color: #64748b;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.header-admin-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Fix Period Search visibility */
+.filter-group label {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}

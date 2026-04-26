@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>안산유통상가 추진위원회 - 민원소통센터</title>
     <meta name="description" content="안산유통상가의 쾌적한 환경과 발전을 위해 상인 여러분의 소중한 의견을 듣는 민원소통센터입니다.">
-    <link rel="stylesheet" href="./src/style.css?v=2.2.0">
+    <link rel="stylesheet" href="./src/style.css?v=2.2.1">
   </head>
   <body>
     <div id="app">
     <!-- VERSION BANNER (v2.2.0) -->
-    <div id="version-banner" style="background: #2563eb; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #1e40af;">
-        🔵 v2.2.0 - UI 개선 및 배경색 업데이트 완료
+    <div id="version-banner" style="background: #ef4444; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #b91c1c;">
+        🔥 v2.2.1 - UI 레이아웃 및 관리자 권한 버그 수정 완료 (새로고침 권장)
     </div>
 
     <script>
-        const CURRENT_VERSION = "2.2.0";
+        const CURRENT_VERSION = "2.2.1";
         if (localStorage.getItem("app_version") !== CURRENT_VERSION) {
             localStorage.clear();
             localStorage.setItem("app_version", CURRENT_VERSION);
-            console.log("Upgrading to v2.2.0. Clearing all cache...");
+            console.log("Upgrading to v2.2.1. Clearing all cache...");
             window.location.replace(window.location.origin + window.location.pathname + '?v=' + Date.now());
         }
         setTimeout(() => {
