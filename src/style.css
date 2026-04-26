@@ -29,7 +29,7 @@
 
 /* Force white background on the entire page */
 html, body {
-  background-color: #fcfcfd !important;
+  background-color: #ffffff !important;
   color: #0f172a !important;
 }
 
@@ -98,10 +98,7 @@ body {
   color: var(--text-primary);
   font-family: 'Pretendard', sans-serif;
   overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.03) 0, transparent 40%), 
-    radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.03) 0, transparent 40%);
+  background-image: none; /* Removed gradients for pure white background */
   background-attachment: fixed;
   line-height: 1.6;
 }
@@ -362,13 +359,28 @@ header {
 }
 
 .btn-icon {
-  background: var(--bg-sub);
-  border: none;
-  padding: 0.4rem 0.8rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 0.9rem;
   border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: #1e293b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.btn-icon:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.delete-btn {
+  color: #ef4444 !important;
+  border-color: #fee2e2 !important;
+}
+
+.delete-btn:hover {
+  background: #fee2e2 !important;
 }
 
 .view-count {
@@ -1041,9 +1053,8 @@ textarea::-webkit-scrollbar-thumb {
   .app-container { padding: 0 0.75rem 2rem !important; }
   .hero-slider { height: 300px !important; border-radius: 1rem !important; }
 
-  /* 2. Modal - NUCLEAR BORDER FOR DEBUGGING */
+  /* 2. Modal */
   .modal-content { 
-    border: 4px solid #ef4444 !important; /* Visible change to confirm CSS loads */
     border-radius: 1rem !important; 
     width: 96% !important;
     max-width: 96vw !important;
@@ -1053,6 +1064,25 @@ textarea::-webkit-scrollbar-thumb {
     transform: none !important;
     height: auto !important;
     max-height: 90vh !important;
+  }
+
+  .card-header {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: flex-start !important;
+  }
+
+  .header-admin-group {
+    width: 100% !important;
+    align-items: flex-start !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 1rem;
+  }
+
+  .card-actions {
+    width: auto !important;
   }
 
   .modal-scroll-area {
