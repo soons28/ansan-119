@@ -5,28 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>안산유통상가 추진위원회 - 민원소통센터</title>
     <meta name="description" content="안산유통상가의 쾌적한 환경과 발전을 위해 상인 여러분의 소중한 의견을 듣는 민원소통센터입니다.">
-    <link rel="stylesheet" href="./src/style-v205.css?v=20260426">
+    <link rel="stylesheet" href="./src/style.css?v=20260426_FINAL_V6">
   </head>
   <body>
     <div id="app">
-    <!-- VERSION BANNER (v2.0.5 CACHE BUSTER) -->
-    <div id="version-banner" style="background: #059669; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #064e3b;">
-        🚀 v2.0.5 - 최신 업데이트 적용 완료 (모바일 전체화면)
+    <!-- VERSION BANNER (v2.0.6 FINAL FIX) -->
+    <div id="version-banner" style="background: #f59e0b; color: black; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #b45309;">
+        ⚠️ v2.0.6 - 모바일 최적화 패치 적용 중 (새로고침 확인용)
     </div>
 
     <script>
-        // FORCED REFRESH SCRIPT (Aggressive)
-        const CURRENT_VERSION = "2.0.5";
+        // FORCED REFRESH SCRIPT (Maximum Power)
+        const CURRENT_VERSION = "2.0.6";
         if (localStorage.getItem("app_version") !== CURRENT_VERSION) {
             localStorage.clear();
             localStorage.setItem("app_version", CURRENT_VERSION);
-            console.log("Forcing update to v2.0.5...");
-            window.location.replace(window.location.href.split('?')[0] + '?v=' + Date.now());
+            console.log("Upgrading to v2.0.6. Bypassing cache...");
+            window.location.replace(window.location.origin + window.location.pathname + '?v=' + Date.now());
         }
         setTimeout(() => {
             const banner = document.getElementById('version-banner');
             if (banner) banner.style.display = 'none';
-        }, 8000);
+        }, 10000);
     </script>
       <div class="app-container">
         <!-- Header -->
