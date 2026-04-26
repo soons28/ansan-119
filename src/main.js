@@ -253,6 +253,7 @@ const renderPosts = () => {
     printReportBtn.style.display = 'block';
     if (printReportBtn2) printReportBtn2.style.display = 'block';
     selectAllBtn.style.display = 'block';
+    if (adminControls) adminControls.style.display = 'flex';
   } else {
     document.body.classList.remove('admin-mode');
     adminToggleBtn.classList.remove('active');
@@ -260,6 +261,7 @@ const renderPosts = () => {
     printReportBtn.style.display = 'none';
     if (printReportBtn2) printReportBtn2.style.display = 'none';
     selectAllBtn.style.display = 'none';
+    if (adminControls) adminControls.style.display = 'none';
     state.selectedIds = [];
   }
 

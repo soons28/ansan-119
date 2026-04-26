@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>안산유통상가 추진위원회 - 민원소통센터</title>
     <meta name="description" content="안산유통상가의 쾌적한 환경과 발전을 위해 상인 여러분의 소중한 의견을 듣는 민원소통센터입니다.">
-    <link rel="stylesheet" href="./src/style.css?v=20260426_FINAL_V6">
+    <link rel="stylesheet" href="./src/style.css?v=2.0.9_FINAL">
   </head>
   <body>
     <div id="app">
-    <!-- VERSION BANNER (v2.0.8 ULTIMATE CONTRAST FIX) -->
+    <!-- VERSION BANNER (v2.0.9 ULTIMATE MOBILE FIX) -->
     <div id="version-banner" style="background: #ef4444; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 15px; position: fixed; top: 0; width: 100%; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-bottom: 3px solid #b91c1c;">
-        🔥 v2.0.8 - 글씨 안보임 문제 및 색상 대비 2차 긴급 패치 (최종 확인)
+        🔥 v2.0.9 - 모바일 글씨 안보임 및 관리자 버튼 긴급 수정 (반드시 확인)
     </div>
 
     <script>
         // FORCED REFRESH SCRIPT (Maximum Power)
-        const CURRENT_VERSION = "2.0.8";
+        const CURRENT_VERSION = "2.0.9";
         if (localStorage.getItem("app_version") !== CURRENT_VERSION) {
             localStorage.clear();
             localStorage.setItem("app_version", CURRENT_VERSION);
-            console.log("Upgrading to v2.0.8. Bypassing cache...");
+            console.log("Upgrading to v2.0.9. Bypassing cache...");
             window.location.replace(window.location.origin + window.location.pathname + '?v=' + Date.now());
         }
         setTimeout(() => {
@@ -39,9 +39,9 @@
             </h1>
           </div>
           <div class="nav-actions">
-            <button id="admin-toggle-btn" class="btn btn-secondary">🔒 관리자 모드</button>
-            <button id="print-report-btn" class="btn btn-primary admin-only-btn" style="display: none; background: var(--accent-primary) !important;">📊 보고서 출력</button>
-            <button id="open-modal-btn" class="btn btn-primary">민원 등록</button>
+            <button id="admin-toggle-btn" class="btn btn-secondary" style="color: #1e293b !important; background: #f1f5f9 !important; border: 1px solid #cbd5e1 !important;">🔒 관리자 모드</button>
+            <button id="print-report-btn" class="btn btn-primary admin-only-btn" style="display: none; background: #2563eb !important; color: white !important;">📊 보고서 출력</button>
+            <button id="open-modal-btn" class="btn btn-primary" style="background: #2563eb !important; color: white !important;">민원 등록</button>
           </div>
         </header>
 
@@ -97,22 +97,22 @@
           </div>
         </section>
 
-        <div id="admin-controls" class="admin-filter-bar">
+        <div id="admin-controls" class="admin-filter-bar" style="display: none; background: #ffffff !important; border: 1px solid #e2e8f0 !important; color: #0f172a !important; padding: 1.5rem !important;">
           <div class="filter-group">
-            <label>📅 기간별 조회</label>
+            <label style="color: #0f172a !important; font-weight: bold; margin-bottom: 0.5rem; display: block;">📅 기간별 조회</label>
             <div class="date-container">
-              <input type="date" id="start-date" class="date-input">
-              <span class="date-separator">~</span>
-              <input type="date" id="end-date" class="date-input">
+              <input type="date" id="start-date" class="date-input" style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important;">
+              <span class="date-separator" style="color: #64748b !important;">~</span>
+              <input type="date" id="end-date" class="date-input" style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important;">
             </div>
           </div>
           <div class="filter-actions">
-            <div id="live-users-badge">
+            <div id="live-users-badge" style="color: #1e293b !important; font-weight: bold;">
               <span class="live-dot"></span>
               접속자: <span id="online-count">1</span>명
             </div>
-            <button id="select-all-btn" class="btn btn-secondary" style="display: none;">✅ 전체 선택</button>
-            <button id="print-report-btn-2" class="btn btn-primary admin-only-btn" style="display: none; background: var(--accent-secondary) !important;">📊 선택 보고서 출력</button>
+            <button id="select-all-btn" class="btn btn-secondary" style="display: none; color: #1e293b !important; background: #f1f5f9 !important;">✅ 전체 선택</button>
+            <button id="print-report-btn-2" class="btn btn-primary admin-only-btn" style="display: none; background: #4f46e5 !important; color: white !important;">📊 선택 보고서 출력</button>
           </div>
         </div>
 
@@ -121,22 +121,22 @@
 
         <!-- Submission Modal -->
         <div id="complaint-modal" class="modal-backdrop">
-          <div class="modal-content">
+          <div class="modal-content" style="background: #ffffff !important; color: #0f172a !important;">
             <div class="modal-scroll-area">
-              <h2>민원 등록</h2>
+              <h2 style="color: #0f172a !important; font-weight: 800; margin-bottom: 2rem;">📝 민원 등록</h2>
               <form id="complaint-form">
                 <div class="form-grid">
                   <div class="form-group">
-                    <label for="title">제목</label>
-                    <input type="text" id="title" placeholder="민원 제목을 입력해주세요" required>
+                    <label for="title" style="color: #0f172a !important; font-weight: 700;">제목</label>
+                    <input type="text" id="title" placeholder="민원 제목을 입력해주세요" required style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important;">
                   </div>
                   <div class="form-group">
-                    <label for="author">작성자</label>
-                    <input type="text" id="author" placeholder="작성자 성함을 입력해주세요" required>
+                    <label for="author" style="color: #0f172a !important; font-weight: 700;">작성자</label>
+                    <input type="text" id="author" placeholder="작성자 성함을 입력해주세요" required style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important;">
                   </div>
                   <div class="form-group">
-                    <label for="category">분류</label>
-                    <select id="category" required>
+                    <label for="category" style="color: #0f172a !important; font-weight: 700;">분류</label>
+                    <select id="category" required style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important;">
                       <option value="" disabled selected>분류를 선택하세요</option>
                       <option value="공용시설 보수">공용시설 보수 (상강도, 포장 등)</option>
                       <option value="전기/조명">전기/조명 시설</option>
@@ -150,18 +150,18 @@
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="password">게시글 비밀번호 (4자리)</label>
-                    <input type="password" id="password" placeholder="수정/삭제 시 필요합니다" required>
+                    <label for="password" style="color: #0f172a !important; font-weight: 700;">게시글 비밀번호 (4자리)</label>
+                    <input type="password" id="password" placeholder="수정/삭제 시 필요합니다" required style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important;">
                   </div>
                   <div class="form-group full-width">
-                    <label for="description">불편사항을 상세히 적어주세요 (장소, 문제점, 처리상황 등)</label>
-                    <textarea id="description" rows="5" placeholder="명확한 확인을 위해 장소, 문제점, 처리상황 등을 상세히 기재해 주시면 감사하겠습니다." required></textarea>
-                    <p class="form-helper-text">※ 정확한 위치와 현장 상황을 적어주시면 더 신속한 처리가 가능합니다.</p>
+                    <label for="description" style="color: #0f172a !important; font-weight: 700;">불편사항을 상세히 적어주세요 (장소, 문제점, 처리상황 등)</label>
+                    <textarea id="description" rows="5" placeholder="명확한 확인을 위해 장소, 문제점, 처리상황 등을 상세히 기재해 주시면 감사하겠습니다." required style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important;"></textarea>
+                    <p class="form-helper-text" style="color: #475569 !important;">※ 정확한 위치와 현장 상황을 적어주시면 더 신속한 처리가 가능합니다.</p>
                   </div>
                   <div class="form-group full-width">
-                    <label>이미지 첨부 (최대 5장)</label>
-                    <div id="dropzone" class="dropzone">
-                      <p>창을 클릭하거나 이미지를 드래그하세요</p>
+                    <label style="color: #0f172a !important; font-weight: 700;">이미지 첨부 (최대 5장)</label>
+                    <div id="dropzone" class="dropzone" style="background: #f8fafc !important; border: 2px dashed #cbd5e1 !important; color: #475569 !important;">
+                      <p style="color: #475569 !important;">창을 클릭하거나 이미지를 드래그하세요</p>
                     </div>
                     <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
                     <div id="preview-container"></div>
@@ -177,7 +177,7 @@
         </div>
 
         <div id="detail-modal" class="modal-backdrop">
-          <div class="modal-content">
+          <div class="modal-content" style="background: #ffffff !important; color: #0f172a !important;">
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: start;">
               <div></div>
               <button id="close-detail-top-btn" class="btn-close" style="font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
@@ -192,21 +192,21 @@
         </div>
 
         <div id="print-option-modal" class="modal-backdrop">
-          <div class="modal-content" style="max-width: 650px; text-align: center;">
+          <div class="modal-content" style="max-width: 650px; text-align: center; background: #ffffff !important; color: #0f172a !important;">
             <div style="padding: 3.5rem 3.5rem 3rem;">
-              <h2 style="margin-bottom: 1rem;">🖨️ 보고서 출력 설정</h2>
-              <p style="color: var(--text-secondary); margin-bottom: 3rem;">목적에 맞는 인쇄 형식을 선택해 주세요.</p>
+              <h2 style="margin-bottom: 1rem; color: #0f172a !important;">🖨️ 보고서 출력 설정</h2>
+              <p style="color: #475569 !important; margin-bottom: 3rem;">목적에 맞는 인쇄 형식을 선택해 주세요.</p>
               
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem;">
-                <div id="print-table-type" style="padding: 2.5rem 2rem; border: 2px solid var(--border-color); border-radius: 1.5rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.background='rgba(30,64,175,0.02)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.background='white'">
+                <div id="print-table-type" style="padding: 2.5rem 2rem; border: 2px solid #e2e8f0; border-radius: 1.5rem; cursor: pointer; transition: all 0.3s ease; background: #ffffff !important; color: #0f172a !important;" onmouseover="this.style.borderColor='#2563eb'; this.style.background='#f8fafc'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#ffffff'">
                   <div style="font-size: 2.5rem; margin-bottom: 1rem;">📊</div>
-                  <h3 style="margin-bottom: 0.75rem;">요약형 (표)</h3>
-                  <p style="font-size: 0.9rem; color: var(--text-muted);">전체 리스트 파악 및<br>기록용에 적합</p>
+                  <h3 style="margin-bottom: 0.75rem; color: #0f172a !important;">요약형 (표)</h3>
+                  <p style="font-size: 0.9rem; color: #64748b !important;">전체 리스트 파악 및<br>기록용에 적합</p>
                 </div>
-                <div id="print-card-type" style="padding: 2.5rem 2rem; border: 2px solid var(--border-color); border-radius: 1.5rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.background='rgba(30,64,175,0.02)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.background='white'">
+                <div id="print-card-type" style="padding: 2.5rem 2rem; border: 2px solid #e2e8f0; border-radius: 1.5rem; cursor: pointer; transition: all 0.3s ease; background: #ffffff !important; color: #0f172a !important;" onmouseover="this.style.borderColor='#2563eb'; this.style.background='#f8fafc'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#ffffff'">
                   <div style="font-size: 2.5rem; margin-bottom: 1rem;">🖼️</div>
-                  <h3 style="margin-bottom: 0.75rem;">상세형 (카드)</h3>
-                  <p style="font-size: 0.9rem; color: var(--text-muted);">현장 사진 확인 및<br>증거 제출용에 적합</p>
+                  <h3 style="margin-bottom: 0.75rem; color: #0f172a !important;">상세형 (카드)</h3>
+                  <p style="font-size: 0.9rem; color: #64748b !important;">현장 사진 확인 및<br>증거 제출용에 적합</p>
                 </div>
               </div>
 
@@ -218,12 +218,12 @@
         </div>
 
         <div id="verify-modal" class="modal-backdrop">
-          <div class="modal-content" style="max-width: 550px;">
+          <div class="modal-content" style="max-width: 550px; background: #ffffff !important; color: #0f172a !important;">
             <div style="padding: 3.5rem 3.5rem 3rem;">
-              <h2>관리자 인증</h2>
-              <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">시스템 관리를 위해 인증이 필요합니다.</p>
+              <h2 style="color: #0f172a !important;">관리자 인증</h2>
+              <p style="color: #475569 !important; margin-bottom: 0.5rem;">시스템 관리를 위해 인증이 필요합니다.</p>
               <div class="form-group" style="margin-top: 2.5rem;">
-                <input type="password" id="verify-password-input" placeholder="관리자 전용 암호">
+                <input type="password" id="verify-password-input" placeholder="관리자 전용 암호" style="color: #0f172a !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important; height: 50px; font-size: 1.2rem;">
                 <p id="caps-warning" style="display: none; color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; font-weight: bold;">⚠️ 소문자로 입력해 주세요.</p>
               </div>
               <div class="form-actions" style="margin-top: 2.5rem;">
@@ -236,10 +236,10 @@
 
         <footer class="main-footer">
           <p>&copy; 2026 COPYRIGHT <span class="footer-brand">KUKDONG SYSTEM</span>. ALL RIGHTS RESERVED.</p>
-          <p style="font-size: 0.7rem; opacity: 0.3; margin-top: 0.5rem;">UI Version: 2.0.8 (Contrast Optimized)</p>
+          <p style="font-size: 0.7rem; opacity: 0.3; margin-top: 0.5rem;">UI Version: 2.0.9 (Admin & Contrast Fix)</p>
         </footer>
       </div>
     </div>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/main.js?v=2.0.9_FINAL"></script>
   </body>
 </html>
