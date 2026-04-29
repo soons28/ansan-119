@@ -849,7 +849,8 @@ header {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1.5rem;
-  background: white;
+  background: #ffffff !important;
+  color-scheme: light !important;
   margin: 1.5rem auto;
   padding: 1rem 1.5rem;
   border-radius: 1.25rem;
@@ -1403,5 +1404,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   color: #1e293b !important;
   font-weight: 700 !important;
   font-size: 0.95rem !important;
+  color-scheme: light !important;
+  background-color: transparent !important;
 }
 }
