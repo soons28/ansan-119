@@ -250,14 +250,15 @@ const renderPosts = () => {
     document.body.classList.add('admin-mode');
     adminToggleBtn.classList.add('active');
     adminToggleBtn.innerHTML = '🔓 관리자 모드 활성';
-    if (adminControls) adminControls.style.display = 'flex';
   } else {
     document.body.classList.remove('admin-mode');
     adminToggleBtn.classList.remove('active');
     adminToggleBtn.innerHTML = '🔒 관리자 모드';
-    if (adminControls) adminControls.style.display = 'none';
     state.selectedIds = [];
   }
+
+  // Always ensure filter bar is visible if it exists
+  if (adminControls) adminControls.style.display = 'flex';
 
   // Update Select All Button Text
   if (state.isAdmin) {
@@ -275,9 +276,31 @@ const renderPosts = () => {
     return;
   }
 
-  complaintsList.innerHTML = state.posts
-    .slice()
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  let filteredPosts = [...state.posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // Apply Date Filtering
+  if (startDateInput.value || endDateInput.value) {
+    const start = startDateInput.value ? new Date(startDateInput.value) : new Date(0);
+    const end = endDateInput.value ? new Date(endDateInput.value) : new Date();
+    end.setHours(23, 59, 59, 999);
+
+    filteredPosts = filteredPosts.filter(p => {
+      const date = new Date(p.createdAt);
+      return date >= start && date <= end;
+    });
+  }
+
+  if (filteredPosts.length === 0) {
+    complaintsList.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
+        <p style="font-size: 1.25rem; font-weight: 600;">🔍 선택하신 기간에 게시글이 없습니다.</p>
+        <p>다른 기간을 선택해보세요.</p>
+      </div>
+    `;
+    return;
+  }
+
+  complaintsList.innerHTML = filteredPosts
     .map(post => {
       const colors = getCategoryColor(post.category);
       const isSelected = state.selectedIds.includes(post.id);
@@ -288,6 +311,7 @@ const renderPosts = () => {
           <div class="card-title-meta">
             <span class="category-tag" style="background: ${colors.bg} !important; color: ${colors.text} !important">${post.category}</span>
             <span class="timestamp">${formatDate(post.createdAt, false)}</span>
+            <span class="view-count-inline">| 조회 ${post.views || 0}</span>
           </div>
           <div class="header-admin-group">
             <div class="card-actions">
@@ -304,7 +328,6 @@ const renderPosts = () => {
             <div class="card-author-info">
               <span>작성자: ${post.author}</span>
             </div>
-            <span class="view-count-badge">조회 ${post.views || 0}</span>
           </div>
         </div>
 
@@ -314,7 +337,9 @@ const renderPosts = () => {
           </div>
         ` : ''}
       </div>
-    `}).join('');
+      `;
+    })
+    .join('');
 
   document.querySelectorAll('.complaint-card').forEach(card => {
     const id = card.dataset.id;
@@ -324,7 +349,6 @@ const renderPosts = () => {
       if (e.target.closest('button')) return;
 
       if (state.isAdmin) {
-        // Toggle selection in admin mode
         if (state.selectedIds.includes(id)) {
           state.selectedIds = state.selectedIds.filter(idx => idx !== id);
         } else {
@@ -332,7 +356,6 @@ const renderPosts = () => {
         }
         renderPosts();
       } else {
-        // Just open detail in user mode
         openDetail(post);
         incrementViews(id);
       }
@@ -357,6 +380,11 @@ const renderPosts = () => {
     };
   });
 };
+
+// --- Initial Render and Setup ---
+
+startDateInput.onchange = renderPosts;
+endDateInput.onchange = renderPosts;
 
 const deletePost = async (id) => {
   await supabase.from('complaints').delete().eq('id', id);

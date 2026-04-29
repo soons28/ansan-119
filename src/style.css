@@ -54,10 +54,12 @@ html, body {
 /* All form inputs: always white background, dark text */
 .form-group input,
 .form-group select,
-.form-group textarea {
+.form-group textarea,
+.date-input {
   background: #f8fafc !important;
   color: #0f172a !important;
   border-color: #e2e8f0 !important;
+  color-scheme: light !important;
 }
 .form-group input:focus,
 .form-group select:focus,
@@ -344,6 +346,12 @@ header {
 .timestamp {
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.view-count-inline {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
 }
 
 .header-admin-group {
@@ -836,30 +844,32 @@ header {
 
 /* Admin Filter Bar - Professional Dashboard Style */
 .admin-filter-bar {
-  display: none; /* Default hidden, shown by JS */
+  display: flex; /* Always show for date filtering */
   align-items: center;
-  justify-content: space-between; /* Space out items */
-  flex-wrap: wrap; /* Allow wrapping on small screens */
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1.5rem;
   background: white;
   margin: 1.5rem auto;
-  padding: 1rem 2rem;
+  padding: 1rem 1.5rem;
   border-radius: 1.25rem;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
-  max-width: 100%; /* Allow it to expand */
+  max-width: 100%;
   width: fit-content;
   min-width: 320px;
   animation: slideDown 0.4s ease-out;
 }
 
 /* Strictly hide admin elements when not in admin mode */
-.admin-only-btn {
+.admin-only-btn, 
+#live-users-badge {
   display: none !important;
 }
 
-.admin-mode .admin-only-btn {
-  display: block !important;
+.admin-mode .admin-only-btn,
+.admin-mode #live-users-badge {
+  display: flex !important;
 }
 
 .admin-mode .admin-filter-bar {
@@ -886,16 +896,34 @@ header {
 }
 
 .date-separator {
-  color: var(--text-muted);
+  color: #0f172a !important;
   font-weight: bold;
 }
 
 .filter-actions {
   display: flex;
   align-items: center;
-  flex-wrap: wrap; /* Allow buttons to wrap */
+  flex-wrap: wrap;
   gap: 0.75rem;
   margin-left: auto;
+}
+
+.filter-actions .btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 0.6rem 1rem;
+}
+
+#live-users-badge {
+  background: #f1f5f9;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 #live-users-badge {
@@ -1188,8 +1216,10 @@ textarea::-webkit-scrollbar-thumb {
     padding: 1rem !important;
     border: 1px solid #cbd5e1 !important;
     background: #fff !important;
+    color: #0f172a !important;
     display: block !important;
     -webkit-appearance: none !important;
+    color-scheme: light !important;
   }
 
   .btn-primary, .btn-secondary {
