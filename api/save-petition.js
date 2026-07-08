@@ -124,7 +124,11 @@ async function handler(req, res) {
     return res.status(200).json({ success: true, index: nextIndex, driveFileUrl: finalSignatureUrl });
   } catch (error) {
     console.error('API Error in save-petition:', error);
-    return res.status(500).json({ success: false, message: error.toString() });
+    return res.status(500).json({ 
+      success: false, 
+      message: error.message || error.toString(),
+      detail: error.stack || ''
+    });
   }
 }
 

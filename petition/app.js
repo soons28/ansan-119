@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 alert('탄원 연명부 제출이 완료되었습니다. 참여해주셔서 대단히 감사합니다.');
             } else {
-                alert('제출 중 오류가 발생했습니다: ' + data.message);
+                alert('제출 중 오류가 발생했습니다: ' + data.message + '\n\n[오류 상세 정보]\n' + (data.detail || '없음'));
                 return;
             }
         } catch (e) {
