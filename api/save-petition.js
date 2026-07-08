@@ -54,10 +54,10 @@ async function handler(req, res) {
       // Write header row
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${targetSheetTitle}!A1:J1`,
+        range: `${targetSheetTitle}!A1:K1`,
         valueInputOption: 'RAW',
         resource: {
-          values: [['순번', '성명', '동호수', '자격', '연락처', 'IP 주소', '접속 기기', '서명 일시', '서명 이미지 URL', 'PIN']]
+          values: [['순번', '성명', '동호수', '자격', '연락처', 'IP 주소', '접속 기기', '서명 일시', '서명 이미지 URL', 'PIN', '서명 이미지(자동)']]
         }
       });
     }
@@ -109,13 +109,16 @@ async function handler(req, res) {
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown IP';
     const clientDevice = req.headers['user-agent'] || 'Unknown Device';
 
-    // Append to sheet (10개 열 등록)
+    // Append to sheet (11개 열 등록 - K열에 IMAGE 자동 수식 탑재)
+    const formulaRowIdx = nextIndex + 1; // row index in sheet (1-based, e.g. row 2)
+    const imageFormula = `=IMAGE(I${formulaRowIdx})`;
+
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `${targetSheetTitle}!A2`,
-      valueInputOption: 'RAW',
+      valueInputOption: 'USER_ENTERED', // MUST use USER_ENTERED to parse formula
       resource: {
-        values: [[nextIndex, name.trim(), address.trim(), (userType || '구분소유자').trim(), (phone || '').trim(), clientIp, clientDevice, timestampStr, finalSignatureUrl, pin.trim()]]
+        values: [[nextIndex, name.trim(), address.trim(), (userType || '구분소유자').trim(), (phone || '').trim(), clientIp, clientDevice, timestampStr, finalSignatureUrl, pin.trim(), imageFormula]]
       }
     });
 
