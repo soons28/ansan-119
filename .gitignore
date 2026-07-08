@@ -1,0 +1,6 @@
+node_modules/
+.vercel/
+.env*
+*.log
+구글드라이브이메일키/
+

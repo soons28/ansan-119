@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내용증명 및 연명부 자동 입력기</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/complaint/style.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Dashboard Sidebar (Hidden during print) -->
+        <aside class="control-panel no-print">
+            <header class="panel-header">
+                <div class="logo-area">
+                    <span class="logo-icon">🛡️</span>
+                    <div>
+                        <h1>연명부 자동 작성기</h1>
+                        <p class="subtitle">안산업무포털 로컬 지원 도구</p>
+                    </div>
+                </div>
+                <a href="/" class="btn-home" title="메인 화면으로 이동">포털 메인</a>
+            </header>
+
+            <div class="panel-content">
+                <!-- 지상 / 지하 선택 탭 (대시보드 전용) -->
+                <div class="mode-selector-tabs no-print">
+                    <button type="button" class="tab-btn" id="tab-ground">지상 (일반 연명부)</button>
+                    <button type="button" class="tab-btn active" id="tab-basement">지하 (이긍석 님 답변서)</button>
+                </div>
+
+                <!-- 연명부 직접 입력 및 서명 패드 -->
+                <section class="config-section">
+                    <h2 class="section-title" style="margin-bottom: 12px;">동의 및 서명 작성</h2>
+                    
+                    <div class="form-grid" style="margin-bottom: 8px;">
+                        <div class="form-group">
+                            <label for="new-name">성명</label>
+                            <input type="text" id="new-name" placeholder="예: 홍길동">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-address">동호수</label>
+                            <input type="text" id="new-address" placeholder="예: 지하 나-40호">
+                        </div>
+                    </div>
+                    
+                    <div class="signature-pad-container" style="margin-bottom: 12px;">
+                        <label>디지털 서명 패드</label>
+                        <div class="canvas-wrapper">
+                            <canvas id="signature-pad" width="376" height="120"></canvas>
+                        </div>
+                        <div class="sig-pad-actions" style="margin-top: 6px; display: flex; justify-content: flex-end;">
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-clear-pad" style="font-size: 0.75rem; padding: 6px 12px;">서명 지우기</button>
+                        </div>
+                    </div>
+
+                    <!-- 삭제용 비밀번호 입력란 추가 -->
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label for="new-pin">삭제 비밀번호 (숫자 4자리)</label>
+                        <input type="password" id="new-pin" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="서명 오작성 시 삭제 확인용 4자리 숫자">
+                    </div>
+
+                    <!-- 제출 마감 타이머 -->
+                    <div id="deadline-timer-container" style="margin-bottom: 16px; padding: 12px; border-radius: var(--radius-sm); background-color: #fff5f5; border: 1px solid #feb2b2; text-align: center; font-size: 0.9rem; font-weight: 700; color: #e53e3e; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);">
+                        <span style="font-size: 0.75rem; color: #c53030; font-weight: 600; display: flex; align-items: center; gap: 4px;">⏰ 오전 11시 마감 임박</span>
+                        <span style="font-size: 1.15rem; font-family: monospace; letter-spacing: 0.5px;" id="deadline-timer">00:00:00</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" id="btn-add-member" style="width: 100%; font-weight: 700;">제 출 하 기</button>
+                </section>
+
+                <!-- 연명부 명단 누적 관리 영역 -->
+                <section class="config-section">
+                    <div class="section-header-row">
+                        <h2 class="section-title">누적 연명부 명단 (<span id="roster-count">0</span>명)</h2>
+                    </div>
+
+                    <!-- 누적 목록 테이블 -->
+                    <div class="table-container" style="margin-bottom: 12px; max-height: 200px;">
+                        <table class="roster-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">번호</th>
+                                    <th style="width: 30%;">성명</th>
+                                    <th style="width: 40%;">동호수</th>
+                                    <th style="width: 15%; text-align: center;">삭제</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roster-tbody">
+                                <!-- JS에서 채워짐 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+                <!-- 제어 버튼들 -->
+                <footer class="action-footer">
+                    <button type="button" class="btn btn-accent btn-large" id="btn-print">
+                        <span class="btn-icon">🖨️</span> 관리자전용 인쇄
+                    </button>
+                </footer>
+            </div>
+        </aside>
+
+        <!-- Document Preview Canvas (Always visible, formatted for A4 print) -->
+        <main class="preview-canvas" id="preview-canvas-area">
+            <div class="canvas-header no-print">
+                <span class="badge">A4 실시간 미리보기</span>
+                <span class="info-text">작성 중인 본인 서명이 반영된 가상 화면입니다.</span>
+            </div>
+
+            <!-- 이 컨테이너 안에 화면용 또는 인쇄용 A4 페이지들이 바인딩됩니다. -->
+            <div class="document-pages" id="document-pages-container">
+                <!-- Page 1: 내용증명 답변서 본문 -->
+                <article class="a4-page" id="page-main">
+                    <h1 class="doc-main-title" id="doc-title">답 변 서</h1>
+                    <p class="doc-main-subtitle" id="doc-subtitle" style="text-align: center; font-size: 11pt; margin-top: -18pt; margin-bottom: 20pt; color: #555;">(관리비 부당 청구 및 미납 독촉에 대한 연명 반박서)</p>
+                    
+                    <table class="doc-meta-table">
+                        <tr id="row-recipient">
+                            <td class="meta-label">1. 수신인:</td>
+                            <td class="meta-val" id="val-recipient">
+                                <strong>안산유통상가 1차 관리단 임시관리인 김용명</strong><br>
+                                <span style="font-size: 9.5pt; color: #555;">주소: 경기도 안산시 단원구 산단로 342(안산유통상가 1차) A동 403호</span>
+                            </td>
+                        </tr>
+                        <tr id="row-sender">
+                            <td class="meta-label">2. 발신인:</td>
+                            <td class="meta-val" id="val-sender">
+                                <strong>안산유통상가 1차 관리인 교체 추진위원회 대표 [대표자성명] 및 아래 연명 소유주/입주자 일동</strong><br>
+                                <span style="font-size: 9.5pt; color: #555;">주소: 경기도 안산시 단원구 산단로 326 안산유통상가 1차 내 각 동 호실</span>
+                            </td>
+                        </tr>
+                        <tr id="row-title">
+                            <td class="meta-label">3. 제 목:</td>
+                            <td class="meta-val" id="val-title" style="font-weight: 700;">
+                                관리비 미납금 납부 최고 내용증명에 대한 단체 항변 및 소명 요구의 건
+                            </td>
+                        </tr>
+                    </table>
+
+                    <hr class="doc-divider">
+
+                    <div class="doc-body" id="doc-body-content" style="font-size: 10pt; line-height: 1.7;">
+1) 귀 하(이하 '발신인')가 최근 안산유통상가 1차 소유주 및 입주자들을 상대로 발송한 '관리비 미납금 납부 최고' 내용증명(예: 우편물번호 제                  호 등)에 대하여, 본 관리인 교체 추진위원회와 아래 연명인들은 공동의 항변권을 행사하고자 본 답변서를 발송합니다.
+2) 아래 연명인들을 포함한 상가 소유주들은 상가의 공용부분 유지·보수를 위한 정당한 관리비 납부 의무를 기피한 사실이 없으며, 상가 정상화를 위해 합리적이고 투명하게 산정된 관리비라면 언제든 납부할 용의가 있음을 확약합니다.
+3) 그러나 귀 발신인이 청구한 관리비 내역은 다음과 같은 치명적인 절차적, 회계적 의혹이 해소되지 않았으므로, 본 연명인들은 분쟁 해결 시까지 관리비 납부를 집단 유예함을 통고합니다.
+  - 가. 부과 및 연체료 산정의 불투명성: 귀 발신인이 일방적으로 제시한 미납 원금과 고율의 연체료는 정당한 관리규약 및 집합건물법에 의거한 상세 산정 근거가 결여되어 있습니다. 
+  - 나. 임시관리인의 권한 남용 의혹: 법원이 선임한 임시관리인의 직무 범위는 상가의 파행을 막고 정상적인 관리단집회를 소집하는 등 제한적 권한에 그쳐야 함에도, 소유주들을 상대로 소송 제기 및 강제집행을 운위하며 무차별적인 법적 압박을 가하는 것은 명백한 권한 남용입니다.
+4) 현재 안산유통상가 1차는 관리단의 회계 불투명성과 파행 운영으로 인해 법적·행정적 분쟁이 격화되고 있는 엄중한 상황입니다. 이러한 분쟁의 근본 원인을 제공한 귀 발신인 측이, 소유주들의 정당한 소명 요구에는 일절 불응하면서 '7일 이내 납부'라는 임의의 기한을 두어 지급명령 등으로 위협하는 행위는 본 상가 소유주들의 권리를 심각하게 침해하는 행위입니다.
+5) 이에 본 연명인 일동은 귀 발신인 측에 청구된 관리비의 상세 회계 장부 및 정당한 규약상의 산정 근거를 상가 전체에 투명하게 공개할 것을 강력히 촉구합니다.
+6) 만약 귀 발신인이 소유주들의 정당한 요구를 묵살하고 일방적으로 기습적인 지급명령 신청 등 법적 절차를 강행할 경우, 본 연명인 일동은 추진위원회를 중심으로 즉각적인 집단 이의신청 및 법적 본안 소송을 제기하여 부과 절차의 위법성을 끝까지 다툴 것입니다. 이로 인해 발생하는 모든 법적 소송 비용 및 상가 혼란에 대한 책임은 귀 발신인 측에 있음을 엄중히 고지합니다.
+                    </div>
+
+                    <div class="doc-footer" id="doc-footer-content" style="border-top: none; padding-top: 0;">
+                        <p style="text-align: center; margin-bottom: 8pt; font-size: 10.5pt;">2026년 6월 &nbsp; &nbsp; &nbsp; 일</p>
+                        <p class="sender-signature-line" id="doc-signer-line" style="font-size: 11pt; text-align: center; font-weight: 700;">
+                            발신인: 안산유통상가 1차 관리인 교체 추진위원회 대표 [대표자성명] (인)
+                        </p>
+                        <p class="page-number-footer" style="margin-top: 10pt;">1 / 2</p>
+                    </div>
+                </article>
+
+                <!-- Page 2: 본인이 작성한 서명만 보여주는 화면용 서명부 페이지 -->
+                <article class="a4-page" id="page-roster-single">
+                    <h2 class="doc-sub-title">【 연 명 부 】</h2>
+                    <p class="roster-desc" id="roster-page-desc" style="font-size: 9.5pt; margin-bottom: 12pt;">본 연명부에 서명한 구분소유자 및 임차인 일동은 상기 답변서 내용에 동의하며 공동으로 의사를 표시합니다.</p>
+
+                    <table class="preview-roster-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 8%;">번호</th>
+                                <th style="width: 15%;">성명</th>
+                                <th style="width: 25%;">주소 / 동호수</th>
+                                <th style="width: 17%;">서명 또는 날인</th>
+                                <th style="width: 35%;">디지털 인증 로그 (IP / 환경 / 일시)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="single-preview-tbody">
+                            <!-- 현재 작성 중인 본인의 정보가 실시간으로 노출되는 영역 -->
+                            <tr id="single-preview-row">
+                                <td>1</td>
+                                <td id="single-preview-name" style="font-weight: 700; color: #94a3b8;">성명 입력 대기</td>
+                                <td id="single-preview-address" class="left-align" style="color: #94a3b8;">동호수 입력 대기</td>
+                                <td id="single-preview-sign" style="height: 50px;">
+                                    <div style="font-size: 8pt; color: #aaa; text-align: center; border: 1px dashed #ccc; padding: 4px; border-radius: 4px; width: 60px; margin: 0 auto;">(서명/인)</div>
+                                </td>
+                                <td id="single-preview-log" class="preview-roster-log" style="color: #94a3b8;">
+                                    IP: 대기 중 | 기기: 대기 중 | 일시: 실시간 기록
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="doc-footer">
+                        <div class="verification-legal-note">
+                            ※ 본 연명부는 개별 소유자/입주자가 직접 접속하여 작성하였으며, 기재된 IP 및 접속기기 환경 로그는 본인 작성 사실을 증명하는 법적 간접 증거로 효력을 가집니다.
+                        </div>
+                        <p class="page-number-footer">2 / 2</p>
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script src="/complaint/app.js"></script>
+</body>
+</html>

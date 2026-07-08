@@ -1,0 +1,816 @@
+/* --- CSS Variable Definitions for Premium Aesthetic --- */
+:root {
+    --bg-base: #f8fafc;
+    --bg-panel: #ffffff;
+    --bg-input: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --accent: #0284c7;
+    --accent-hover: #0369a1;
+    --border: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --font-sans: 'Inter', 'Noto Sans KR', sans-serif;
+}
+
+/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Main Layout */
+.app-container {
+    display: grid;
+    grid-template-columns: 460px 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Control Panel (Sidebar) */
+.control-panel {
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+    overflow-y: auto;
+}
+
+.panel-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-home:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 28px;
+}
+
+.panel-header h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.panel-header .subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.panel-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Form Styles */
+.config-section {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.form-grid .form-group {
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-base);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--border);
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    color: #ffffff;
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-large {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 1rem;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+/* Excel Paste & Custom Grid Styles */
+.paste-zone {
+    margin-bottom: 16px;
+    border: 1px dashed var(--primary);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background-color: rgba(79, 70, 229, 0.02);
+}
+
+.paste-zone textarea {
+    height: 80px;
+    margin-bottom: 8px;
+}
+
+.add-member-form {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+/* Roster Table inside Dashboard */
+.table-container {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.roster-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    text-align: left;
+}
+
+.roster-table th {
+    background-color: var(--bg-base);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+}
+
+.roster-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.roster-table tr:last-child td {
+    border-bottom: none;
+}
+
+.roster-log-cell {
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: #0d9488;
+    white-space: pre-wrap;
+    max-width: 150px;
+}
+
+.btn-delete-row {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.action-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+/* Preview Canvas Area */
+.preview-canvas {
+    background-color: #cbd5e1;
+    overflow-y: auto;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.canvas-header {
+    width: 210mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.badge {
+    background-color: var(--primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 9999px;
+}
+
+.info-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* A4 Paper Sheets styling for screen */
+.document-pages {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.a4-page {
+    background: #ffffff;
+    width: 210mm;
+    min-height: 297mm;
+    height: auto;
+    padding: 20mm;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Document Typography inside A4 Page */
+.doc-main-title {
+    font-size: 24pt;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 24pt;
+    color: #000000;
+    letter-spacing: 2px;
+}
+
+.doc-sub-title {
+    font-size: 18pt;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 16pt;
+    color: #000000;
+}
+
+.doc-meta-table {
+    width: 100%;
+    margin-bottom: 8pt;
+    border-collapse: collapse;
+}
+
+.doc-meta-table td {
+    padding: 2pt 0;
+    vertical-align: top;
+    font-size: 11pt;
+}
+
+.meta-label {
+    width: 15%;
+    font-weight: 700;
+    color: #111111;
+}
+
+.meta-val {
+    width: 85%;
+    color: #222222;
+}
+
+.doc-divider {
+    border: none;
+    border-top: 1.5pt solid #111111;
+    margin-bottom: 20pt;
+}
+
+.doc-body {
+    font-size: 11pt;
+    line-height: 1.8;
+    color: #333333;
+    flex: 1;
+    white-space: pre-wrap;
+    text-align: justify;
+}
+
+.doc-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12pt;
+    border-top: 1px solid #eeeeee;
+    padding-top: 12pt;
+}
+
+.sender-signature-line {
+    font-size: 12pt;
+    text-align: right;
+    font-weight: 500;
+}
+
+.page-number-footer {
+    text-align: center;
+    font-size: 9pt;
+    color: #666666;
+}
+
+/* Roster Table on printed A4 document */
+.roster-desc {
+    font-size: 10.5pt;
+    margin-bottom: 14pt;
+    line-height: 1.6;
+    color: #444444;
+}
+
+.preview-roster-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+    margin-bottom: 20pt;
+}
+
+.preview-roster-table th,
+.preview-roster-table td {
+    border: 1px solid #111111;
+    padding: 8pt 6pt;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.preview-roster-table th {
+    background-color: #f1f5f9;
+    font-weight: 700;
+}
+
+.preview-roster-table td {
+    font-weight: 400;
+}
+
+.preview-roster-table .left-align {
+    text-align: left;
+}
+
+.preview-roster-log {
+    font-family: monospace;
+    font-size: 8pt;
+    color: #555555;
+    text-align: left;
+    white-space: pre-line;
+    line-height: 1.3;
+}
+
+.verification-legal-note {
+    font-size: 8pt;
+    color: #666666;
+    line-height: 1.5;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8pt;
+    border-radius: 4px;
+}
+
+.canvas-wrapper {
+    background-color: #ffffff;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    height: 120px;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+#signature-pad {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.signature-img-preview {
+    max-height: 40px;
+    max-width: 80px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Mode Selector Tabs */
+.mode-selector-tabs {
+    display: flex;
+    gap: 8px;
+    background-color: var(--bg-input);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+}
+
+.tab-btn.active {
+    background-color: #ffffff;
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- PRINT MEDIA STYLES --- */
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    .no-print,
+    .control-panel,
+    .canvas-header {
+        display: none !important;
+    }
+
+    body, html {
+        background-color: #ffffff !important;
+        height: auto;
+        overflow: visible;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .app-container {
+        display: block;
+        height: auto;
+        overflow: visible;
+    }
+
+    .preview-canvas {
+        background-color: #ffffff !important;
+        padding: 0 !important;
+        overflow: visible;
+        display: block;
+    }
+
+    .document-pages {
+        gap: 0;
+    }
+
+    .a4-page {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        padding: 12mm 20mm 10mm 20mm !important;
+        box-sizing: border-box !important;
+    }
+    
+    .a4-page:last-child {
+        page-break-after: avoid !important;
+    }
+
+    /* Print Overrides to prevent main letter overflow */
+    .doc-main-title {
+        font-size: 18pt !important;
+        margin-bottom: 8pt !important;
+    }
+    .doc-main-subtitle {
+        margin-top: -8pt !important;
+        margin-bottom: 8pt !important;
+        font-size: 10pt !important;
+    }
+    .doc-meta-table {
+        margin-bottom: 2pt !important;
+    }
+    .doc-meta-table td {
+        padding: 0.5pt 0 !important;
+        font-size: 9pt !important;
+    }
+    .doc-divider {
+        margin-bottom: 8pt !important;
+    }
+    .doc-body {
+        font-size: 8.8pt !important;
+        line-height: 1.42 !important;
+    }
+    .doc-footer {
+        margin-top: 6pt !important;
+        padding-top: 4pt !important;
+    }
+    .doc-footer p {
+        margin-bottom: 4pt !important;
+    }
+    .page-number-footer {
+        margin-top: 4pt !important;
+    }
+
+    /* Print Overrides for Roster Page to prevent overflow */
+    .doc-sub-title {
+        font-size: 15pt !important;
+        margin-bottom: 6pt !important;
+    }
+    .roster-desc {
+        font-size: 9pt !important;
+        margin-bottom: 6pt !important;
+    }
+    .preview-roster-table {
+        margin-bottom: 8pt !important;
+    }
+    .preview-roster-table th,
+    .preview-roster-table td {
+        padding: 4pt 4pt !important;
+        font-size: 8.5pt !important;
+    }
+    .preview-roster-log {
+        font-size: 7.2pt !important;
+        line-height: 1.15 !important;
+    }
+    .signature-img-preview {
+        max-height: 32px !important;
+        max-width: 70px !important;
+    }
+    .verification-legal-note {
+        padding: 4pt 6pt !important;
+        font-size: 7.2pt !important;
+    }
+
+    .preview-roster-table th {
+        background-color: #f1f5f9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .preview-roster-table tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+}
+
+/* --- MOBILE RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 900px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .control-panel {
+        height: auto !important;
+        overflow: visible !important;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .panel-header {
+        padding: 16px 20px;
+    }
+
+    .panel-content {
+        padding: 16px;
+        gap: 16px;
+        overflow-y: visible !important;
+        flex: none !important;
+    }
+
+    .preview-canvas {
+        padding: 20px 10px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .canvas-header {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 4px;
+    }
+
+    .document-pages {
+        width: 100%;
+        gap: 20px;
+    }
+
+    .a4-page {
+        width: 100%;
+        min-height: auto;
+        padding: 15mm 10mm;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+    }
+
+    /* Adjust font scaling inside A4 Page for smaller screens */
+    .doc-main-title {
+        font-size: 18pt;
+        margin-bottom: 16pt;
+        letter-spacing: 1px;
+    }
+
+    .doc-sub-title {
+        font-size: 13pt;
+        margin-bottom: 12pt;
+    }
+
+    .doc-body {
+        font-size: 10pt;
+        line-height: 1.6;
+    }
+
+    .doc-meta-table td {
+        font-size: 9.5pt;
+    }
+
+    .meta-label {
+        width: 25%;
+    }
+
+    .meta-val {
+        width: 75%;
+    }
+
+    .preview-roster-table {
+        font-size: 8pt;
+    }
+
+    .preview-roster-table th,
+    .preview-roster-table td {
+        padding: 5pt 3pt;
+    }
+
+    .preview-roster-log {
+        font-size: 7pt;
+    }
+    
+    .canvas-wrapper {
+        width: 100%;
+    }
+    
+    #signature-pad {
+        width: 100%;
+    }
+}

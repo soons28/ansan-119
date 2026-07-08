@@ -1,0 +1,14 @@
+{
+  "name": "ansan-admin-portal",
+  "version": "1.0.0",
+  "description": "안산유통상가 행정지원 포털시스템",
+  "scripts": {
+    "start": "node -e \"console.log('To run locally, open the html files directly or deploy to Vercel.')\""
+  },
+  "dependencies": {
+    "googleapis": "^126.0.0",
+    "google-auth-library": "^9.0.0",
+    "pdf-lib": "^1.17.1",
+    "@pdf-lib/fontkit": "^1.1.1"
+  }
+}

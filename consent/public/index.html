@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>소집동의서(위임장) 자동 타이핑 시스템</title>
+  <!-- 라이브러리 CDN 호출 -->
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/@pdf-lib/fontkit/dist/fontkit.umd.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1; /* Indigo */
+      --primary-hover: #4f46e5;
+      --bg: #f8fafc;
+      --panel-bg: #ffffff;
+      --text: #0f172a;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --error: #ef4444;
+      --badge-bg-red: #fee2e2;
+      --badge-text-red: #ef4444;
+      --badge-bg-green: #dcfce7;
+      --badge-text-green: #15803d;
+      --gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Outfit', 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* 좌측 입력 패널 */
+    .left-panel {
+      width: 450px;
+      background-color: var(--panel-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-shadow: 4px 0 25px rgba(15, 23, 42, 0.04);
+      z-index: 10;
+    }
+
+    .panel-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #fcfdfe 0%, #f8fafc 100%);
+    }
+
+    .panel-header h1 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--text);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-header h1 span {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .panel-header p {
+      margin: 6px 0 0 0;
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    .panel-content {
+      padding: 24px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .section-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .section-box:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.02), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+      border-color: #cbd5e1;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #475569;
+    }
+
+    input[type="text"], input[type="tel"], input[type="email"], select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13.5px;
+      box-sizing: border-box;
+      background-color: #ffffff;
+      transition: all 0.2s ease;
+      color: var(--text);
+    }
+
+    input[type="text"]:focus, input[type="tel"]:focus, input[type="email"]:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #64748b;
+      color: white;
+      margin-top: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    .btn:disabled {
+      background: #e2e8f0 !important;
+      color: #94a3b8 !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+
+    .message {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-top: 12px;
+      display: none;
+      line-height: 1.5;
+    }
+    .message.error { background: #fee2e2; color: var(--error); display: block; border: 1px solid #fecaca; }
+    .message.success { background: #ecfdf5; color: #065f46; display: block; border: 1px solid #a7f3d0; }
+
+    /* 우측 PDF 미리보기 영역 */
+    .preview-panel {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background-color: #1e293b;
+    }
+
+    .preview-header {
+      background-color: #0f172a;
+      padding: 16px 24px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .preview-header h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-body {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      background: #1e293b;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: #ffffff;
+      transition: all 0.3s;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 14px;
+      z-index: 20;
+      gap: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn-coord {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 1px solid var(--border);
+      background: #f1f5f9;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      transition: all 0.15s;
+    }
+    .btn-coord:hover {
+      background: #cbd5e1;
+      border-color: #94a3b8;
+    }
+
+    /* 서명 패드 스타일 */
+    .signature-container {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background-color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .signature-canvas {
+      display: block;
+      width: 100%;
+      height: 120px;
+      cursor: crosshair;
+      touch-action: none; /* 모바일에서 스크롤 간섭 방지 */
+    }
+    .signature-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding: 6px 12px;
+      background-color: #f8fafc;
+      border-top: 1px solid var(--border);
+      gap: 8px;
+    }
+    .btn-sig-clear {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .btn-sig-clear:hover {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .mobile-email-actions {
+      display: none;
+      padding: 16px;
+      background: #0f172a;
+      border-top: 1px solid #1e293b;
+      box-sizing: border-box;
+    }
+
+    /* 모바일 반응형 처리 */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+      }
+      .left-panel {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        box-shadow: none;
+      }
+      .preview-panel {
+        display: block !important;
+        height: auto !important;
+        background: none !important;
+      }
+      .preview-header, .preview-body {
+        display: none !important;
+      }
+      /* 모바일에서는 기본 인쇄 및 이메일 전송 숨김 (하단 모바일 전용 버튼 사용) */
+      #btnSubmit, #btnSendEmail {
+        display: none !important;
+      }
+      .mobile-email-actions {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 좌측 컨트롤 패널 -->
+  <div class="left-panel">
+    <div class="panel-header">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <h1><span>소집동의서 타이핑</span></h1>
+        <button type="button" class="btn-help" onclick="openHelpModal()" style="background: none; border: 1px solid var(--border); padding: 4px 8px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-light); display: flex; align-items: center; gap: 3px; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.color='var(--primary)';" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-light)';">❓ 사용방법</button>
+      </div>
+      <p id="appDesc">시스템 초기화 중...</p>
+    </div>
+
+    <div class="panel-content">
+      <!-- 정보 입력 및 인쇄 -->
+      <div class="section-box">
+        <div class="section-title">위임인 정보 입력</div>
+
+        <div class="form-group">
+          <label for="officialNameInput">위임인 성명</label>
+          <input type="text" id="officialNameInput" placeholder="예: 홍길동" oninput="queuePreview()" required>
+        </div>
+
+        <div class="form-group">
+          <label for="birthInput">생년월일 (숫자 7자리)</label>
+          <input type="text" id="birthInput" placeholder="예: 950101-1" maxlength="8" oninput="const clean = this.value.replace(/[^0-9]/g, ''); if (clean.length > 6) { this.value = clean.substring(0, 6) + '-' + clean.substring(6, 7); } else { this.value = clean; } queuePreview();" required>
+        </div>
+
+        <div class="form-group">
+          <label for="addressInput">주소 (동)</label>
+          <input type="text" id="addressInput" value="경기도 안산시 단원구 산단로 326 안산유통상가" placeholder="소유하신 동만 추가 입력하세요" oninput="queuePreview()" required>
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px;">* 주소 뒤에 소유하신 동(예: 19동)을 추가로 입력하세요.</div>
+          <div class="address-chips" style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;">
+            <button type="button" id="chip-default" onclick="setAddress('경기도 안산시 단원구 산단로 326 안산유통상가', 'chip-default')" style="background: #dbeafe; border: 2px solid #2563eb; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer; color: #1d4ed8; transition: all 0.15s;">기본</button>
+            <button type="button" id="chip-A" onclick="setAddress('경기도 안산시 단원구 산단로 342 안산유통상가 편익A동', 'chip-A')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.15s;">편익A동</button>
+            <button type="button" id="chip-B" onclick="setAddress('경기도 안산시 단원구 산단로 326 안산유통상가 편익B동', 'chip-B')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.15s;">편익B동</button>
+            <button type="button" id="chip-basement" onclick="setAddress('경기도 안산시 단원구 산단로 326 안산유통상가 지하', 'chip-basement')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.15s;">지하</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="unitNo">소유 호수</label>
+          <input type="text" id="unitNo" placeholder="소유하신 호수를 입력하세요" oninput="queuePreview()" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">연락처</label>
+          <input type="tel" id="phone" placeholder="예: 010-1234-5678" oninput="queuePreview()" required>
+        </div>
+
+        <div class="form-group">
+          <label>수기 서명 (PC 마우스 / 모바일 터치)</label>
+          <div class="signature-container">
+            <canvas id="sigCanvas" class="signature-canvas"></canvas>
+            <div class="signature-actions">
+              <button type="button" class="btn-sig-clear" onclick="clearSignature()">❌ 서명 지우기</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 18px; border-top: 1px dashed var(--border); padding-top: 18px;">
+          <button type="button" class="btn btn-success" id="btnSubmit" onclick="submitAndPrint()" style="flex: 1; padding: 12px; margin: 0;">
+            🖨️ 즉시 인쇄
+          </button>
+          <button type="button" class="btn" id="btnSendEmail" onclick="sendPdfByEmail()" style="flex: 1; padding: 12px; margin: 0; background: #6366f1; color: white; box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1); font-weight: 700;" onmouseover="this.style.background='#4f46e5'; this.style.boxShadow='0 4px 12px rgba(99, 102, 241, 0.2)';" onmouseout="this.style.background='#6366f1'; this.style.boxShadow='0 2px 4px rgba(99, 102, 241, 0.1)';">
+            📁 제출하기
+          </button>
+        </div>
+        <div id="submitMsg" class="message"></div>
+      </div>
+
+      <!-- 미세조정 패널 -->
+      <div class="section-box" style="margin-top: 16px;">
+        <details>
+          <summary style="font-size: 13px; font-weight: 700; cursor: pointer; color: #1e293b; user-select: none;">
+            🔧 출력 글자 위치 미세조정
+          </summary>
+          <div style="font-size: 11px; color: var(--text-light); margin: 8px 0; line-height: 1.4;">
+            * 항목의 인쇄 위치(X, Y)를 1pt 단위로 세밀하게 조정할 수 있습니다. (값이 클수록 오른쪽/위로 이동)
+          </div>
+          <table style="width: 100%; font-size: 12px; border-collapse: collapse; border-top: 1px solid var(--border);">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid var(--border);">
+                <th style="text-align: left; padding: 6px;">항목</th>
+                <th style="padding: 6px; width: 90px; text-align: center;">가로 위치(X)</th>
+                <th style="padding: 6px; width: 90px; text-align: center;">세로 위치(Y)</th>
+              </tr>
+            </thead>
+            <tbody id="coordsTableBody">
+              <!-- JS에서 동적 생성됨 -->
+            </tbody>
+          </table>
+          <div style="margin-top: 12px;">
+            <button type="button" class="btn btn-secondary" style="margin:0; padding:6px; font-size:11px;" onclick="resetCoords()">기본값으로 초기화</button>
+          </div>
+        </details>
+      </div>
+    </div>
+    
+    <!-- 개인정보 보호 안내 푸터 -->
+    <div style="padding: 14px 24px; border-top: 1px solid var(--border); background: #f8fafc; font-size: 11px; color: var(--text-light); line-height: 1.5; text-align: left;">
+      <div style="font-weight: 700; color: #475569; margin-bottom: 3px; display: flex; align-items: center; gap: 4px;">🔒 개인정보 보호 및 무단도용 방지 서약</div>
+      입력된 인적사항 정보는 외부 서버에 전송되거나 무단 기록되지 않으며 오프라인 환경에서도 안전하게 사용이 가능합니다.
+    </div>
+  </div>
+
+  <!-- 우측 미리보기 영역 -->
+  <div class="preview-panel">
+    <div class="preview-header">
+      <h2>실시간 PDF 위임장 작성 미리보기</h2>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="zoom-controls" style="display: flex; align-items: center; gap: 6px;">
+          <button type="button" class="btn-zoom" onclick="zoomOut()" style="background: #334155; color: white; border: 1px solid #475569; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s;" onmouseover="this.style.background='#475569'" onmouseout="this.style.background='#334155'">➖ 축소</button>
+          <span id="zoomLabel" style="font-size: 12px; font-weight: bold; color: #e2e8f0; min-width: 55px; text-align: center; user-select: none;">화면맞춤</span>
+          <button type="button" class="btn-zoom" onclick="zoomIn()" style="background: #334155; color: white; border: 1px solid #475569; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s;" onmouseover="this.style.background='#475569'" onmouseout="this.style.background='#334155'">➕ 확대</button>
+          <button type="button" class="btn-zoom" onclick="zoomReset()" style="background: #334155; color: white; border: 1px solid #475569; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s; margin-left: 4px;" onmouseover="this.style.background='#475569'" onmouseout="this.style.background='#334155'">🔄 화면맞춤</button>
+        </div>
+        <div style="font-size: 12px; color: #94a3b8;">* 변경 사항이 실시간으로 스캔본 위에 작성됩니다.</div>
+      </div>
+    </div>
+    <div class="preview-body">
+      <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loadingMsg">시스템 리소스 초기화 중...</div>
+      </div>
+      <iframe id="pdfPreview"></iframe>
+    </div>
+    <div class="mobile-email-actions">
+      <button type="button" class="btn btn-secondary" onclick="viewPdfMobile()" style="padding: 14px; margin-bottom: 8px; font-weight: 700; background-color: #475569;">
+        🔍 작성 문서 미리보기 (PDF 확인)
+      </button>
+      <button type="button" class="btn btn-primary" id="btnSendEmailMobile" onclick="sendPdfByEmail()" style="padding: 14px; background: #6366f1; color: white; font-weight: 700; width: 100%; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        📁 제출하기 (작성 완료)
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 빌드 시점에 치환될 플레이스홀더 변수
+    const EMBEDDED_PDF_BASE64 = "/* EMBEDDED_PDF_BASE64_PLACEHOLDER */";
+    
+    // 빌드 버전 여부 체크 (빌드 스크립트 실행 후 파일 크기가 크면 임베디드 모드)
+    const IS_EMBEDDED_MODE = !EMBEDDED_PDF_BASE64.startsWith('/*');
+
+    let templateBytes = null;
+    let fontBytes = null;
+    let sigFontBytesArr = []; // 사인 폰트 여러 개 (이름 해시 기반으로 배정)
+    let currentPdfBytes = null;
+    let previewDebounce = null;
+    let userIp = 'IP 조회 중...';
+
+    // 수기 서명용 Canvas 변수
+    let canvas = null;
+    let ctx = null;
+    let isDrawing = false;
+    let hasSignature = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // 미리보기 제어 줌 상태
+    let currentZoom = 'page-fit'; // 기본은 'page-fit'
+    const zoomLevels = [50, 75, 90, 100, 110, 125, 150, 200];
+    
+    function zoomIn() {
+      const idx = zoomLevels.indexOf(currentZoom);
+      if (idx !== -1 && idx < zoomLevels.length - 1) {
+        currentZoom = zoomLevels[idx + 1];
+        updateZoomUI();
+        queuePreview();
+      } else if (currentZoom === 'page-fit') {
+        currentZoom = 100;
+        updateZoomUI();
+        queuePreview();
+      }
+    }
+
+    function zoomOut() {
+      const idx = zoomLevels.indexOf(currentZoom);
+      if (idx !== -1 && idx > 0) {
+        currentZoom = zoomLevels[idx - 1];
+        updateZoomUI();
+        queuePreview();
+      } else if (currentZoom === 'page-fit') {
+        currentZoom = 75;
+        updateZoomUI();
+        queuePreview();
+      }
+    }
+
+    function zoomReset() {
+      currentZoom = 'page-fit';
+      updateZoomUI();
+      queuePreview();
+    }
+
+    function updateZoomUI() {
+      const label = document.getElementById('zoomLabel');
+      if (label) {
+        label.innerText = currentZoom === 'page-fit' ? '화면맞춤' : currentZoom + '%';
+      }
+    }
+
+    function resizeCanvas() {
+      if (!canvas || !ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      
+      const dpr = window.devicePixelRatio || 1;
+      if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        ctx.strokeStyle = '#051040';
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+    }
+
+    // 기본 좌표 및 조정 설정 (사용자 실측 튜닝값 반영)
+    const DEFAULT_COORDS = {
+      nameX: 149, nameY: 742,
+      phoneX: 400, phoneY: 742,
+      birthX: 178, birthY: 713,
+      genderX: 295, genderY: 713,
+      addressX: 143, addressY: 687,
+      unitX: 450, unitY: 687,
+      monthX: 260, monthY: 515,
+      dayX: 290, dayY: 515,
+      sigX: 272, sigY: 748
+    };
+
+    let coords = { ...DEFAULT_COORDS };
+    const APP_VERSION = '1.5';
+
+    // 앱 버전 체크 및 로컬 스토리지 초기화 (이전 캐시로 인한 좌표 갱신 안됨 방지)
+    function checkAppVersion() {
+      const savedVersion = localStorage.getItem('consent_app_version');
+      if (savedVersion !== APP_VERSION) {
+        localStorage.setItem('consent_app_version', APP_VERSION);
+        localStorage.setItem('draw_coords_consent_v3', JSON.stringify(DEFAULT_COORDS));
+      }
+    }
+
+    // 초기 로딩
+    window.onload = async function() {
+      const loader = document.getElementById('loadingOverlay');
+      const loadMsg = document.getElementById('loadingMsg');
+      const desc = document.getElementById('appDesc');
+      
+      try {
+        if (IS_EMBEDDED_MODE) {
+          desc.innerText = '더블클릭만으로 실행되는 오프라인 단독형 프로그램입니다.';
+          loadMsg.innerText = '내장 리소스 초기화 중...';
+          
+          // 1. 내장 PDF 템플릿 디코딩
+          const binaryString = atob(EMBEDDED_PDF_BASE64);
+          const len = binaryString.length;
+          templateBytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            templateBytes[i] = binaryString.charCodeAt(i);
+          }
+
+          // 2. 구글 나눔고딕 한글 폰트 로드
+          loadMsg.innerText = '한글 폰트(나눔고딕) 파일 로드 중...';
+          const fontRes = await fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/nanumgothic/NanumGothic-Regular.ttf');
+          if (!fontRes.ok) throw new Error('폰트 파일 다운로드 실패');
+          fontBytes = await fontRes.arrayBuffer();
+
+          // 3. 서명용 폰트 다중 병렬 로드 (이름마다 다른 사인체)
+          loadMsg.innerText = '서명용 폰트 로드 중...';
+          const sigFontCandidates = [
+            'https://raw.githubusercontent.com/google/fonts/main/ofl/nanumpenscript/NanumPenScript-Regular.ttf',
+            'https://raw.githubusercontent.com/google/fonts/main/ofl/nanumbrushscript/NanumBrushScript-Regular.ttf',
+            'https://raw.githubusercontent.com/google/fonts/main/ofl/gamjaflower/GamjaFlower-Regular.ttf',
+            'https://raw.githubusercontent.com/google/fonts/main/ofl/dokdo/Dokdo-Regular.ttf'
+          ];
+          const sigFontResults = await Promise.allSettled(
+            sigFontCandidates.map(url => fetch(url).then(r => r.ok ? r.arrayBuffer() : null).catch(() => null))
+          );
+          for (const result of sigFontResults) {
+            if (result.status === 'fulfilled' && result.value) sigFontBytesArr.push(result.value);
+          }
+        } else {
+          desc.innerText = '위임장 정보를 입력하여 소집동의서를 즉시 생성 및 출력합니다. (로컬 서버 버전)';
+          loadMsg.innerText = '서버로부터 PDF 양식 로드 중...';
+
+          // 1. API로부터 원본 PDF 로드
+          const tempRes = await fetch('/api/template');
+          if (!tempRes.ok) throw new Error('PDF 템플릿 로드 실패');
+          templateBytes = await tempRes.arrayBuffer();
+
+          // 2. API로부터 맑은고딕 폰트 로드
+          loadMsg.innerText = '맑은 고딕 한글 폰트 로드 중...';
+          const fontRes = await fetch('/api/font');
+          if (!fontRes.ok) throw new Error('한글 폰트 로드 실패');
+          fontBytes = await fontRes.arrayBuffer();
+        }
+
+        // 공통 좌표 복구 및 미리보기 갱신
+        checkAppVersion();
+        loadSavedCoords();
+        buildCoordsTable();
+        initSignaturePad();
+        fetchUserIp();
+        
+        loader.style.display = 'none';
+        updatePreview();
+      } catch (err) {
+        loader.innerHTML = '<div style="color:#f87171; font-weight:bold; text-align:center; padding: 20px;">' +
+                           '⚠️ 초기화 오류가 발생했습니다.<br>' +
+                           '<span style="font-size:12px; font-weight:normal; color:#94a3b8;">' + err.message + '</span><br>' +
+                           '<button onclick="location.reload()" style="margin-top:12px; padding:6px 12px; font-size:12px; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer;">재시도</button>' +
+                           '</div>';
+        console.error(err);
+      }
+    };
+
+    function queuePreview(immediate = false) {
+      clearTimeout(previewDebounce);
+      previewDebounce = setTimeout(updatePreview, immediate ? 50 : 800);
+    }
+
+    // IP 주소 비동기 조회
+    async function fetchUserIp() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        if (res.ok) {
+          const data = await res.json();
+          userIp = data.ip || '조회 실패';
+        } else {
+          userIp = '조회 불가';
+        }
+      } catch (e) {
+        userIp = '오프라인/조회불가';
+      }
+      // IP 조회 완료 후 하단 감사기록 갱신을 위해 미리보기 리로드
+      queuePreview(true);
+    }
+
+    // 접속 기기 텍스트 추출 헬퍼
+    function getClientDevice() {
+      const ua = navigator.userAgent;
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) || window.innerWidth < 768;
+      
+      let deviceType = isMobile ? 'Mobile' : 'Desktop';
+      let os = 'Unknown OS';
+      
+      if (ua.indexOf('Windows') !== -1) os = 'Windows';
+      else if (ua.indexOf('Macintosh') !== -1) os = 'macOS';
+      else if (ua.indexOf('Android') !== -1) os = 'Android';
+      else if (ua.indexOf('iPhone') !== -1 || ua.indexOf('iPad') !== -1) os = 'iOS';
+      else if (ua.indexOf('Linux') !== -1) os = 'Linux';
+      
+      return `${deviceType} (${os})`;
+    }
+
+    // 수기 서명 패드 초기화
+    function initSignaturePad() {
+      canvas = document.getElementById('sigCanvas');
+      if (!canvas) return;
+      
+      ctx = canvas.getContext('2d');
+      
+      // HDPI 디스플레이 선명도 대응
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      
+      // 스타일 초기 설정 (사인 잉크 색깔: 짙은 남색)
+      ctx.strokeStyle = '#051040';
+      ctx.lineWidth = 3.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
+      // 드로잉 좌표 보정 헬퍼
+      function getCoords(e) {
+        const r = canvas.getBoundingClientRect();
+        if (e.touches && e.touches.length > 0) {
+          return {
+            x: e.touches[0].clientX - r.left,
+            y: e.touches[0].clientY - r.top
+          };
+        }
+        return {
+          x: e.clientX - r.left,
+          y: e.clientY - r.top
+        };
+      }
+      
+      function startDraw(e) {
+        resizeCanvas();
+        isDrawing = true;
+        const pt = getCoords(e);
+        lastX = pt.x;
+        lastY = pt.y;
+        
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        hasSignature = true;
+      }
+      
+      function draw(e) {
+        if (!isDrawing) return;
+        // 모바일 터치 스크롤 간섭 강제 방지
+        if (e.cancelable) e.preventDefault();
+        
+        const pt = getCoords(e);
+        ctx.lineTo(pt.x, pt.y);
+        ctx.stroke();
+        
+        lastX = pt.x;
+        lastY = pt.y;
+      }
+      
+      function stopDraw() {
+        if (!isDrawing) return;
+        isDrawing = false;
+        // 마우스/터치를 떼면 즉시 미리보기에 반영
+        queuePreview(true);
+      }
+      
+      // 마우스 이벤트 연결
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mouseout', stopDraw);
+      
+      // 터치 이벤트 연결 (모바일 기기 전용)
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', draw, { passive: false });
+      canvas.addEventListener('touchend', stopDraw);
+      canvas.addEventListener('touchcancel', stopDraw);
+      
+      // 윈도우 크기 변경 시 서명 패드 리사이즈 대응
+      window.addEventListener('resize', () => {
+        const tempImage = canvas.toDataURL();
+        const r = canvas.getBoundingClientRect();
+        canvas.width = r.width * dpr;
+        canvas.height = r.height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        ctx.strokeStyle = '#051040';
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, r.width, r.height);
+        };
+        img.src = tempImage;
+      });
+    }
+
+    function clearSignature() {
+      if (!canvas || !ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasSignature = false;
+      queuePreview(true);
+    }
+
+    // PDF 렌더링 및 미리보기 갱신
+    async function updatePreview() {
+      if (!templateBytes || !fontBytes) return;
+
+      try {
+        const name = document.getElementById('officialNameInput').value.trim();
+        const birthVal = document.getElementById('birthInput').value.trim();
+        const address = document.getElementById('addressInput').value.trim();
+        const unitNo = document.getElementById('unitNo').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        // 생년월일 하이픈 분리 처리
+        let birthPart1 = '';
+        let birthPart2 = '';
+        if (birthVal.includes('-')) {
+          const parts = birthVal.split('-');
+          birthPart1 = parts[0];
+          birthPart2 = parts[1] || '';
+        } else if (birthVal.length >= 7) {
+          birthPart1 = birthVal.substring(0, 6);
+          birthPart2 = birthVal.substring(6);
+        } else {
+          birthPart1 = birthVal;
+        }
+
+        const formatPhone = (val) => {
+          const num = val.replace(/\D/g, '');
+          if (num.length === 11) {
+            return num.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+          } else if (num.length === 10) {
+            if (num.startsWith('02')) {
+              return num.replace(/(02)(\d{4})(\d{4})/, '$1-$2-$3');
+            } else {
+              return num.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            }
+          } else if (num.length === 9 && num.startsWith('02')) {
+            return num.replace(/(02)(\d{3})(\d{4})/, '$1-$2-$3');
+          }
+          return val;
+        };
+
+        const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+        pdfDoc.registerFontkit(window.fontkit);
+        const customFont = await pdfDoc.embedFont(fontBytes);
+        // 이름 해시 기반 일관된 사인체 선택 (같은 이름 = 같은 폰트)
+        function pickSigFontBytes(n) {
+          if (sigFontBytesArr.length === 0) return null;
+          if (!n) return sigFontBytesArr[0];
+          let h = 0;
+          for (let i = 0; i < n.length; i++) h = (((h << 5) - h) + n.charCodeAt(i)) | 0;
+          return sigFontBytesArr[Math.abs(h) % sigFontBytesArr.length];
+        }
+        const sigBytes = pickSigFontBytes(name);
+        const signatureFont = sigBytes ? await pdfDoc.embedFont(sigBytes) : customFont;
+        const firstPage = pdfDoc.getPages()[0];
+
+        const draw = (text, x, y, size = 12, center = false, maxAvailableWidth = null) => {
+          if (!text) return;
+          let currentSize = size;
+          if (maxAvailableWidth) {
+            const textWidth = customFont.widthOfTextAtSize(text, currentSize);
+            if (textWidth > maxAvailableWidth) {
+              currentSize = Math.max(8, currentSize * (maxAvailableWidth / textWidth));
+            }
+          }
+          let drawX = x;
+          if (center) {
+            const textWidth = customFont.widthOfTextAtSize(text, currentSize);
+            drawX = x - (textWidth / 2);
+          }
+          firstPage.drawText(text, {
+            x: drawX, y: y, size: currentSize,
+            font: customFont,
+            color: PDFLib.rgb(0, 0, 0)
+          });
+        };
+
+        // 위임인 정보 오버레이 (성명, 생년월일, 성별자리, 주소, 소유호수, 연락처)
+        draw(name, coords.nameX, coords.nameY, 14, false, 110);
+        
+        const formattedPhone = formatPhone(phone);
+        draw(formattedPhone, coords.phoneX, coords.phoneY, 12, false, 100);
+        
+        draw(birthPart1, coords.birthX, coords.birthY, 12, false, 100);
+        draw(birthPart2, coords.genderX, coords.genderY, 12, false, 50);
+        draw(address, coords.addressX, coords.addressY, 11, false, 200);
+        draw(unitNo, coords.unitX, coords.unitY, 12, false, 100);
+
+        // 성명 옆의 (인) 자리에 서명 그리기 (수기 서명 있을 때만 그리기, 미서명 시 공란)
+        if (hasSignature && canvas) {
+          try {
+            // 투명 배경 유지를 위해 PNG로 인코딩하여 임베딩
+            const sigUrl = canvas.toDataURL('image/png');
+            const sigImgBytes = await fetch(sigUrl).then(res => res.arrayBuffer());
+            const embeddedSigImg = await pdfDoc.embedPng(sigImgBytes);
+            
+            // 좌표 매핑 (X, Y 미세조정)
+            const sigWidth = 100;
+            const sigHeight = 40;
+            firstPage.drawImage(embeddedSigImg, {
+              x: (coords.sigX || 243) - (sigWidth / 2),
+              y: (coords.sigY || 742) - (sigHeight / 2),
+              width: sigWidth,
+              height: sigHeight
+            });
+          } catch (e) {
+            console.error('수기 서명 합성 에러:', e);
+          }
+        }
+
+        // 작성일자 (오늘 날짜 기본)
+        const today = new Date();
+        draw(String(today.getMonth() + 1), coords.monthX, coords.monthY, 12, true);
+        draw(String(today.getDate()), coords.dayX, coords.dayY, 12, true);
+
+        // 법적 서명기록 감사 추적 정보 합성 (Footer 영역)
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const date = String(today.getDate()).padStart(2, '0');
+        const hours = String(today.getHours()).padStart(2, '0');
+        const minutes = String(today.getMinutes()).padStart(2, '0');
+        const seconds = String(today.getSeconds()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+        const deviceStr = getClientDevice();
+        
+        const auditText = `[전산 서명필] 작성자: ${name || '미입력'} | IP: ${userIp} | 기기: ${deviceStr} | 일시: ${formattedDate}`;
+        firstPage.drawText(auditText, {
+          x: 40,
+          y: 20,
+          size: 7.5,
+          font: customFont,
+          color: PDFLib.rgb(0.4, 0.4, 0.4)
+        });
+
+        currentPdfBytes = await pdfDoc.save();
+        const pdfBlob = new Blob([currentPdfBytes], { type: 'application/pdf' });
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        
+        let zoomParam = 'zoom=page-fit';
+        if (currentZoom !== 'page-fit') {
+          zoomParam = `zoom=${currentZoom}`;
+        }
+        document.getElementById('pdfPreview').src = pdfUrl + `#toolbar=0&navpanes=0&scrollbar=0&view=Fit&${zoomParam}`;
+      } catch (err) {
+        console.error('PDF 미리보기 갱신 에러:', err);
+      }
+    }
+
+    // 최종 접수 및 인쇄 호출
+    async function submitAndPrint() {
+      const name = document.getElementById('officialNameInput').value.trim();
+      const birth = document.getElementById('birthInput').value.trim();
+      const address = document.getElementById('addressInput').value.trim();
+      const unitNo = document.getElementById('unitNo').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const msg = document.getElementById('submitMsg');
+      const btn = document.getElementById('btnSubmit');
+
+      if (!name || !unitNo) {
+        alert('성명과 소유호수는 필수 입력 항목입니다.');
+        return;
+      }
+
+      msg.style.display = 'none';
+      btn.disabled = true;
+
+      if (IS_EMBEDDED_MODE) {
+        btn.disabled = false;
+        triggerPrint();
+        msg.innerHTML = '<strong>인쇄 작업 기동 완료!</strong><br>인쇄 팝업이 활성화되었습니다. (오프라인 모드)';
+        msg.className = 'message success';
+      } else {
+        const base64Pdf = btoa(
+          new Uint8Array(currentPdfBytes)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        const cleanNum = phone.replace(/\D/g, '');
+        let formattedPhone = phone;
+        if (cleanNum.length === 11) {
+          formattedPhone = cleanNum.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        } else if (cleanNum.length === 10) {
+          if (cleanNum.startsWith('02')) {
+            formattedPhone = cleanNum.replace(/(02)(\d{4})(\d{4})/, '$1-$2-$3');
+          } else {
+            formattedPhone = cleanNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+          }
+        } else if (cleanNum.length === 9 && cleanNum.startsWith('02')) {
+          formattedPhone = cleanNum.replace(/(02)(\d{3})(\d{4})/, '$1-$2-$3');
+        }
+
+        const submitData = {
+          name,
+          unitNo,
+          phone: formattedPhone,
+          birth,
+          address,
+          pdfBytes: base64Pdf
+        };
+
+        try {
+          const res = await fetch('/api/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(submitData)
+          });
+          const result = await res.json();
+          btn.disabled = false;
+
+          if (result.success) {
+            msg.innerHTML = '<strong>성공적으로 접수 및 저장되었습니다!</strong><br>서버의 output 폴더에 저장되었으며 인쇄 창이 열립니다.';
+            msg.className = 'message success';
+            triggerPrint();
+          } else {
+            msg.innerText = '저장 오류: ' + result.message;
+            msg.className = 'message error';
+          }
+        } catch (err) {
+          btn.disabled = false;
+          msg.innerText = '서버 전송 중 통신 실패';
+          msg.className = 'message error';
+        }
+      }
+    }
+
+    function triggerPrint() {
+      const pdfBlob = new Blob([currentPdfBytes], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const printWin = window.open(pdfUrl, '_blank');
+      if (printWin) {
+        printWin.onload = function() {
+          setTimeout(function() {
+            printWin.focus();
+            printWin.print();
+          }, 500);
+        };
+      }
+    }
+
+    // 모바일 전용 새 창으로 PDF 보기 함수
+    function viewPdfMobile() {
+      if (!currentPdfBytes) {
+        alert('문서 생성 중입니다. 정보를 모두 입력해 주세요.');
+        return;
+      }
+      const pdfBlob = new Blob([currentPdfBytes], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      
+      const a = document.createElement('a');
+      a.href = pdfUrl;
+      a.target = '_blank';
+      const name = (document.getElementById('officialNameInput').value.trim() || '무명').replace(/\s+/g, '');
+      a.download = `미리보기_소집동의서_${name}.pdf`;
+      
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // 로컬 다운로드 폴더로 PDF 자동 저장 함수
+    function downloadPdfDirectly() {
+      if (!currentPdfBytes) return;
+      const name = document.getElementById('officialNameInput').value.trim() || '무명';
+      const unitNo = document.getElementById('unitNo').value.trim() || '미지정';
+      const filename = `소집동의서_${name.replace(/\s+/g, '')}_${unitNo.replace(/\s+/g, '')}.pdf`;
+      
+      const pdfBlob = new Blob([currentPdfBytes], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      
+      const a = document.createElement('a');
+      a.href = pdfUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(pdfUrl);
+    }
+
+    async function sendPdfByEmail() {
+      const name = document.getElementById('officialNameInput').value.trim();
+      const unitNo = document.getElementById('unitNo').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      const msg = document.getElementById('submitMsg');
+      const btn = document.getElementById('btnSendEmail');
+      const btnMobile = document.getElementById('btnSendEmailMobile');
+
+      if (!name || !unitNo) {
+        alert('성명과 소유호수는 필수 입력 항목입니다.');
+        return;
+      }
+
+      msg.style.display = 'block';
+      msg.innerHTML = `<strong>📁 구글 드라이브 파일 업로드 중...</strong><br>작성된 PDF 파일을 구글 드라이브에 안전하게 업로드하고 있습니다. 잠시만 기다려 주세요.`;
+      msg.className = 'message success';
+      
+      if (btn) btn.disabled = true;
+      if (btnMobile) btnMobile.disabled = true;
+
+      try {
+        const pdfBlob = new Blob([currentPdfBytes], { type: 'application/pdf' });
+        const base64Pdf = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(pdfBlob);
+        });
+
+        const cleanName = (name || '무명').replace(/\s+/g, '');
+        const cleanUnit = (unitNo || '미지정').replace(/\s+/g, '');
+        const filename = `위임장_${cleanName}_${cleanUnit}.pdf`;
+
+        const postData = {
+          name,
+          unitNo,
+          phone,
+          pdfBytes: base64Pdf,
+          type: 'consent', // 소집동의서 구분자
+          filename: filename
+        };
+
+        const uploadUrl = 'https://script.google.com/macros/s/AKfycbyCne5tnvdyfcMUR63VViL1Z5RyxPm3Y5oBSImJmkDPUtOul4wtXrPGrRg_XNOHLnqD/exec';
+
+        const res = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(postData)
+        });
+        const result = await res.json();
+        
+        if (btn) btn.disabled = false;
+        if (btnMobile) btnMobile.disabled = false;
+
+        if (result.success) {
+          msg.innerHTML = `<strong>📁 업로드 성공!</strong><br>해당 문서가 구글 드라이브에 성공적으로 저장되었습니다. (기기에도 저장 완료)<br>이제 브라우저 창을 닫으셔도 좋습니다.`;
+          msg.className = 'message success';
+          alert('제출이 완료되었습니다.');
+          // 휴대폰/PC 기기에 PDF 파일도 자동 저장(다운로드)
+          downloadPdfDirectly();
+        } else {
+          msg.innerText = '드라이브 저장 오류: ' + result.message;
+          msg.className = 'message error';
+        }
+      } catch (err) {
+        if (btn) btn.disabled = false;
+        if (btnMobile) btnMobile.disabled = false;
+        msg.innerText = '구글 드라이브 서버 전송 중 통신 실패';
+        msg.className = 'message error';
+      }
+    }
+
+    // 좌표 조정 모드
+    const COORDS_META = {
+      nameX: '성명(X)', nameY: '성명(Y)',
+      phoneX: '연락처(X)', phoneY: '연락처(Y)',
+      birthX: '생년월일(X)', birthY: '생년월일(Y)',
+      genderX: '주민번호성별(X)', genderY: '주민번호성별(Y)',
+      addressX: '주소(X)', addressY: '주소(Y)',
+      unitX: '소유호수(X)', unitY: '소유호수(Y)',
+      monthX: '날짜 월(X)', monthY: '날짜 월(Y)',
+      dayX: '날짜 일(X)', dayY: '날짜 일(Y)'
+    };
+
+    function loadSavedCoords() {
+      const saved = localStorage.getItem('draw_coords_consent_v3');
+      if (saved) {
+        try {
+          coords = { ...DEFAULT_COORDS, ...JSON.parse(saved) };
+        } catch (e) {
+          coords = { ...DEFAULT_COORDS };
+        }
+      } else {
+        coords = { ...DEFAULT_COORDS };
+      }
+    }
+
+    function buildCoordsTable() {
+      const tbody = document.getElementById('coordsTableBody');
+      tbody.innerHTML = '';
+
+      const items = [
+        { label: '성명', xKey: 'nameX', yKey: 'nameY' },
+        { label: '연락처', xKey: 'phoneX', yKey: 'phoneY' },
+        { label: '생년월일', xKey: 'birthX', yKey: 'birthY' },
+        { label: '생년월일 뒷자리(성별)', xKey: 'genderX', yKey: 'genderY' },
+        { label: '주소', xKey: 'addressX', yKey: 'addressY' },
+        { label: '소유호수', xKey: 'unitX', yKey: 'unitY' },
+        { label: '날짜(월)', xKey: 'monthX', yKey: 'monthY' },
+        { label: '날짜(일)', xKey: 'dayX', yKey: 'dayY' },
+        { label: '서명(인)', xKey: 'sigX', yKey: 'sigY' }
+      ];
+
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px dashed #e2e8f0';
+        tr.innerHTML = 
+          '<td style="padding: 6px; font-weight: 600; color: #475569;">' + item.label + '</td>' +
+          '<td style="padding: 6px; text-align: center;">' +
+            '<div style="display:flex; align-items:center; justify-content:center; gap:2px;">' +
+              '<button type="button" class="btn-coord" onclick="adjustCoord(\'' + item.xKey + '\', -1)">-</button>' +
+              '<input type="number" id="coord_' + item.xKey + '" style="width:36px; text-align:center; font-size:11px; padding:2px;" onchange="saveCoords()">' +
+              '<button type="button" class="btn-coord" onclick="adjustCoord(\'' + item.xKey + '\', 1)">+</button>' +
+            '</div>' +
+          '</td>' +
+          '<td style="padding: 6px; text-align: center;">' +
+            '<div style="display:flex; align-items:center; justify-content:center; gap:2px;">' +
+              '<button type="button" class="btn-coord" onclick="adjustCoord(\'' + item.yKey + '\', -1)">-</button>' +
+              '<input type="number" id="coord_' + item.yKey + '" style="width:36px; text-align:center; font-size:11px; padding:2px;" onchange="saveCoords()">' +
+              '<button type="button" class="btn-coord" onclick="adjustCoord(\'' + item.yKey + '\', 1)">+</button>' +
+            '</div>' +
+          '</td>';
+        tbody.appendChild(tr);
+
+        // 입력창 값 동기화
+        setTimeout(() => {
+          document.getElementById('coord_' + item.xKey).value = coords[item.xKey];
+          document.getElementById('coord_' + item.yKey).value = coords[item.yKey];
+        }, 0);
+      });
+    }
+
+    function adjustCoord(key, amount) {
+      if (coords[key] !== undefined) {
+        coords[key] = parseInt(coords[key]) + amount;
+        const input = document.getElementById('coord_' + key);
+        if (input) {
+          input.value = coords[key];
+        }
+        saveCoords();
+      }
+    }
+
+    function saveCoords() {
+      for (const key in coords) {
+        const input = document.getElementById('coord_' + key);
+        if (input) {
+          coords[key] = parseInt(input.value) || DEFAULT_COORDS[key];
+        }
+      }
+      localStorage.setItem('draw_coords_consent_v3', JSON.stringify(coords));
+      queuePreview();
+    }
+
+    function setAddress(value, chipId) {
+      const input = document.getElementById('addressInput');
+      if (input) {
+        input.value = value;
+        input.focus();
+      }
+      
+      const chips = ['chip-default', 'chip-A', 'chip-B', 'chip-basement'];
+      chips.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === chipId) {
+          el.style.background = '#dbeafe';
+          el.style.border = '2px solid #2563eb';
+          el.style.color = '#1d4ed8';
+        } else {
+          el.style.background = '#f1f5f9';
+          el.style.border = '1px solid #cbd5e1';
+          el.style.color = '#475569';
+        }
+      });
+      queuePreview();
+    }
+
+    function resetCoords() {
+      coords = { ...DEFAULT_COORDS };
+      for (const key in coords) {
+        const input = document.getElementById('coord_' + key);
+        if (input) input.value = coords[key];
+      }
+      localStorage.setItem('draw_coords_consent_v3', JSON.stringify(coords));
+      queuePreview();
+    }
+
+    function openHelpModal() {
+      const modal = document.getElementById('helpModal');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        modal.firstElementChild.style.transform = 'scale(1)';
+      }, 10);
+    }
+
+    function closeHelpModal() {
+      const modal = document.getElementById('helpModal');
+      modal.style.opacity = '0';
+      modal.firstElementChild.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 200);
+    }
+  </script>
+
+  <!-- 사용 방법 도움말 모달 -->
+  <div id="helpModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); z-index: 9999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;">
+    <div style="background: white; width: 520px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; transform: scale(0.9); transition: transform 0.2s ease; display: flex; flex-direction: column; max-height: 90vh;">
+      <div style="padding: 20px 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+        <h3 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">💡 소집동의서 작성기 사용 방법</h3>
+        <button onclick="closeHelpModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #94a3b8; line-height: 1; padding: 4px;">&times;</button>
+      </div>
+      <div style="padding: 24px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: #334155;">
+        <p style="margin-top: 0; font-weight: bold; color: #0f172a; font-size: 13.5px;">임시총회 위임장(소집동의서)을 작성하고 출력하는 프로그램입니다.</p>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 18px;">
+          <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px;">📌 사용 순서</div>
+          <ol style="margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 6px;"><strong>위임인 정보 입력</strong>: 성명, 생년월일(숫자 7자리, 예: 9501011), 주소, 소유 동호수, 연락처를 입력합니다.</li>
+            <li style="margin-bottom: 6px;"><strong>실시간 미리보기</strong>: 우측 영역에서 글씨 인쇄 위치와 오탈자를 실시간 확인합니다.</li>
+            <li style="margin-bottom: 6px;"><strong>인쇄 / 제출</strong>: <strong>🖨️ 즉시 인쇄</strong> 버튼으로 출력하거나, <strong>📁 제출하기</strong> 버튼을 눌러 구글 드라이브에 문서를 제출합니다.</li>
+            <li style="margin-bottom: 6px; color: #b45309; font-weight: bold;">⚠️ 주의사항: <strong>제출하기</strong> 버튼을 누른 후, 화면에 <strong>'제출이 완료되었습니다.'</strong> 알림 팝업창이 나타나고 초록색 <strong>'업로드 성공!'</strong> 메시지가 뜨기 전까지는 절대 창을 닫지 마세요.</li>
+          </ol>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">🔧 인쇄 위치 미세조정</div>
+          <div style="color: #64748b; padding-left: 4px;">프린터마다 인쇄 여백 오차가 있을 수 있으므로 하단 '출력 글자 위치 미세조정' 탭을 펼쳐 항목들의 X, Y 좌표를 1pt 단위로 직접 변경해 정렬할 수 있습니다.</div>
+        </div>
+
+        <div>
+          <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">💾 오프라인 단독 구동</div>
+          <div style="color: #64748b; padding-left: 4px;">빌드 스크립트 실행 후 완성되는 <code>index.html</code> 파일은 내부 자원이 전부 텍스트로 합쳐져 있어, 인터넷 연결 없이 브라우저 더블클릭만으로 실행 가능합니다.</div>
+        </div>
+      </div>
+      <div style="padding: 16px 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; background: #f8fafc;">
+        <button onclick="closeHelpModal()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;">확인</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
