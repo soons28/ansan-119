@@ -70,8 +70,61 @@ async function handler(req, res) {
     const rows = getRows.data.values || [];
     const nextIndex = rows.length;
 
-    // 3. Set Destination Folder ID to "1uVuv9jdogyjRbCUHnAqPZkFYDHfteT31" (User Shared Folder)
-    const targetFolderId = "1uVuv9jdogyjRbCUHnAqPZkFYDHfteT31";
+    // 3. Find/Create Google Drive Folder "04_시청제출 탄원서" inside the existing Portal Root Folder
+    let targetFolderId = null;
+    const portalRootFolderId = process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID ? process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID.trim() : null;
+
+    if (portalRootFolderId) {
+      try {
+        // Search if "04_시청제출 탄원서" folder exists under the Portal Root Folder
+        const findTargetFolder = await drive.files.list({
+          q: `name = '04_시청제출 탄원서' and '${portalRootFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+          fields: 'files(id)'
+        });
+
+        if (findTargetFolder.data.files && findTargetFolder.data.files.length > 0) {
+          targetFolderId = findTargetFolder.data.files[0].id;
+        } else {
+          // Create "04_시청제출 탄원서" under the Portal Root Folder
+          const createFolder = await drive.files.create({
+            resource: {
+              name: '04_시청제출 탄원서',
+              mimeType: 'application/vnd.google-apps.folder',
+              parents: [portalRootFolderId]
+            },
+            fields: 'id'
+          });
+          targetFolderId = createFolder.data.id;
+        }
+      } catch (folderError) {
+        console.error('Error finding/creating child folder inside GOOGLE_DRIVE_ROOT_FOLDER_ID:', folderError);
+      }
+    }
+
+    // fallback: if GOOGLE_DRIVE_ROOT_FOLDER_ID mapping fails, try to find/create at Root level
+    if (!targetFolderId) {
+      try {
+        const findTargetFolder = await drive.files.list({
+          q: "name = '04_시청제출 탄원서' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+          fields: 'files(id)'
+        });
+
+        if (findTargetFolder.data.files && findTargetFolder.data.files.length > 0) {
+          targetFolderId = findTargetFolder.data.files[0].id;
+        } else {
+          const createFolder = await drive.files.create({
+            resource: {
+              name: '04_시청제출 탄원서',
+              mimeType: 'application/vnd.google-apps.folder'
+            },
+            fields: 'id'
+          });
+          targetFolderId = createFolder.data.id;
+        }
+      } catch (fallbackError) {
+        console.error('Fallback folder creation error:', fallbackError);
+      }
+    }
 
     // 4. Upload signature image to the target folder
     let finalSignatureUrl = '';
@@ -83,7 +136,7 @@ async function handler(req, res) {
 
         const fileMetadata = {
           name: filename,
-          parents: [targetFolderId]
+          parents: targetFolderId ? [targetFolderId] : []
         };
         const media = {
           mimeType: 'image/png',
