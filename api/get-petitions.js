@@ -24,14 +24,13 @@ async function handler(req, res) {
     const targetSheet = existingSheets.find(s => s.properties.title === targetSheetTitle);
 
     if (!targetSheet) {
-      // If the sheet doesn't exist yet, return an empty roster
       return res.status(200).json({ success: true, roster: [] });
     }
 
-    // 2. Fetch rows (excluding the PIN in column I for security, so fetch A2:H)
+    // 2. Fetch rows (excluding the PIN in column J for security, fetch A2:I)
     const getRows = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheetTitle}!A2:H`
+      range: `${targetSheetTitle}!A2:I`
     });
 
     const rows = getRows.data.values || [];
@@ -39,11 +38,12 @@ async function handler(req, res) {
       index: row[0] ? parseInt(row[0], 10) : (idx + 1),
       name: row[1] || '',
       address: row[2] || '',
-      phone: row[3] || '',
-      ip: row[4] || '',
-      device: row[5] || '',
-      timestamp: row[6] || '',
-      signatureImg: row[7] || ''
+      userType: row[3] || '구분소유자',
+      phone: row[4] || '',
+      ip: row[5] || '',
+      device: row[6] || '',
+      timestamp: row[7] || '',
+      signatureImg: row[8] || ''
     }));
 
     return res.status(200).json({ success: true, roster });

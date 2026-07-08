@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Live Preview Elements (Single Signer Roster Page)
     const singlePreviewName = document.getElementById('single-preview-name');
+    const singlePreviewType = document.getElementById('single-preview-type');
     const singlePreviewAddress = document.getElementById('single-preview-address');
     const singlePreviewPhone = document.getElementById('single-preview-phone');
     const singlePreviewSign = document.getElementById('single-preview-sign');
@@ -116,6 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
             singlePreviewName.style.color = '#94a3b8';
         }
 
+        // Update Type (Qualification)
+        const checkedTypeInput = document.querySelector('input[name="new-user-type"]:checked');
+        const userTypeVal = checkedTypeInput ? checkedTypeInput.value : '구분소유자';
+        singlePreviewType.textContent = userTypeVal;
+        singlePreviewType.style.color = '#000000';
+
         // Update Address
         if (newAddressInput.value.trim()) {
             singlePreviewAddress.textContent = newAddressInput.value;
@@ -144,6 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
     newNameInput.addEventListener('input', updateLivePreviewTexts);
     newAddressInput.addEventListener('input', updateLivePreviewTexts);
     newPhoneInput.addEventListener('input', updateLivePreviewTexts);
+    
+    // Add change listeners to new-user-type radio buttons
+    document.querySelectorAll('input[name="new-user-type"]').forEach(radio => {
+        radio.addEventListener('change', updateLivePreviewTexts);
+    });
 
     // Helper to simplify User Agent string for clean print layout
     function simplifyUserAgent(ua) {
@@ -253,10 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         roster.forEach((member, index) => {
+            const userTypeLabel = member.userType || '구분소유자';
+            const badgeColor = userTypeLabel === '임차인' ? 'background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;' : 'background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;';
+            const badgeHTML = `<span style="font-size: 0.65rem; padding: 2px 5px; border-radius: 4px; margin-left: 5px; font-weight: 700; ${badgeColor}">${escapeHtml(userTypeLabel)}</span>`;
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index + 1}</td>
-                <td><strong>${escapeHtml(member.name)}</strong></td>
+                <td><strong>${escapeHtml(member.name)}</strong>${badgeHTML}</td>
                 <td>
                     <div style="font-weight: 500;">${escapeHtml(member.address)}</div>
                     <div style="font-size: 0.7rem; color: #64748b;">${escapeHtml(member.phone || '-')}</div>
@@ -299,11 +315,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const checkedTypeInput = document.querySelector('input[name="new-user-type"]:checked');
+        const userType = checkedTypeInput ? checkedTypeInput.value : '구분소유자';
+
         try {
             const res = await fetch('/api/save-petition', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, address, phone, signatureImg, pin })
+                body: JSON.stringify({ name, address, phone, userType, signatureImg, pin })
             });
             const data = await res.json();
             if (data.success) {
@@ -328,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: name.trim(),
                 address: address.trim(),
                 phone: phone.trim(),
+                userType: userType,
                 ip: clientIp,
                 device: clientDevice,
                 timestamp: timestampStr,
@@ -344,6 +364,10 @@ document.addEventListener('DOMContentLoaded', () => {
         newAddressInput.value = '';
         newPhoneInput.value = '';
         newPinInput.value = '';
+        // Reset radio buttons to default (구분소유자)
+        const defaultRadio = document.querySelector('input[name="new-user-type"][value="구분소유자"]');
+        if (defaultRadio) defaultRadio.checked = true;
+        
         btnClearPad.click();
         updateLivePreviewTexts();
         newNameInput.focus();
@@ -450,6 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr>
                         <td>${globalIndex}</td>
                         <td style="font-weight:700;">${escapeHtml(member.name)}</td>
+                        <td style="font-weight:600;">${escapeHtml(member.userType || '구분소유자')}</td>
                         <td class="left-align">${escapeHtml(member.address)}</td>
                         <td>${escapeHtml(member.phone || '-')}</td>
                         <td>${signHTML}</td>
@@ -479,18 +504,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     <table class="preview-roster-table">
                         <thead>
                             <tr>
-                                <th style="width: 8%;">번호</th>
+                                <th style="width: 6%;">번호</th>
                                 <th style="width: 12%;">성명</th>
+                                <th style="width: 12%;">구분</th>
                                 <th style="width: 20%;">주소 / 동호수</th>
                                 <th style="width: 15%;">연락처</th>
-                                <th style="width: 15%;">서명 또는 날인</th>
-                                <th style="width: 30%;">디지털 인증 로그 (IP / 환경 / 일시)</th>
+                                <th style="width: 12%;">서명 또는 날인</th>
+                                <th style="width: 23%;">디지털 인증 로그 (IP / 환경 / 일시)</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${rowsHTML}
                         </tbody>
                     </table>
+
 
                     <div class="doc-footer">
                         <div class="verification-legal-note">

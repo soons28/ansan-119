@@ -8,7 +8,7 @@ async function handler(req, res) {
     return res.status(405).json({ success: false, message: 'Method Not Allowed' });
   }
 
-  const { name, address, phone, signatureImg, pin } = req.body;
+  const { name, address, phone, userType, signatureImg, pin } = req.body;
   if (!name || !address || !pin) {
     return res.status(400).json({ success: false, message: 'Missing required fields' });
   }
@@ -50,13 +50,13 @@ async function handler(req, res) {
         }
       });
 
-      // Write header row (연락처 열 추가)
+      // Write header row (자격 열 추가하여 10개 열 정의)
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${targetSheetTitle}!A1:I1`,
+        range: `${targetSheetTitle}!A1:J1`,
         valueInputOption: 'RAW',
         resource: {
-          values: [['순번', '성명', '동호수', '연락처', 'IP 주소', '접속 기기', '서명 일시', '서명 이미지 URL', 'PIN']]
+          values: [['순번', '성명', '동호수', '자격', '연락처', 'IP 주소', '접속 기기', '서명 일시', '서명 이미지 URL', 'PIN']]
         }
       });
     }
@@ -73,7 +73,6 @@ async function handler(req, res) {
     // 3. Find/Create Google Drive Folder "04_시청제출 탄원서" inside "안산업무포털"
     let targetFolderId = null;
     try {
-      // Find "안산업무포털" parent folder
       const findPortalFolder = await drive.files.list({
         q: "name = '안산업무포털' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
         fields: 'files(id)'
@@ -85,7 +84,6 @@ async function handler(req, res) {
       }
 
       if (portalFolderId) {
-        // Find "04_시청제출 탄원서" folder inside "안산업무포털"
         const findTargetFolder = await drive.files.list({
           q: `name = '04_시청제출 탄원서' and '${portalFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
           fields: 'files(id)'
@@ -94,7 +92,6 @@ async function handler(req, res) {
         if (findTargetFolder.data.files && findTargetFolder.data.files.length > 0) {
           targetFolderId = findTargetFolder.data.files[0].id;
         } else {
-          // If not exists, create it
           const createFolder = await drive.files.create({
             resource: {
               name: '04_시청제출 탄원서',
@@ -108,7 +105,6 @@ async function handler(req, res) {
       }
     } catch (folderError) {
       console.error('Error finding/creating Google Drive folder:', folderError);
-      // Fallback: will upload to root drive if folder creation fails
     }
 
     // 4. Upload signature image to the target folder
@@ -134,7 +130,6 @@ async function handler(req, res) {
           fields: 'id'
         });
 
-        // Set permission to anyone so it can be loaded as image in print pages
         try {
           await drive.permissions.create({
             fileId: uploadedFile.data.id,
@@ -147,17 +142,14 @@ async function handler(req, res) {
           console.error('Error sharing uploaded file:', permErr);
         }
 
-        // Direct image url for print loading
         finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${uploadedFile.data.id}`;
       } catch (uploadErr) {
         console.error('Error uploading signature file to Drive:', uploadErr);
-        // Fallback to Base64 if upload fails
         finalSignatureUrl = signatureImg;
       }
     }
 
     const now = new Date();
-    // Offset to KST (UTC+9)
     const kstOffset = 9 * 60 * 60 * 1000;
     const kstDate = new Date(now.getTime() + kstOffset);
     const timestampStr = kstDate.toISOString().replace('T', ' ').substring(0, 19);
@@ -165,13 +157,13 @@ async function handler(req, res) {
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown IP';
     const clientDevice = req.headers['user-agent'] || 'Unknown Device';
 
-    // Append to sheet (연락처를 포함하여 9개 열 등록)
+    // Append to sheet (10개 열 등록)
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `${targetSheetTitle}!A2`,
       valueInputOption: 'RAW',
       resource: {
-        values: [[nextIndex, name.trim(), address.trim(), (phone || '').trim(), clientIp, clientDevice, timestampStr, finalSignatureUrl, pin.trim()]]
+        values: [[nextIndex, name.trim(), address.trim(), (userType || '구분소유자').trim(), (phone || '').trim(), clientIp, clientDevice, timestampStr, finalSignatureUrl, pin.trim()]]
       }
     });
 

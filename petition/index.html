@@ -95,6 +95,18 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="margin-bottom: 8px;">자격 구분 (필수)</label>
+                        <div style="display: flex; gap: 24px; padding: 6px 0;">
+                            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; font-weight: 600; color: #1e293b;">
+                                <input type="radio" name="new-user-type" value="구분소유자" checked style="width: 18px; height: 18px; accent-color: var(--primary);"> 구분소유자
+                            </label>
+                            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; font-weight: 600; color: #1e293b;">
+                                <input type="radio" name="new-user-type" value="임차인" style="width: 18px; height: 18px; accent-color: var(--primary);"> 임차인
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
                         <label for="new-address">정확한 상가 주소 (동·호수)</label>
                         <input type="text" id="new-address" placeholder="예: 지하 나-40호 또는 A동 101호">
                     </div>
@@ -254,12 +266,13 @@
                     <table class="preview-roster-table">
                         <thead>
                             <tr>
-                                <th style="width: 8%;">번호</th>
+                                <th style="width: 6%;">번호</th>
                                 <th style="width: 12%;">성명</th>
+                                <th style="width: 12%;">구분</th>
                                 <th style="width: 20%;">주소 / 동호수</th>
                                 <th style="width: 15%;">연락처</th>
-                                <th style="width: 15%;">서명 또는 날인</th>
-                                <th style="width: 30%;">디지털 인증 로그 (IP / 환경 / 일시)</th>
+                                <th style="width: 12%;">서명 또는 날인</th>
+                                <th style="width: 23%;">디지털 인증 로그 (IP / 환경 / 일시)</th>
                             </tr>
                         </thead>
                         <tbody id="single-preview-tbody">
@@ -267,6 +280,7 @@
                             <tr id="single-preview-row">
                                 <td>1</td>
                                 <td id="single-preview-name" style="font-weight: 700; color: #94a3b8;">성명 대기</td>
+                                <td id="single-preview-type" style="font-weight: 600; color: #94a3b8;">구분 대기</td>
                                 <td id="single-preview-address" class="left-align" style="color: #94a3b8;">동호수 대기</td>
                                 <td id="single-preview-phone" style="color: #94a3b8;">연락처 대기</td>
                                 <td id="single-preview-sign" style="height: 50px;">
@@ -278,6 +292,7 @@
                             </tr>
                         </tbody>
                     </table>
+
 
                     <div class="doc-footer">
                         <div class="verification-legal-note">

@@ -25,7 +25,6 @@ async function handler(req, res) {
     const sheets = google.sheets({ version: 'v4', auth });
     const drive = google.drive({ version: 'v3', auth });
 
-    // 1. Get spreadsheet metadata to check if sheet exists and get sheetId
     const spreadsheetMetadata = await sheets.spreadsheets.get({
       spreadsheetId: SPREADSHEET_ID
     });
@@ -39,29 +38,28 @@ async function handler(req, res) {
 
     const sheetId = targetSheet.properties.sheetId;
 
-    // 2. Fetch rows including PIN to verify authorization (A2:I)
+    // 2. Fetch rows including PIN to verify authorization (A2:J)
     const getRows = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheetTitle}!A2:I`
+      range: `${targetSheetTitle}!A2:J`
     });
 
     const rows = getRows.data.values || [];
     
-    // Find the row where the first column matches the given index
     const targetRowIdx = rows.findIndex(row => parseInt(row[0], 10) === parseInt(index, 10));
     if (targetRowIdx === -1) {
       return res.status(404).json({ success: false, message: 'Row not found' });
     }
 
     const targetRow = rows[targetRowIdx];
-    const signatureUrl = targetRow[7] || '';
-    const storedPin = targetRow[8] || '';
+    const signatureUrl = targetRow[8] || ''; // 9번째 열 (I열)
+    const storedPin = targetRow[9] || '';    // 10번째 열 (J열)
 
     if (pin.trim() !== storedPin.trim() && pin.trim() !== '3686') {
       return res.status(403).json({ success: false, message: 'Invalid PIN' });
     }
 
-    // 3. Try to delete the signature image from Google Drive if URL exists
+    // 3. Delete signature image from Google Drive
     if (signatureUrl && signatureUrl.includes('id=')) {
       try {
         const fileId = signatureUrl.split('id=')[1];
@@ -72,7 +70,6 @@ async function handler(req, res) {
         }
       } catch (driveDelError) {
         console.error('Error deleting signature file from Drive:', driveDelError);
-        // Continue spreadsheet deletion even if drive image deletion fails
       }
     }
 
@@ -100,7 +97,7 @@ async function handler(req, res) {
     // 5. Fetch the remaining rows to re-index them
     const getUpdatedRows = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheetTitle}!A2:I`
+      range: `${targetSheetTitle}!A2:J`
     });
 
     const updatedRows = getUpdatedRows.data.values || [];
@@ -113,13 +110,13 @@ async function handler(req, res) {
       // Clear original content area first
       await sheets.spreadsheets.values.clear({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${targetSheetTitle}!A2:I`
+        range: `${targetSheetTitle}!A2:J`
       });
 
       // Write reindexed values
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${targetSheetTitle}!A2:I${updatedRows.length + 1}`,
+        range: `${targetSheetTitle}!A2:J${updatedRows.length + 1}`,
         valueInputOption: 'RAW',
         resource: {
           values: reindexedValues
