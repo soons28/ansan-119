@@ -1,5 +1,4 @@
 const { google } = require('googleapis');
-const { Readable } = require('stream');
 
 const SPREADSHEET_ID = '1YdcpcUSiBHHDrL-tyYvJ1eZGnV4kAIKTli732thFGIU';
 
@@ -22,7 +21,6 @@ async function handler(req, res) {
     );
 
     const sheets = google.sheets({ version: 'v4', auth });
-    const drive = google.drive({ version: 'v3', auth });
     const targetSheetTitle = "탄원서";
 
     // 1. Check if the spreadsheet has the target sheet (tab)
@@ -70,88 +68,41 @@ async function handler(req, res) {
     const rows = getRows.data.values || [];
     const nextIndex = rows.length;
 
-    // 3. Find/Create Google Drive Folder "04_시청제출 탄원서" inside the existing Portal Root Folder
-    let targetFolderId = null;
-    const portalRootFolderId = process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID ? process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID.trim() : null;
-
-    if (portalRootFolderId) {
-      try {
-        // Search if "04_시청제출 탄원서" folder exists under the Portal Root Folder
-        const findTargetFolder = await drive.files.list({
-          q: `name = '04_시청제출 탄원서' and '${portalRootFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-          fields: 'files(id)'
-        });
-
-        if (findTargetFolder.data.files && findTargetFolder.data.files.length > 0) {
-          targetFolderId = findTargetFolder.data.files[0].id;
-        } else {
-          // Create "04_시청제출 탄원서" under the Portal Root Folder
-          const createFolder = await drive.files.create({
-            resource: {
-              name: '04_시청제출 탄원서',
-              mimeType: 'application/vnd.google-apps.folder',
-              parents: [portalRootFolderId]
-            },
-            fields: 'id'
-          });
-          targetFolderId = createFolder.data.id;
-        }
-      } catch (folderError) {
-        console.error('Error finding/creating child folder inside GOOGLE_DRIVE_ROOT_FOLDER_ID:', folderError);
-      }
-    }
-
-    // fallback: if GOOGLE_DRIVE_ROOT_FOLDER_ID mapping fails, try to find/create at Root level
-    if (!targetFolderId) {
-      try {
-        const findTargetFolder = await drive.files.list({
-          q: "name = '04_시청제출 탄원서' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
-          fields: 'files(id)'
-        });
-
-        if (findTargetFolder.data.files && findTargetFolder.data.files.length > 0) {
-          targetFolderId = findTargetFolder.data.files[0].id;
-        } else {
-          const createFolder = await drive.files.create({
-            resource: {
-              name: '04_시청제출 탄원서',
-              mimeType: 'application/vnd.google-apps.folder'
-            },
-            fields: 'id'
-          });
-          targetFolderId = createFolder.data.id;
-        }
-      } catch (fallbackError) {
-        console.error('Fallback folder creation error:', fallbackError);
-      }
-    }
-
-    // 4. Upload signature image to the target folder
+    // 3. Upload signature image using Google Apps Script (GAS) Web App
     let finalSignatureUrl = '';
     if (signatureImg && signatureImg.startsWith('data:image/png;base64,')) {
       try {
         const base64Data = signatureImg.replace(/^data:image\/png;base64,/, "");
-        const buffer = Buffer.from(base64Data, 'base64');
         const filename = `서명_${nextIndex}_${name.replace(/\s+/g, '')}_${address.replace(/\s+/g, '')}.png`;
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyCne5tnvdyfcMUR63VViL1Z5RyxPm3Y5oBSImJmkDPUtOul4wtXrPGrRg_XNOHLnqD/exec';
 
-        const fileMetadata = {
-          name: filename,
-          parents: targetFolderId ? [targetFolderId] : []
-        };
-        const media = {
-          mimeType: 'image/png',
-          body: Readable.from(buffer)
-        };
-
-        const uploadedFile = await drive.files.create({
-          resource: fileMetadata,
-          media: media,
-          fields: 'id'
+        // Call user's Google Apps Script to upload signature PNG file
+        const gasResponse = await fetch(scriptUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.trim(),
+            unitNo: address.trim(),
+            pdfBytes: base64Data, // send raw base64 data to GAS
+            filename: filename,
+            type: 'petition'      // custom type for petition signature images
+          })
         });
 
-        finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${uploadedFile.data.id}`;
+        if (gasResponse.ok) {
+          const gasResult = await gasResponse.json();
+          if (gasResult.success && gasResult.fileId) {
+            finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${gasResult.fileId}`;
+          } else {
+            console.error('GAS returned error:', gasResult.error);
+            finalSignatureUrl = signatureImg;
+          }
+        } else {
+          console.error('GAS network response was not ok');
+          finalSignatureUrl = signatureImg;
+        }
       } catch (uploadErr) {
-        console.error('Error uploading signature file to Drive:', uploadErr);
+        console.error('Error uploading signature file via GAS:', uploadErr);
         finalSignatureUrl = signatureImg;
       }
     }
