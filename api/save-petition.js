@@ -70,31 +70,8 @@ async function handler(req, res) {
     const rows = getRows.data.values || [];
     const nextIndex = rows.length;
 
-    // 3. Find/Create Google Drive Folder "04_시청제출 탄원서" directly in Root (My Drive)
-    let targetFolderId = null;
-    try {
-      // Find "04_시청제출 탄원서" folder at Root level
-      const findTargetFolder = await drive.files.list({
-        q: "name = '04_시청제출 탄원서' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
-        fields: 'files(id)'
-      });
-
-      if (findTargetFolder.data.files && findTargetFolder.data.files.length > 0) {
-        targetFolderId = findTargetFolder.data.files[0].id;
-      } else {
-        // Create at root
-        const createFolder = await drive.files.create({
-          resource: {
-            name: '04_시청제출 탄원서',
-            mimeType: 'application/vnd.google-apps.folder'
-          },
-          fields: 'id'
-        });
-        targetFolderId = createFolder.data.id;
-      }
-    } catch (folderError) {
-      console.error('Error finding/creating Google Drive folder directly:', folderError);
-    }
+    // 3. Set Destination Folder ID to "1uVuv9jdogyjRbCUHnAqPZkFYDHfteT31" (User Shared Folder)
+    const targetFolderId = "1uVuv9jdogyjRbCUHnAqPZkFYDHfteT31";
 
     // 4. Upload signature image to the target folder
     let finalSignatureUrl = '';
@@ -106,7 +83,7 @@ async function handler(req, res) {
 
         const fileMetadata = {
           name: filename,
-          parents: targetFolderId ? [targetFolderId] : []
+          parents: [targetFolderId]
         };
         const media = {
           mimeType: 'image/png',
