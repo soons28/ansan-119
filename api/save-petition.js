@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 
-const SPREADSHEET_ID = '1YdcpcUSiBHHDrL-tyYvJ1eZGnV4kAIKTli732thFGIU';
+const SPREADSHEET_ID = '1qX_SUfJRrjPWL7iMj3OQMhkCCgBeybwg';
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -85,7 +85,7 @@ async function handler(req, res) {
             unitNo: address.trim(),
             pdfBytes: base64Data, // send raw base64 data to GAS
             filename: filename,
-            type: 'petition'      // custom type for petition signature images
+            type: 'withdrawal'    // use 'withdrawal' to bypass GAS hardcoded branches
           })
         });
 

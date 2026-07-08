@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 
-const SPREADSHEET_ID = '1YdcpcUSiBHHDrL-tyYvJ1eZGnV4kAIKTli732thFGIU';
+const SPREADSHEET_ID = '1qX_SUfJRrjPWL7iMj3OQMhkCCgBeybwg';
 
 async function handler(req, res) {
   const targetSheetTitle = "탄원서";
