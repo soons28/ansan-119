@@ -275,7 +275,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><strong>${escapeHtml(member.name)}</strong>${badgeHTML}</td>
                 <td>
                     <div style="font-weight: 500;">${escapeHtml(member.address)}</div>
-                    <div style="font-size: 0.7rem; color: #64748b;">${escapeHtml(member.phone || '-')}</div>
                 </td>
                 <td style="text-align: center;">
                     <button type="button" class="btn-delete-row" data-index="${index}" title="삭제">❌</button>
