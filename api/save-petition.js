@@ -96,18 +96,6 @@ async function handler(req, res) {
           fields: 'id'
         });
 
-        try {
-          await drive.permissions.create({
-            fileId: uploadedFile.data.id,
-            requestBody: {
-              role: 'reader',
-              type: 'anyone'
-            }
-          });
-        } catch (permErr) {
-          console.error('Error sharing uploaded file:', permErr);
-        }
-
         finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${uploadedFile.data.id}`;
       } catch (uploadErr) {
         console.error('Error uploading signature file to Drive:', uploadErr);
