@@ -1,6 +1,8 @@
 const { google } = require('googleapis');
+const { Readable } = require('stream');
 
 const SPREADSHEET_ID = '1qX_SUfJRrjPWL7iMj3OQMhkCCgBeybwg';
+const TARGET_FOLDER_ID = '1uVuv9jdogyjRbCUHnAqPZkFYDHfteT31'; // 04_시청제출 탄원서 폴더 ID
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -21,6 +23,7 @@ async function handler(req, res) {
     );
 
     const sheets = google.sheets({ version: 'v4', auth });
+    const drive = google.drive({ version: 'v3', auth });
     const targetSheetTitle = "탄원서";
 
     // 1. Check if the spreadsheet has the target sheet (tab)
@@ -68,41 +71,32 @@ async function handler(req, res) {
     const rows = getRows.data.values || [];
     const nextIndex = rows.length;
 
-    // 3. Upload signature image using Google Apps Script (GAS) Web App
+    // 3. Upload signature image to the target folder DIRECTLY (No GAS redirect)
     let finalSignatureUrl = '';
     if (signatureImg && signatureImg.startsWith('data:image/png;base64,')) {
       try {
         const base64Data = signatureImg.replace(/^data:image\/png;base64,/, "");
+        const buffer = Buffer.from(base64Data, 'base64');
         const filename = `서명_${nextIndex}_${name.replace(/\s+/g, '')}_${address.replace(/\s+/g, '')}.png`;
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyCne5tnvdyfcMUR63VViL1Z5RyxPm3Y5oBSImJmkDPUtOul4wtXrPGrRg_XNOHLnqD/exec';
 
-        // Call user's Google Apps Script to upload signature PNG file
-        const gasResponse = await fetch(scriptUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: name.trim(),
-            unitNo: address.trim(),
-            pdfBytes: base64Data, // send raw base64 data to GAS
-            filename: filename,
-            type: 'withdrawal'    // use 'withdrawal' to bypass GAS hardcoded branches
-          })
+        const fileMetadata = {
+          name: filename,
+          parents: [TARGET_FOLDER_ID] // direct mapping inside target folder
+        };
+        const media = {
+          mimeType: 'image/png',
+          body: Readable.from(buffer)
+        };
+
+        const uploadedFile = await drive.files.create({
+          resource: fileMetadata,
+          media: media,
+          fields: 'id'
         });
 
-        if (gasResponse.ok) {
-          const gasResult = await gasResponse.json();
-          if (gasResult.success && gasResult.fileId) {
-            finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${gasResult.fileId}`;
-          } else {
-            console.error('GAS returned error:', gasResult.error);
-            finalSignatureUrl = signatureImg;
-          }
-        } else {
-          console.error('GAS network response was not ok');
-          finalSignatureUrl = signatureImg;
-        }
+        finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${uploadedFile.data.id}`;
       } catch (uploadErr) {
-        console.error('Error uploading signature file via GAS:', uploadErr);
+        console.error('Error uploading signature file to Drive:', uploadErr);
         finalSignatureUrl = signatureImg;
       }
     }
