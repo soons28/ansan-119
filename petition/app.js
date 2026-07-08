@@ -465,8 +465,29 @@ document.addEventListener('DOMContentLoaded', () => {
             let rowsHTML = '';
             chunk.forEach((member, i) => {
                 const globalIndex = startIdx + i + 1;
-                const signHTML = member.signatureImg 
-                    ? `<img src="${member.signatureImg}" class="signature-img-preview">`
+                
+                // Fallback to local storage backup if member.signatureImg is an external URL to bypass print preview CORS issues
+                let printSignSrc = member.signatureImg || '';
+                if (printSignSrc && printSignSrc.startsWith('http')) {
+                    // Try to find matching backup in localStorage
+                    const storageKey = `ansan_petition_roster_data`;
+                    const savedRoster = localStorage.getItem(storageKey);
+                    if (savedRoster) {
+                        try {
+                            const localRoster = JSON.parse(savedRoster);
+                            // Match by name and address
+                            const matched = localRoster.find(m => m.name === member.name && m.address === member.address);
+                            if (matched && matched.signatureImg && matched.signatureImg.startsWith('data:image/')) {
+                                printSignSrc = matched.signatureImg;
+                            }
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+                }
+
+                const signHTML = printSignSrc 
+                    ? `<img src="${printSignSrc}" class="signature-img-preview">`
                     : `<div style="font-size: 8pt; color: #aaa; text-align: center; border: 1px dashed #ccc; padding: 4px; border-radius: 4px; width: 60px; margin: 0 auto;">(서명/인)</div>`;
 
                 rowsHTML += `
