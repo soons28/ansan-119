@@ -377,43 +377,44 @@ textarea {
     background: #ffffff;
     width: 210mm;
     min-height: 297mm;
-    height: auto;
-    padding: 20mm;
+    height: 297mm; /* Force height to match A4 precisely */
+    padding: 14mm 20mm 12mm 20mm; /* Narrow top/bottom padding */
     box-shadow: var(--shadow-lg);
     position: relative;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Avoid overflow leak */
 }
 
 /* Document Typography inside A4 Page */
 .doc-main-title {
-    font-size: 24pt;
+    font-size: 20pt; /* Scale down slightly */
     font-weight: 700;
     text-align: center;
-    margin-bottom: 24pt;
+    margin-bottom: 12pt; /* Tighten margin */
     color: #000000;
     letter-spacing: 2px;
 }
 
 .doc-sub-title {
-    font-size: 18pt;
+    font-size: 16pt;
     font-weight: 700;
     text-align: center;
-    margin-bottom: 16pt;
+    margin-bottom: 12pt;
     color: #000000;
 }
 
 .doc-meta-table {
     width: 100%;
-    margin-bottom: 8pt;
+    margin-bottom: 6pt;
     border-collapse: collapse;
 }
 
 .doc-meta-table td {
-    padding: 2pt 0;
+    padding: 1pt 0;
     vertical-align: top;
-    font-size: 11pt;
+    font-size: 9.8pt; /* Scale down */
 }
 
 .meta-label {
@@ -430,14 +431,19 @@ textarea {
 .doc-divider {
     border: none;
     border-top: 1.5pt solid #111111;
-    margin-bottom: 20pt;
+    margin-bottom: 12pt; /* Tighten margin */
 }
 
 .doc-body {
-    font-size: 11pt;
-    line-height: 1.8;
+    font-size: 9.8pt; /* Scale down font size */
+    line-height: 1.48; /* Narrow line spacing */
     color: #333333;
     flex: 1;
+    text-align: justify;
+}
+.doc-body p {
+    margin-bottom: 6pt !important; /* Tighten paragraph margins */
+}
     white-space: pre-wrap;
     text-align: justify;
 }
@@ -627,7 +633,7 @@ textarea {
         break-inside: avoid !important;
         width: 210mm !important;
         height: 297mm !important;
-        padding: 12mm 20mm 10mm 20mm !important;
+        padding: 10mm 20mm 8mm 20mm !important; /* Narrower print padding */
         box-sizing: border-box !important;
     }
     
@@ -637,37 +643,40 @@ textarea {
 
     /* Print Overrides to prevent main letter overflow */
     .doc-main-title {
-        font-size: 18pt !important;
-        margin-bottom: 8pt !important;
+        font-size: 16pt !important; /* Shrink title */
+        margin-bottom: 6pt !important;
     }
     .doc-main-subtitle {
-        margin-top: -8pt !important;
-        margin-bottom: 8pt !important;
-        font-size: 10pt !important;
+        margin-top: -6pt !important;
+        margin-bottom: 6pt !important;
+        font-size: 9.5pt !important;
     }
     .doc-meta-table {
         margin-bottom: 2pt !important;
     }
     .doc-meta-table td {
         padding: 0.5pt 0 !important;
-        font-size: 9pt !important;
+        font-size: 8.4pt !important; /* Shrink meta info */
     }
     .doc-divider {
-        margin-bottom: 8pt !important;
+        margin-bottom: 6pt !important;
     }
     .doc-body {
-        font-size: 8.8pt !important;
-        line-height: 1.42 !important;
+        font-size: 8.2pt !important; /* Shrink print body size */
+        line-height: 1.34 !important; /* Narrow print line spacing */
+    }
+    .doc-body p {
+        margin-bottom: 4pt !important; /* Tighten paragraph gap on print */
     }
     .doc-footer {
-        margin-top: 6pt !important;
-        padding-top: 4pt !important;
+        margin-top: 4pt !important;
+        padding-top: 2pt !important;
     }
     .doc-footer p {
-        margin-bottom: 4pt !important;
+        margin-bottom: 2pt !important;
     }
     .page-number-footer {
-        margin-top: 4pt !important;
+        margin-top: 2pt !important;
     }
 
     /* Print Overrides for Roster Page to prevent overflow */
