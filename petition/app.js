@@ -504,11 +504,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
 
-                        // If no local backup and it's a drive URL, fallback to Google CDN proxy URL
+                        // If no local backup and it's a drive URL, rewrite to CORS-free Google Thumbnail viewer URL (high success rate)
                         if (!foundLocalBackup && (driveImgUrl.includes('drive.google.com') || driveImgUrl.includes('docs.google.com'))) {
                             const fileIdMatch = driveImgUrl.match(/[?&]id=([^&]+)/);
                             if (fileIdMatch && fileIdMatch[1]) {
-                                printSignSrc = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+                                printSignSrc = `https://docs.google.com/thumbnail?sz=w500&id=${fileIdMatch[1]}`;
                             }
                         } else if (!foundLocalBackup) {
                             printSignSrc = driveImgUrl;
