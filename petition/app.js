@@ -443,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 9. Printing Logic with Multi-page Partitioning
-    btnPrint.addEventListener('click', () => {
+    btnPrint.addEventListener('click', async () => {
         const password = prompt('관리자 암호를 입력하세요:');
         if (password !== '3686') {
             alert('암호가 올바르지 않습니다.');
@@ -593,6 +593,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Bind the dynamic printable structure to preview canvas
         documentPagesContainer.innerHTML = newContent;
+
+        // Wait for all images inside documentPagesContainer to load completely
+        const images = documentPagesContainer.querySelectorAll('img');
+        const imageLoadPromises = Array.from(images).map(img => {
+            return new Promise((resolve) => {
+                if (img.complete) {
+                    resolve();
+                } else {
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve();
+                }
+            });
+        });
+
+        await Promise.all(imageLoadPromises);
 
         // Perform browser print
         window.print();
