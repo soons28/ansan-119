@@ -767,6 +767,8 @@ textarea {
     .a4-page {
         width: 100%;
         min-height: auto;
+        height: auto !important; /* Cancel fixed A4 height on mobile screens */
+        overflow: visible !important; /* Show entire scrollable text content */
         padding: 15mm 10mm;
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border);

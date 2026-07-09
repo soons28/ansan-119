@@ -265,14 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         roster.forEach((member, index) => {
-            const userTypeLabel = member.userType || '구분소유자';
-            const badgeColor = userTypeLabel === '임차인' ? 'background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;' : 'background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;';
-            const badgeHTML = `<span style="font-size: 0.65rem; padding: 2px 5px; border-radius: 4px; margin-left: 5px; font-weight: 700; ${badgeColor}">${escapeHtml(userTypeLabel)}</span>`;
-
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index + 1}</td>
-                <td><strong>${escapeHtml(member.name)}</strong>${badgeHTML}</td>
+                <td><strong>${escapeHtml(member.name)}</strong></td>
                 <td>
                     <div style="font-weight: 500;">${escapeHtml(member.address)}</div>
                 </td>
