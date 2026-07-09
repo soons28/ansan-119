@@ -480,33 +480,41 @@ document.addEventListener('DOMContentLoaded', () => {
             chunk.forEach((member, i) => {
                 const globalIndex = startIdx + i + 1;
                 
-                // Fallback to local storage backup if member.signatureImg is an external URL to bypass print preview CORS issues
-                let printSignSrc = member.signatureImg || '';
-                if (printSignSrc && printSignSrc.startsWith('http')) {
-                    // Try to find matching backup in localStorage first
-                    const storageKey = `ansan_petition_roster_data`;
-                    const savedRoster = localStorage.getItem(storageKey);
-                    let foundLocalBackup = false;
-                    if (savedRoster) {
-                        try {
-                            const localRoster = JSON.parse(savedRoster);
-                            // Match by name and address
-                            const matched = localRoster.find(m => m.name === member.name && m.address === member.address);
-                            if (matched && matched.signatureImg && matched.signatureImg.startsWith('data:image/')) {
-                                printSignSrc = matched.signatureImg;
-                                foundLocalBackup = true;
-                            }
-                        } catch (err) {
-                            console.error(err);
-                        }
-                    }
+                // 1st Priority: Use base64 signature data fetched directly from L-column of Google Sheet
+                let printSignSrc = member.signatureBase64 || '';
 
-                    // If no local backup is found and it's a Google Drive URL, rewrite to CORS-free Google User Content Proxy
-                    if (!foundLocalBackup && (printSignSrc.includes('drive.google.com') || printSignSrc.includes('docs.google.com'))) {
-                        const fileIdMatch = printSignSrc.match(/[?&]id=([^&]+)/);
-                        if (fileIdMatch && fileIdMatch[1]) {
-                            printSignSrc = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+                // 2nd Priority: Fallback to local storage base64 backup or parse drive link
+                if (!printSignSrc || !printSignSrc.startsWith('data:image/')) {
+                    const driveImgUrl = member.signatureImg || '';
+                    if (driveImgUrl && driveImgUrl.startsWith('http')) {
+                        // Try local storage match
+                        const storageKey = `ansan_petition_roster_data`;
+                        const savedRoster = localStorage.getItem(storageKey);
+                        let foundLocalBackup = false;
+                        if (savedRoster) {
+                            try {
+                                const localRoster = JSON.parse(savedRoster);
+                                const matched = localRoster.find(m => m.name === member.name && m.address === member.address);
+                                if (matched && matched.signatureImg && matched.signatureImg.startsWith('data:image/')) {
+                                    printSignSrc = matched.signatureImg;
+                                    foundLocalBackup = true;
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
                         }
+
+                        // If no local backup and it's a drive URL, fallback to Google CDN proxy URL
+                        if (!foundLocalBackup && (driveImgUrl.includes('drive.google.com') || driveImgUrl.includes('docs.google.com'))) {
+                            const fileIdMatch = driveImgUrl.match(/[?&]id=([^&]+)/);
+                            if (fileIdMatch && fileIdMatch[1]) {
+                                printSignSrc = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+                            }
+                        } else if (!foundLocalBackup) {
+                            printSignSrc = driveImgUrl;
+                        }
+                    } else {
+                        printSignSrc = driveImgUrl;
                     }
                 }
 

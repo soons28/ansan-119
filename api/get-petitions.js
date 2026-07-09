@@ -27,10 +27,10 @@ async function handler(req, res) {
       return res.status(200).json({ success: true, roster: [] });
     }
 
-    // 2. Fetch rows (excluding the PIN in column J for security, fetch A2:I)
+    // 2. Fetch rows (excluding the PIN in column J/row[9] for security, fetch A2:L)
     const getRows = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${targetSheetTitle}!A2:I`
+      range: `${targetSheetTitle}!A2:L`
     });
 
     const rows = getRows.data.values || [];
@@ -43,7 +43,8 @@ async function handler(req, res) {
       ip: row[5] || '',
       device: row[6] || '',
       timestamp: row[7] || '',
-      signatureImg: row[8] || ''
+      signatureImg: row[8] || '',
+      signatureBase64: row[11] || '' // L열(12번째 데이터)에서 base64 데이터를 정상 조회해 옵니다.
     }));
 
     return res.status(200).json({ success: true, roster });

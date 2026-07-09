@@ -135,7 +135,20 @@ async function handler(req, res) {
       range: `${targetSheetTitle}!A2`,
       valueInputOption: 'USER_ENTERED', // MUST use USER_ENTERED to parse formula
       resource: {
-        values: [[nextIndex, name.trim(), address.trim(), (userType || '구분소유자').trim(), formattedPhoneForSheet, clientIp, clientDevice, timestampStr, finalSignatureUrl, pin.trim(), imageFormula]]
+        values: [[
+          nextIndex, 
+          name.trim(), 
+          address.trim(), 
+          (userType || '구분소유자').trim(), 
+          formattedPhoneForSheet, 
+          clientIp, 
+          clientDevice, 
+          timestampStr, 
+          finalSignatureUrl, 
+          pin.trim(), 
+          imageFormula,
+          signatureImg.trim() // 12번째 열(L열)에 base64 원본 텍스트 직접 저장
+        ]]
       }
     });
 
