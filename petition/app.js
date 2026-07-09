@@ -1,6 +1,9 @@
 // --- Petition Signature Roster Controller with Multi-page Printing ---
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Clear out old browser cached rosters once to force fetch fresh and bypassed thumbnail urls from server
+    localStorage.removeItem('ansan_petition_roster_data');
+
     // 1. DOM Selectors
     const newNameInput = document.getElementById('new-name');
     const newAddressInput = document.getElementById('new-address');
