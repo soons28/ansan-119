@@ -633,7 +633,7 @@ textarea {
         break-inside: avoid !important;
         width: 210mm !important;
         height: 297mm !important;
-        padding: 10mm 20mm 8mm 20mm !important; /* Narrower print padding */
+        padding: 12mm 20mm 10mm 20mm !important; /* 복원된 print padding */
         box-sizing: border-box !important;
     }
     
@@ -643,27 +643,27 @@ textarea {
 
     /* Print Overrides to prevent main letter overflow */
     .doc-main-title {
-        font-size: 16pt !important; /* Shrink title */
-        margin-bottom: 6pt !important;
+        font-size: 18pt !important; /* 타이틀 복원 */
+        margin-bottom: 8pt !important;
     }
     .doc-main-subtitle {
         margin-top: -6pt !important;
-        margin-bottom: 6pt !important;
-        font-size: 9.5pt !important;
+        margin-bottom: 8pt !important;
+        font-size: 10pt !important;
     }
     .doc-meta-table {
-        margin-bottom: 2pt !important;
+        margin-bottom: 4pt !important;
     }
     .doc-meta-table td {
-        padding: 0.5pt 0 !important;
-        font-size: 8.4pt !important; /* Shrink meta info */
+        padding: 1.2pt 0 !important;
+        font-size: 9.5pt !important; /* 메타 데이터 가독성 복원 */
     }
     .doc-divider {
-        margin-bottom: 6pt !important;
+        margin-bottom: 8pt !important;
     }
     .doc-body {
-        font-size: 8.2pt !important; /* Shrink print body size */
-        line-height: 1.34 !important; /* Narrow print line spacing */
+        font-size: 9.4pt !important; /* 본문 폰트 9.4pt로 웅장하게 복원 */
+        line-height: 1.56 !important; /* 줄간격 1.56으로 편안하게 복원 */
     }
     .doc-body p {
         margin-bottom: 4pt !important; /* Tighten paragraph gap on print */
