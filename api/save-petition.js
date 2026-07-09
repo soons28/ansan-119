@@ -94,7 +94,20 @@ async function handler(req, res) {
           fields: 'id'
         });
 
-        finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${uploadedFile.data.id}`;
+        const fileId = uploadedFile.data.id;
+        try {
+          await drive.permissions.create({
+            fileId: fileId,
+            resource: {
+              role: 'reader',
+              type: 'anyone'
+            }
+          });
+        } catch (permErr) {
+          console.error('Error setting public permissions for signature file:', permErr);
+        }
+
+        finalSignatureUrl = `https://docs.google.com/uc?export=download&id=${fileId}`;
       } catch (uploadErr) {
         console.error('Error uploading signature file to Drive:', uploadErr);
         finalSignatureUrl = signatureImg;
