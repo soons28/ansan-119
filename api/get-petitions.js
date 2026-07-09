@@ -34,18 +34,30 @@ async function handler(req, res) {
     });
 
     const rows = getRows.data.values || [];
-    const roster = rows.map((row, idx) => ({
-      index: row[0] ? parseInt(row[0], 10) : (idx + 1),
-      name: row[1] || '',
-      address: row[2] || '',
-      userType: row[3] || '구분소유자',
-      phone: row[4] || '',
-      ip: row[5] || '',
-      device: row[6] || '',
-      timestamp: row[7] || '',
-      signatureImg: row[8] || '',
-      signatureBase64: row[11] || '' // L열(12번째 데이터)에서 base64 데이터를 정상 조회해 옵니다.
-    }));
+    const roster = rows.map((row, idx) => {
+      let rawImg = '';
+      if (row && row.length > 8 && row[8]) {
+        rawImg = String(row[8]).trim();
+      }
+      
+      let rawBase64 = '';
+      if (row && row.length > 11 && row[11]) {
+        rawBase64 = String(row[11]).trim();
+      }
+
+      return {
+        index: (row && row[0]) ? parseInt(row[0], 10) : (idx + 1),
+        name: (row && row[1]) ? String(row[1]).trim() : '',
+        address: (row && row[2]) ? String(row[2]).trim() : '',
+        userType: (row && row[3]) ? String(row[3]).trim() : '구분소유자',
+        phone: (row && row[4]) ? String(row[4]).trim() : '',
+        ip: (row && row[5]) ? String(row[5]).trim() : '',
+        device: (row && row[6]) ? String(row[6]).trim() : '',
+        timestamp: (row && row[7]) ? String(row[7]).trim() : '',
+        signatureImg: rawImg,
+        signatureBase64: rawBase64
+      };
+    });
 
     return res.status(200).json({ success: true, roster });
   } catch (error) {
