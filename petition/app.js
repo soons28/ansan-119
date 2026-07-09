@@ -483,12 +483,17 @@ document.addEventListener('DOMContentLoaded', () => {
             chunk.forEach((member, i) => {
                 const globalIndex = startIdx + i + 1;
                 
-                // 1st Priority: Use base64 signature data fetched directly from L-column of Google Sheet
-                let printSignSrc = member.signatureBase64 || '';
-
-                // 2nd Priority: Fallback to local storage base64 backup or parse drive link
-                if (!printSignSrc || !printSignSrc.startsWith('data:image/')) {
-                    const driveImgUrl = member.signatureImg || '';
+                // 1st Priority: Use direct base64 signature from signatureImg (column I) if it starts with data:image
+                let printSignSrc = '';
+                const rawSignImg = member.signatureImg || '';
+                
+                if (rawSignImg && rawSignImg.startsWith('data:image/')) {
+                    printSignSrc = rawSignImg;
+                } else if (member.signatureBase64 && member.signatureBase64.startsWith('data:image/')) {
+                    printSignSrc = member.signatureBase64;
+                } else {
+                    // 2nd Priority: Fallback to local storage base64 backup or parse drive link
+                    const driveImgUrl = rawSignImg;
                     if (driveImgUrl && driveImgUrl.startsWith('http')) {
                         // Try local storage match
                         const storageKey = `ansan_petition_roster_data`;
