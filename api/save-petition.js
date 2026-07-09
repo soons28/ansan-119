@@ -112,13 +112,17 @@ async function handler(req, res) {
     // Append to sheet (11개 열 등록 - K열에 IMAGE 자동 수식 탑재)
     const formulaRowIdx = nextIndex + 1; // row index in sheet (1-based, e.g. row 2)
     const imageFormula = `=IMAGE(I${formulaRowIdx})`;
+    
+    // Prepend single quote to force string type for phone number (preventing Google Sheets from stripping leading zero)
+    const rawPhone = (phone || '').trim();
+    const formattedPhoneForSheet = rawPhone ? `'${rawPhone}` : '';
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `${targetSheetTitle}!A2`,
       valueInputOption: 'USER_ENTERED', // MUST use USER_ENTERED to parse formula
       resource: {
-        values: [[nextIndex, name.trim(), address.trim(), (userType || '구분소유자').trim(), (phone || '').trim(), clientIp, clientDevice, timestampStr, finalSignatureUrl, pin.trim(), imageFormula]]
+        values: [[nextIndex, name.trim(), address.trim(), (userType || '구분소유자').trim(), formattedPhoneForSheet, clientIp, clientDevice, timestampStr, finalSignatureUrl, pin.trim(), imageFormula]]
       }
     });
 

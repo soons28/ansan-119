@@ -290,6 +290,24 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/'/g, "&#039;");
     }
 
+    function formatPhoneNumber(phone) {
+        if (!phone) return '-';
+        let cleaned = ('' + phone).replace(/\D/g, '');
+        
+        // Restore missing leading zero for 10-digit Korean mobile numbers starting with '10'
+        if (cleaned.length === 10 && cleaned.startsWith('10')) {
+            cleaned = '0' + cleaned;
+        }
+        
+        if (cleaned.length === 11) {
+            return cleaned.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        } else if (cleaned.length === 10) {
+            return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+        }
+        
+        return phone;
+    }
+
     // 7. Operations
     async function addMember(name, address, phone) {
         if (!name.trim() || !address.trim() || !phone.trim()) {
@@ -492,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td style="font-weight:700;">${escapeHtml(member.name)}</td>
                         <td style="font-weight:600;">${escapeHtml(member.userType || '구분소유자')}</td>
                         <td class="left-align">${escapeHtml(member.address)}</td>
-                        <td>${escapeHtml(member.phone || '-')}</td>
+                        <td>${escapeHtml(formatPhoneNumber(member.phone))}</td>
                         <td>${signHTML}</td>
                         <td class="preview-roster-log">
                             IP: ${member.ip} <br> 기기: ${simplifyUserAgent(member.device)} <br> 일시: ${member.timestamp}
