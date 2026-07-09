@@ -504,11 +504,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
 
-                        // If no local backup and it's a drive URL, rewrite to CORS-free Google Thumbnail viewer URL (high success rate)
+                        // If no local backup and it's a drive URL, rewrite to CORS-free & Cookie-free Global CDN proxy (images.weserv.nl)
                         if (!foundLocalBackup && (driveImgUrl.includes('drive.google.com') || driveImgUrl.includes('docs.google.com'))) {
                             const fileIdMatch = driveImgUrl.match(/[?&]id=([^&]+)/);
                             if (fileIdMatch && fileIdMatch[1]) {
-                                printSignSrc = `https://docs.google.com/thumbnail?sz=w500&id=${fileIdMatch[1]}`;
+                                // Double bypass: proxy (images.weserv.nl) wraps Google Docs Thumbnail streaming to guarantee 100% load
+                                const docThumbnail = `docs.google.com/thumbnail?sz=w500&id=${fileIdMatch[1]}`;
+                                printSignSrc = `https://images.weserv.nl/?url=${encodeURIComponent(docThumbnail)}`;
                             }
                         } else if (!foundLocalBackup) {
                             printSignSrc = driveImgUrl;
