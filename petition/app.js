@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 if (data.success) {
                     roster = data.roster;
+                    saveData();
                     rosterCountSpan.textContent = roster.length;
                     renderDashboardRoster();
                     return;
