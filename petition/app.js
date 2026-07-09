@@ -508,8 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         // If no local backup and it's a drive URL, rewrite to authorized backend signature-proxy endpoint
-                        if (!foundLocalBackup && (driveImgUrl.includes('drive.google.com') || driveImgUrl.includes('docs.google.com'))) {
-                            const fileIdMatch = driveImgUrl.match(/[?&]id=([^&]+)/);
+                        if (!foundLocalBackup && (driveImgUrl.includes('drive.google.com') || driveImgUrl.includes('docs.google.com') || driveImgUrl.includes('googleusercontent.com'))) {
+                            // Wide regex matching all Drive URL patterns
+                            const fileIdMatch = driveImgUrl.match(/(?:id=|\/d\/|srcid=)([\w_-]{25,50})/);
                             if (fileIdMatch && fileIdMatch[1]) {
                                 // Ultimate bypass: Internal Node server downloads media directly from Drive and streams it back to browser
                                 printSignSrc = `/api/signature-proxy?id=${fileIdMatch[1]}`;
