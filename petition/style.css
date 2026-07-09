@@ -693,20 +693,25 @@ textarea {
     }
     .preview-roster-table th,
     .preview-roster-table td {
-        padding: 4pt 4pt !important;
-        font-size: 8.5pt !important;
+        padding: 3px 3px !important;
+        font-size: 7.8pt !important;
+        line-height: 1.2 !important;
+    }
+    .preview-roster-table tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
     }
     .preview-roster-log {
-        font-size: 7.2pt !important;
-        line-height: 1.15 !important;
+        font-size: 6.2pt !important;
+        line-height: 1.1 !important;
     }
     .signature-img-preview {
-        max-height: 32px !important;
-        max-width: 70px !important;
+        max-height: 28px !important;
+        max-width: 65px !important;
     }
     .verification-legal-note {
-        padding: 4pt 6pt !important;
-        font-size: 7.2pt !important;
+        padding: 3pt 5pt !important;
+        font-size: 7.0pt !important;
     }
 
     .preview-roster-table th {
