@@ -492,21 +492,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Number of roster rows per A4 page to prevent overflow
         const rowsPerPage = 12;
         const totalRosterPages = Math.ceil(roster.length / rowsPerPage);
-        const totalPages = totalRosterPages + 1; // Page 1 + Roster pages
+        const totalPages = totalRosterPages + 2; // Page 1 + Page 2 + Roster pages
         
         let newContent = '';
 
-        // Add Page 1: Main Letter Page
-        const page1Element = document.getElementById('page-main').cloneNode(true);
+        // Add Page 1: Main Letter Page 1
+        const page1Element = document.getElementById('page-main-1').cloneNode(true);
         const page1Footer = page1Element.querySelector('.page-number-footer');
         if (page1Footer) {
             page1Footer.textContent = `1 / ${totalPages}`;
         }
         newContent += page1Element.outerHTML;
 
-        // Compile cumulative Roster pages (Pages 2+)
+        // Add Page 2: Main Letter Page 2
+        const page2Element = document.getElementById('page-main-2').cloneNode(true);
+        const page2Footer = page2Element.querySelector('.page-number-footer');
+        if (page2Footer) {
+            page2Footer.textContent = `2 / ${totalPages}`;
+        }
+        newContent += page2Element.outerHTML;
+
+        // Compile cumulative Roster pages (Pages 3+)
         for (let pageIdx = 0; pageIdx < totalRosterPages; pageIdx++) {
-            const pageNum = pageIdx + 2;
+            const pageNum = pageIdx + 3;
             const startIdx = pageIdx * rowsPerPage;
             const endIdx = Math.min(startIdx + rowsPerPage, roster.length);
             const chunk = roster.slice(startIdx, endIdx);

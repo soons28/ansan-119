@@ -386,6 +386,10 @@ textarea {
     flex-direction: column;
     overflow: hidden; /* Avoid overflow leak */
 }
+.image-page {
+    padding: 0 !important;
+    overflow: hidden !important;
+}
 
 /* Document Typography inside A4 Page */
 .doc-main-title {
