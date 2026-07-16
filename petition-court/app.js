@@ -664,9 +664,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSavedData();
 
     // Set today's date dynamically on the petition main document
-    const docDate = document.getElementById('doc-date');
-    if (docDate) {
-        const today = new Date();
-        docDate.textContent = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
-    }
+    const today = new Date();
+    const yrEl = document.getElementById('print-year');
+    const moEl = document.getElementById('print-month');
+    const dyEl = document.getElementById('print-day');
+    if (yrEl) yrEl.textContent = today.getFullYear();
+    if (moEl) moEl.textContent = today.getMonth() + 1;
+    if (dyEl) dyEl.textContent = today.getDate();
 });
