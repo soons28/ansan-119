@@ -446,11 +446,11 @@ textarea {
     margin-bottom: 12pt !important;
 }
 .court-doc-body {
-    font-size: 8.2pt !important;
-    line-height: 1.32 !important;
+    font-size: 8.0pt !important;
+    line-height: 1.30 !important;
 }
 .court-doc-body p {
-    margin-bottom: 2pt !important;
+    margin: 0 0 4px 0 !important;
 }
 .court-a4-page {
     padding: 8mm 15mm 6mm 15mm !important;
@@ -675,6 +675,13 @@ textarea {
     }
     .doc-body p {
         margin-bottom: 4pt !important; /* Tighten paragraph gap on print */
+    }
+    .court-doc-body {
+        font-size: 8.0pt !important;
+        line-height: 1.30 !important;
+    }
+    .court-doc-body p {
+        margin: 0 0 4px 0 !important;
     }
     .doc-footer {
         margin-top: 4pt !important;
