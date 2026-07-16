@@ -445,6 +445,13 @@ textarea {
 .doc-body p {
     margin-bottom: 12pt !important;
 }
+.court-doc-body {
+    font-size: 9.1pt !important;
+    line-height: 1.44 !important;
+}
+.court-doc-body p {
+    margin-bottom: 6pt !important;
+}
 
 .doc-footer {
     margin-top: auto;
