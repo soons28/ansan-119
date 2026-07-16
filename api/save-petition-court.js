@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const { Readable } = require('stream');
 
-const SPREADSHEET_ID = '15hUBBN8mKwY0g00b6cKb01SVCeLRhXxzHKIqq3DhZu0';
+const SPREADSHEET_ID = '1YXY8j6oxiz5WC2iBxX1oqx5QqEeYUGnqbKNAPEBHC8Y';
 const TARGET_FOLDER_ID = '16ijyx6y3uSeXLqyN3InXKAYAXz3GQTYA'; // 05_법원제출 탄원서 폴더 ID
 
 async function handler(req, res) {
