@@ -798,6 +798,16 @@ textarea {
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
     }
+    .image-page {
+        height: auto !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+    .image-page img {
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+    }
 
     /* Adjust font scaling inside A4 Page for smaller screens */
     .doc-main-title {
