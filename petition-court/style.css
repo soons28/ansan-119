@@ -446,11 +446,14 @@ textarea {
     margin-bottom: 12pt !important;
 }
 .court-doc-body {
-    font-size: 9.1pt !important;
-    line-height: 1.44 !important;
+    font-size: 8.2pt !important;
+    line-height: 1.32 !important;
 }
 .court-doc-body p {
-    margin-bottom: 6pt !important;
+    margin-bottom: 2pt !important;
+}
+.court-a4-page {
+    padding: 8mm 15mm 6mm 15mm !important;
 }
 
 .doc-footer {
