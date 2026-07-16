@@ -220,6 +220,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 5. Save & Load
+    function updateAttachmentCount() {
+        const docAttachment = document.getElementById('doc-attachment');
+        if (docAttachment) {
+            const rowsPerPage = 12;
+            const totalPages = Math.max(1, Math.ceil(roster.length / rowsPerPage));
+            docAttachment.textContent = `※ 별첨 : 탄원인 연명부(서명 및 날인) ${totalPages}부.`;
+        }
+    }
+
     async function loadSavedData() {
         try {
             const res = await fetch(`/api/get-petitions`);
@@ -230,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveData();
                     rosterCountSpan.textContent = roster.length;
                     renderDashboardRoster();
+                    updateAttachmentCount();
                     return;
                 }
             }
@@ -252,12 +262,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         rosterCountSpan.textContent = roster.length;
         renderDashboardRoster();
+        updateAttachmentCount();
     }
 
     function saveData() {
         const storageKey = `ansan_petition_roster_data`;
         localStorage.setItem(storageKey, JSON.stringify(roster));
         rosterCountSpan.textContent = roster.length;
+        updateAttachmentCount();
     }
 
     // 6. Render Dashboard Table (Sidebar view)
@@ -459,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalMarkup = documentPagesContainer.innerHTML;
 
         // Number of roster rows per A4 page to prevent overflow
-        const rowsPerPage = 10;
+        const rowsPerPage = 12;
         const totalPages = Math.ceil(roster.length / rowsPerPage);
         
         let newContent = '';
@@ -623,4 +635,11 @@ document.addEventListener('DOMContentLoaded', () => {
     detectDeviceInfo();
     fetchPublicIp();
     loadSavedData();
+
+    // Set today's date dynamically on the petition main document
+    const docDate = document.getElementById('doc-date');
+    if (docDate) {
+        const today = new Date();
+        docDate.textContent = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+    }
 });
