@@ -472,22 +472,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Number of roster rows per A4 page to prevent overflow
         const rowsPerPage = 12;
-        const totalPages = Math.ceil(roster.length / rowsPerPage);
+        const totalRosterPages = Math.ceil(roster.length / rowsPerPage);
+        const totalPages = totalRosterPages + 2; // Page 1 + Page 2 + Roster pages
         
         let newContent = '';
 
-        // Add Page 1: Main Letter Page
-        const page1Element = document.getElementById('page-main').cloneNode(true);
-        // Update total pages footer
+        // Add Page 1: Main Letter Page 1
+        const page1Element = document.getElementById('page-main-1').cloneNode(true);
         const page1Footer = page1Element.querySelector('.page-number-footer');
         if (page1Footer) {
-            page1Footer.textContent = `1 / ${totalPages + 1}`;
+            page1Footer.textContent = `1 / ${totalPages}`;
         }
         newContent += page1Element.outerHTML;
 
-        // Compile cumulative Roster pages (Pages 2+)
-        for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
-            const pageNum = pageIdx + 2;
+        // Add Page 2: Main Letter Page 2
+        const page2Element = document.getElementById('page-main-2').cloneNode(true);
+        const page2Footer = page2Element.querySelector('.page-number-footer');
+        if (page2Footer) {
+            page2Footer.textContent = `2 / ${totalPages}`;
+        }
+        newContent += page2Element.outerHTML;
+
+        // Compile cumulative Roster pages (Pages 3+)
+        for (let pageIdx = 0; pageIdx < totalRosterPages; pageIdx++) {
+            const pageNum = pageIdx + 3;
             const startIdx = pageIdx * rowsPerPage;
             const endIdx = Math.min(startIdx + rowsPerPage, roster.length);
             const chunk = roster.slice(startIdx, endIdx);
@@ -597,7 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="verification-legal-note">
                             ※ 본 연명부는 개별 소유자/입주자가 직접 접속하여 작성하였으며, 기재된 IP 및 접속기기 환경 로그는 본인 작성 사실을 증명하는 법적 간접 증거로 효력을 가집니다.
                         </div>
-                        <p class="page-number-footer">${pageNum} / ${totalPages + 1}</p>
+                        <p class="page-number-footer">${pageNum} / ${totalPages}</p>
                     </div>
                 </article>
             `;
