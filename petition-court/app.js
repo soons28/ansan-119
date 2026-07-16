@@ -324,8 +324,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return phone;
     }
 
+    // Global State for preventing double submit
+    let isSubmitting = false;
+
     // 7. Operations
     async function addMember(name, address, phone) {
+        if (isSubmitting) return;
+        
         if (!name.trim() || !address.trim() || !phone.trim()) {
             alert('성명, 동호수, 휴대폰 번호를 모두 입력해주세요.');
             return;
@@ -347,6 +352,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkedTypeInput = document.querySelector('input[name="new-user-type"]:checked');
         const userType = checkedTypeInput ? checkedTypeInput.value : '구분소유자';
 
+        // Set submitting state
+        isSubmitting = true;
+        btnAddMember.disabled = true;
+        const originalBtnText = btnAddMember.textContent;
+        btnAddMember.textContent = '기록 중... 잠시만 기다려주세요';
+
         try {
             const res = await fetch('/api/save-petition-court', {
                 method: 'POST',
@@ -358,6 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('탄원 연명부 제출이 완료되었습니다. 참여해주셔서 대단히 감사합니다.');
             } else {
                 alert('제출 중 오류가 발생했습니다: ' + data.message + '\n\n[오류 상세 정보]\n' + (data.detail || '없음'));
+                isSubmitting = false;
+                btnAddMember.disabled = false;
+                btnAddMember.textContent = originalBtnText;
                 return;
             }
         } catch (e) {
@@ -400,6 +414,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btnClearPad.click();
         updateLivePreviewTexts();
         newNameInput.focus();
+
+        // Restore button state
+        isSubmitting = false;
+        btnAddMember.disabled = false;
+        btnAddMember.textContent = originalBtnText;
 
         await loadSavedData();
     }
@@ -473,29 +492,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Number of roster rows per A4 page to prevent overflow
         const rowsPerPage = 12;
         const totalRosterPages = Math.ceil(roster.length / rowsPerPage);
-        const totalPages = totalRosterPages + 2; // Page 1 + Page 2 + Roster pages
+        const totalPages = totalRosterPages + 1; // Page 1 + Roster pages
         
         let newContent = '';
 
-        // Add Page 1: Main Letter Page 1
-        const page1Element = document.getElementById('page-main-1').cloneNode(true);
+        // Add Page 1: Main Letter Page
+        const page1Element = document.getElementById('page-main').cloneNode(true);
         const page1Footer = page1Element.querySelector('.page-number-footer');
         if (page1Footer) {
             page1Footer.textContent = `1 / ${totalPages}`;
         }
         newContent += page1Element.outerHTML;
 
-        // Add Page 2: Main Letter Page 2
-        const page2Element = document.getElementById('page-main-2').cloneNode(true);
-        const page2Footer = page2Element.querySelector('.page-number-footer');
-        if (page2Footer) {
-            page2Footer.textContent = `2 / ${totalPages}`;
-        }
-        newContent += page2Element.outerHTML;
-
-        // Compile cumulative Roster pages (Pages 3+)
+        // Compile cumulative Roster pages (Pages 2+)
         for (let pageIdx = 0; pageIdx < totalRosterPages; pageIdx++) {
-            const pageNum = pageIdx + 3;
+            const pageNum = pageIdx + 2;
             const startIdx = pageIdx * rowsPerPage;
             const endIdx = Math.min(startIdx + rowsPerPage, roster.length);
             const chunk = roster.slice(startIdx, endIdx);
