@@ -481,6 +481,9 @@ textarea {
     text-align: right;
     font-weight: 500;
 }
+#doc-signer-line {
+    text-align: center !important;
+}
 
 .page-number-footer {
     text-align: center;
