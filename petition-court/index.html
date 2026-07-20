@@ -132,7 +132,7 @@
                     <!-- 삭제용 비밀번호 입력란 -->
                     <div class="form-group" style="margin-bottom: 16px;">
                         <label for="new-pin">삭제 비밀번호 (숫자 4자리)</label>
-                        <input type="password" id="new-pin" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="직접 지정할 숫자 4자리 (예: 1234)">
+                        <input type="password" id="new-pin" minlength="4" maxlength="4" pattern="\d{4}" inputmode="numeric" placeholder="직접 지정할 숫자 4자리 (예: 1234)" required>
                         <p style="font-size: 0.72rem; color: #64748b; margin-top: 4px; line-height: 1.35; word-break: keep-all;">
                             ※ 서명을 잘못 작성하여 본인이 직접 삭제할 때, 본인확인용으로 사용할 비밀번호 4자리를 정하여 입력해 주세요.
                         </p>
