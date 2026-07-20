@@ -391,18 +391,20 @@ textarea {
     overflow: hidden !important;
 }
 .court-a4-page {
-    padding: 20mm 20mm 20mm 20mm !important;
+    padding: 20mm 20mm 15mm 20mm !important;
 }
 
 /* Document Typography inside A4 Page */
 .doc-main-title {
-    font-size: 20pt; /* Scale down slightly */
+    font-size: 21pt; /* Scale down slightly */
     font-weight: 700;
     text-align: center;
-    margin-bottom: 12pt; /* Tighten margin */
+    margin-top: 10mm;
+    margin-bottom: 15mm; /* Tighten margin */
     color: #000000;
     letter-spacing: 2px;
 }
+
 
 .doc-sub-title {
     font-size: 16pt;
@@ -655,12 +657,12 @@ textarea {
         break-inside: avoid !important;
         width: 210mm !important;
         height: 297mm !important;
-        padding: 20mm 20mm 20mm 20mm !important; /* 화면 여백과 동일하게 적용 */
+        padding: 20mm 20mm 15mm 20mm !important; /* 아래 여백 조절하여 밀림 방지 */
         box-sizing: border-box !important;
     }
     
     .court-a4-page {
-        padding: 20mm 20mm 20mm 20mm !important;
+        padding: 20mm 20mm 15mm 20mm !important;
     }
     
     .a4-page:last-child {
