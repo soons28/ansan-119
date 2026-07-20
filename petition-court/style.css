@@ -391,7 +391,7 @@ textarea {
     overflow: hidden !important;
 }
 .court-a4-page {
-    padding: 10mm 15mm 10mm 15mm !important;
+    padding: 20mm 20mm 20mm 20mm !important;
 }
 
 /* Document Typography inside A4 Page */
@@ -453,15 +453,15 @@ textarea {
     margin-bottom: 12pt !important;
 }
 .page1-body {
-    font-size: 9.3pt !important;
-    line-height: 1.48 !important;
+    font-size: 10.2pt !important;
+    line-height: 1.62 !important;
 }
 .page1-body p {
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
 }
 .page2-body {
     font-size: 10.5pt !important;
-    line-height: 1.68 !important;
+    line-height: 1.62 !important;
 }
 .page2-body p {
     margin-bottom: 12px !important;
