@@ -270,9 +270,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.2.0) -->
+      <!-- VERSION BANNER (v3.3.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.2.0 - 미리보기 팝업창 내 '🔍+ 확대 / 🔍- 축소 / ↺ 원본' 줌 컨트롤러 추가 완료 (어르신 가독성 개선)
+          🔥 v3.3.0 - 로컬 캐싱(0초 즉시 로딩) & 비동기 이미지 디코딩 속도 최적화 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -600,14 +600,14 @@
       if (isImg) {
         inlinePreview = `
           <div onclick="openPreviewPopup('${url}', '${name.replace(/'/g, "\\'")}', '${(noticeTitle||'').replace(/'/g, "\\'")}')" style="margin-top: 12px; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; position: relative; text-align: center; padding: 8px;">
-            <img src="${url}" alt="첨부 이미지 미리보기" style="width: 100%; height: auto; max-height: 700px; object-fit: contain; display: block; margin: 0 auto; border-radius: 8px;" />
+            <img src="${url}" alt="첨부 이미지 미리보기" loading="lazy" decoding="async" style="width: 100%; height: auto; max-height: 700px; object-fit: contain; display: block; margin: 0 auto; border-radius: 8px;" />
             <div style="position: absolute; bottom: 16px; right: 16px; background: rgba(0,0,0,0.8); color: white; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">🔍 클릭하여 팝업창으로 크게보기</div>
           </div>
         `;
       } else if (isPdf) {
         inlinePreview = `
           <div style="margin-top: 12px; border-radius: 12px; overflow: hidden; height: 650px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
-            <iframe src="${url}#toolbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
+            <iframe src="${url}#toolbar=0" loading="lazy" style="width: 100%; height: 100%; border: none;"></iframe>
           </div>
         `;
       }
@@ -653,29 +653,16 @@
       }
     }
 
-    async function loadNotices() {
-      const container = document.getElementById('noticeContainer');
-      const { data, error } = await supabaseClient
-        .from('notices')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) {
-        container.innerHTML = `<div style="color: #f87171; font-size: 13.5px;">공지사항을 로드할 수 없습니다.</div>`;
-        return;
-      }
-
+    function renderNoticesHtml(data) {
       if (!data || data.length === 0) {
-        container.innerHTML = `
+        return `
           <div style="background: rgba(255,255,255,0.03); border: 1px dashed var(--card-border); border-radius: 12px; padding: 20px; text-align: center; color: var(--text-light); font-size: 14px;">
             등록된 공지사항이 없습니다.
           </div>
         `;
-        return;
       }
 
-      container.innerHTML = data.map((item, index) => {
+      return data.map((item, index) => {
         const isLatest = index === 0;
         return `
           <div id="notice-item-${item.id}" class="notice-accordion-item ${isLatest ? 'expanded' : ''}" style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; overflow: hidden; transition: all 0.25s ease;">
@@ -702,6 +689,33 @@
       }).join('');
     }
 
+    async function loadNotices() {
+      const container = document.getElementById('noticeContainer');
+
+      // 1️⃣ 캐시 데이터가 있으면 0초 즉시 렌더링
+      const cachedDataStr = localStorage.getItem('ansan_notices_cache');
+      if (cachedDataStr) {
+        try {
+          const cachedData = JSON.parse(cachedDataStr);
+          container.innerHTML = renderNoticesHtml(cachedData);
+        } catch (e) {}
+      }
+
+      // 2️⃣ Supabase 백그라운드 최신 데이터 조회 및 갱신
+      const { data, error } = await supabaseClient
+        .from('notices')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        if (!cachedDataStr) {
+          container.innerHTML = `<div style="color: #f87171; font-size: 13.5px;">공지사항을 로드할 수 없습니다.</div>`;
+        }
+        return;
+      }
+
+      // 3️⃣ 최신 데이터로 화면 업데이트 및 캐시 저장
     loadNotices();
   </script>
 </body>
