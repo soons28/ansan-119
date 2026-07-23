@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC 전용 법원제출 탄원서 (서식 미리보기 & PDF 다운로드)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/petition-court-paper/style.css?v=14.0">
+    <!-- html2canvas and html2pdf.js for Client-side PDF Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Control Panel (Sidebar) -->
+        <aside class="control-panel no-print">
+            <header class="panel-header">
+                <div class="logo-area">
+                    <span class="logo-icon">⚖️</span>
+                    <div>
+                        <h1>법원 탄원서 작성기</h1>
+                        <p class="subtitle">💻 PC 전용 서식 미리보기 & PDF 출력</p>
+                    </div>
+                </div>
+                <a href="/" class="btn-home" title="메인 화면으로 이동">포털 메인</a>
+            </header>
+
+            <div class="panel-content">
+                <!-- PC 전용 안내 카드 -->
+                <div class="pc-notice-banner">
+                    💻 <strong>PC 전용 작성기</strong> : 본 화면은 PC 환경에 최적화되어 있습니다.
+                </div>
+
+                <!-- 사용 가이드 / 이용 안내 카드 -->
+                <div class="guide-card">
+                    <div class="guide-header">
+                        <span class="guide-icon">📖</span>
+                        <h3>탄원서 사용 및 수기 작성 방법 (PC 전용)</h3>
+                    </div>
+                    <div class="guide-body">
+                        <div class="guide-step">
+                            <span class="step-badge">방법 1</span>
+                            <div class="step-text">
+                                <strong>PC에서 정보 입력 후 출력 / PDF 다운로드</strong>
+                                <p>입력란에 성명, 생년월일(6자리), 주소, 동호수, 연락처를 입력하시면 오른쪽 양식에 실시간으로 반영됩니다. 입력 후 [PDF 다운로드] 또는 [A4 인쇄하기]를 누르신 뒤, <strong>출력된 종이의 (서명)란에 반드시 자필 서명 또는 도장을 찍어주세요.</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="guide-step">
+                            <span class="step-badge step-badge-green">방법 2</span>
+                            <div class="step-text">
+                                <strong>빈 양식으로 인쇄 후 종이에 수기 작성</strong>
+                                <p>입력란을 비워둔 채 [PDF 다운로드]나 [인쇄하기]를 누르면 빈 양식이 출력됩니다. 출력된 종이에 아래와 같이 수기로 자필 작성해 주세요:</p>
+                                <ul class="guide-bullet-list">
+                                    <li><strong>성명 (서명)</strong>: 성명을 입력(또는 수기)하시고 (서명)란에는 반드시 자필 서명 또는 도장을 찍어주세요.</li>
+                                    <li><strong>주민등록번호</strong>: 생년월일 6자리(예: 700101)를 작성해 주세요.</li>
+                                    <li><strong>동호수 & 주소</strong>: 소유하신 상가 동·호수 및 주소를 작성해 주세요.</li>
+                                    <li><strong>연락처</strong>: 연락받으실 휴대전화 번호를 작성해 주세요.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="guide-note">
+                            💡 <strong>작성일자 안내</strong>: 작성일자는 인쇄나 PDF 다운로드 시 당일 날짜로 자동 기록됩니다.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 인적사항 입력 폼 -->
+                <section class="config-section">
+                    <h2 class="section-title">인적사항 입력 (선택)</h2>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">
+                        ※ 입력 시 오른쪽에 실시간 반영됩니다. 비워두시면 <strong>빈칸 양식 그대로 출력</strong>됩니다.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="input-name">성명</label>
+                        <input type="text" id="input-name" placeholder="예: 홍길동">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-birth">생년월일 (숫자 6자리만 입력)</label>
+                        <input type="text" id="input-birth" placeholder="예: 700101" maxlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label>주소지 빠른 선택 (소유 구분)</label>
+                        <div class="address-chips">
+                            <button type="button" class="chip-btn active" id="chip-default" data-address="경기도 안산시 단원구 산단로 326 안산유통상가">기본</button>
+                            <button type="button" class="chip-btn" id="chip-A" data-address="경기도 안산시 단원구 산단로 342 안산유통상가 편익A동">편익A동</button>
+                            <button type="button" class="chip-btn" id="chip-B" data-address="경기도 안산시 단원구 산단로 326 안산유통상가 편익B동">편익B동</button>
+                            <button type="button" class="chip-btn" id="chip-basement" data-address="경기도 안산시 단원구 산단로 326 안산유통상가 지하">지하</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-address">상세 주소 (직접 수정 가능)</label>
+                        <input type="text" id="input-address" value="경기도 안산시 단원구 산단로 326 안산유통상가">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-unit">소유 동·호수</label>
+                        <input type="text" id="input-unit" placeholder="예: 19동 101호 또는 지하 나-40호">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-phone">연락처 (- 자동입력)</label>
+                        <input type="tel" id="input-phone" placeholder="예: 010-1234-5678" maxlength="13">
+                    </div>
+                </section>
+
+                <!-- 제어 버튼들 -->
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-primary" id="btn-download-pdf">
+                        <span>📥 PDF 다운로드 (A4 1장)</span>
+                    </button>
+                    <button type="button" class="btn btn-success" id="btn-print">
+                        <span>🖨️ A4 인쇄하기 (1장)</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="btn-reset">
+                        <span>🔄 입력 초기화 (빈 양식)</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Document Preview Canvas (Always visible, formatted for A4 print) -->
+        <main class="preview-canvas">
+            <div class="canvas-header no-print">
+                <span class="badge">A4 원본 미리보기 (PC 전용 1장 출력)</span>
+                <span class="info-text">첨부 원본 서식과 100% 동일한 A4 레이아웃입니다.</span>
+            </div>
+
+            <div class="document-pages">
+                <!-- Single Page Court Petition -->
+                <article class="a4-page" id="petition-document">
+                    <h1 class="doc-main-title">탄  원  서</h1>
+
+                    <div class="meta-header-box">
+                        <div class="meta-line-item">
+                            <span class="meta-bullet">• 사건번호 :&nbsp;</span>
+                            <span class="meta-val-bold">2026 카합 50149</span>
+                        </div>
+                        <div class="meta-line-grid">
+                            <div class="grid-col-1">
+                                <span class="meta-bullet">• 성&nbsp;&nbsp;&nbsp;&nbsp;명 :&nbsp;</span>
+                                <span id="preview-name" class="meta-field-name"></span>
+                                <span class="sign-label">(서명)</span>
+                            </div>
+                            <div class="grid-col-2">
+                                <span class="meta-label">동호수 :&nbsp;</span>
+                                <span id="preview-unit" class="meta-field-val"></span>
+                            </div>
+                            <div class="grid-col-3">
+                                <span class="meta-label">연락처 :&nbsp;</span>
+                                <span id="preview-phone" class="meta-field-val"></span>
+                            </div>
+                        </div>
+                        <div class="meta-line-item">
+                            <span class="meta-bullet">• 주민등록번호 :&nbsp;</span>
+                            <span id="preview-jumin" class="meta-field-val"></span>
+                        </div>
+                        <div class="meta-line-item">
+                            <span class="meta-bullet">• 주&nbsp;&nbsp;&nbsp;&nbsp;소 :&nbsp;</span>
+                            <span id="preview-address" class="meta-field-val"></span>
+                        </div>
+                    </div>
+
+                    <div class="meta-hr"></div>
+
+                    <div class="doc-body-text">
+                        <p class="p-header-bold">존경하는 재판장님께</p>
+
+                        <p>저희는 안산유통상가의 구분소유자 및 입점자입니다.</p>
+
+                        <p>저희는 재판장님의 공정한 판단을 믿으며, 안산유통상가가 하루빨리 정상적인 관리체계를 회복할 수 있기를 바라는 간절한 마음으로 이 탄원서를 제출합니다.</p>
+
+                        <p>2025 년 6 월 23 일 법원의 결정으로 임시관리인이 선임되었습니다. 선임 이후 6 개월 이내 총회를 개최하면서(2025.12.8.) 집합건물법 제 33 조 2 항이나 관리규약 어디에도 규정에 없는 위임장에 위임인의 신분증 사본과 위임인의 인감증명서 제출을 요구하여 총회가 정상적으로 진행되지 못하였습니다.(증 1)</p>
+
+                        <p>저희 구분소유자들은 집합건물법에 따라 5 분의 1 이상의 동의(이영신 외 265 명 약 30%이상)를 받아 총회소집을 요구(2026.3.5.)하였으나 받아들여지지 않아 법원에 총회소집허가를 신청하였습니다.(2026.3.23) 사건번호: 2026 비합 615 (증 2).</p>
+
+                        <p>임시관리인이 총회소집 공고 후 총회를 개최하였으나(2026.06.22.) 임시관리인이 지정한 넘버링이 된 위임장과 위임인 신분증 사본 제출을 요구하며 적법하게 받은 위임장은 인정하지 않아 임시관리인은 정족수 미달을 이유로 폐회를 하였습니다.(증 3)</p>
+
+                        <p>이에 참석자들은 강력한 항의 후 절차에 따라 총회를 계속 진행하여 의결권 행사자 : 856 중 직접참석: 40 명. 위임장: 488 명 합계: 528(61.68%), 면적: 63.046.66m2 직접참석: 614m2. 위임장: 42.684m2 합계: 43.298m2(68.68%)로 새로운 관리인을 선출 하였습니다. 현재 안산시청에 관리인 신고 접수까지 한 상태입니다.(증 4)</p>
+
+                        <p>그럼에도 불구하고 법원의 임시관리인 선임 결정이 계속 유지되면서 관리 주체와 관리에 혼란이 지속되고 있습니다.</p>
+
+                        <p class="p-body-bold">또한 전기요금(4.5.6 월분)과 수도요금( 2.3.4.5.6.7.월분)이 미납되어 독촉장과 단전. 단수의 위기에 쓰레기.폐기물 적치, 악취, 누수 등으로 관리가 제대로 이루어지지 않아 구분소유자와 입점들이 큰 불편과 피해를 겪고 있습니다.(증 5)</p>
+
+                        <p>입점자들이 납부한 관리비는 소송비용과 고문역. 자문역에 매월 각 100 만원씩 지출. 기타 비용(경조사)으로 사용 하였습니다. 임시관리인은 선임 이후 현재까지 공공요금을 한 차례도 납부하지 않았고( 수도 요금은 1 월분을 4 월 23 일에 납부 그 후 미납) (증 6) 상가 관리가 더욱 어려워졌습니다. 그 결과 약 2,000 여 구분소유자와 입점들이 큰 불편과 피해를 겪고 있습니다.</p>
+
+                        <p class="p-header-bold">존경하는 재판장님.</p>
+
+                        <p>임시관리인은 관리 공백을 해소하기 위한 임시적인 제도입니다. 이제 새로운 관리인이 적법한 절차를 거쳐 선출되고 신고 접수까지 마친 이상, 임시관리인을 계속 유지할 필요성은 상당 부분 해소되었다고 생각합니다.</p>
+
+                        <p>저희는 더 이상 분쟁과 갈등을 원하지 않습니다. 오직 안산유통상가가 하루빨리 정상적인 관리체계를 회복하여 안정적으로 운영되기를 간절히 바랄 뿐입니다.</p>
+
+                        <p>부디 재판장님께서 현재의 사정을 깊이 살펴 주시어 임시관리인 선임 결정을 취소하여 주시고, 새롭게 선출된 관리인이 조속히 정상적인 관리업무를 수행할 수 있도록 선처하여 주시기를 간곡히 탄원 드립니다.</p>
+
+                        <p>재판장님의 현명하고 공정한 판단으로 안산유통상가가 다시 안정과 질서를 되찾고, 구분소유자와 입점자들의 권익이 보호될 수 있기를 진심으로 기원합니다.</p>
+                    </div>
+
+                    <div class="doc-date-footer">
+                        <span id="preview-year">2026</span> 년 &nbsp;<span id="preview-month">7</span> 월 &nbsp;<span id="preview-day">&nbsp;&nbsp;&nbsp;&nbsp;</span> 일
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
+    <script src="/petition-court-paper/app.js?v=14.0"></script>
+</body>
+</html>
