@@ -1,0 +1,8 @@
+# Ignore document folders and non-web assets
+관리비 납부강요 대한 답변서 단체 작성용/
+구글드라이브이메일키/
+*.pdf
+*.docx
+*.txt
+.git/
+node_modules/

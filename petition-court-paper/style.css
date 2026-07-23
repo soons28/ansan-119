@@ -1,0 +1,649 @@
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --bg-dark: #0b0f19;
+    --panel-bg: #1e293b;
+    --border-color: #334155;
+    --accent: #3b82f6;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: var(--bg-dark);
+    color: #f8fafc;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* Control Panel (Sidebar) */
+.control-panel {
+    width: 430px;
+    background-color: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    z-index: 10;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+    overflow-y: auto;
+}
+
+.panel-header {
+    padding: 18px 20px;
+    background-color: #0f172a;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 1.8rem;
+}
+
+.panel-header h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.panel-header .subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-home:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.panel-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* PC Notice Banner */
+.pc-notice-banner {
+    background-color: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: center;
+}
+
+/* User Guide Card */
+.guide-card {
+    background-color: #0f172a;
+    border: 1px solid #3b82f6;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.guide-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1e293b;
+}
+
+.guide-icon {
+    font-size: 1.2rem;
+}
+
+.guide-header h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #38bdf8;
+}
+
+.guide-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.guide-step {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.step-badge {
+    display: inline-block;
+    align-self: flex-start;
+    background-color: #2563eb;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.step-badge-green {
+    background-color: #10b981;
+}
+
+.step-text {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.step-text strong {
+    color: #f8fafc;
+    font-size: 0.85rem;
+}
+
+.guide-bullet-list {
+    margin-top: 6px;
+    padding-left: 14px;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.guide-bullet-list li {
+    margin-bottom: 4px;
+}
+
+.guide-bullet-list strong {
+    color: #38bdf8;
+}
+
+.guide-note {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-left: 3px solid #3b82f6;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    color: #93c5fd;
+    line-height: 1.4;
+    margin-top: 4px;
+}
+
+.info-card {
+    background-color: rgba(30, 41, 59, 0.7);
+    border: 1px solid #334155;
+    border-radius: var(--radius-md);
+    padding: 14px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.info-card h3 {
+    font-size: 0.92rem;
+    color: #60a5fa;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.config-section {
+    background-color: #182234;
+    border: 1px solid #2d3748;
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--accent);
+    padding-left: 8px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 9px 12px;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-size: 0.88rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Address Preset Chips (Consent Style) */
+.address-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.chip-btn {
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.chip-btn:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.chip-btn.active {
+    background-color: #dbeafe;
+    border-color: #2563eb;
+    color: #1d4ed8;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #334155;
+    color: #f1f5f9;
+}
+
+.btn-secondary:hover {
+    background-color: #475569;
+}
+
+/* Preview Canvas */
+.preview-canvas {
+    flex: 1;
+    background-color: #090d16;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.canvas-header {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.canvas-header .badge {
+    background-color: #2563eb;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.canvas-header .info-text {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+/* A4 Page Layout - STRICT COMPACT 1-PAGE FIT (297mm) */
+.document-pages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.a4-page {
+    width: 210mm;
+    height: 297mm;
+    max-height: 297mm;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 12mm 18mm 10mm 18mm;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    box-sizing: border-box;
+    position: relative;
+    font-family: 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+}
+
+/* Main Title: 탄  원  서 */
+.doc-main-title {
+    font-size: 20pt;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 14px;
+    margin-top: 0;
+    margin-bottom: 3mm;
+    color: #000000;
+}
+
+/* Meta Header Box */
+.meta-header-box {
+    font-size: 9.2pt;
+    line-height: 1.55;
+    color: #000000;
+}
+
+.meta-line-item {
+    display: flex;
+    align-items: baseline;
+}
+
+.meta-bullet {
+    font-weight: 700;
+    color: #000000;
+}
+
+.meta-val-bold {
+    font-weight: 700;
+}
+
+/* Line 2 Grid Alignment: 성명 | 동호수 | 연락처 */
+.meta-line-grid {
+    display: flex;
+    align-items: baseline;
+}
+
+.grid-col-1 {
+    width: 32%;
+    display: flex;
+    align-items: baseline;
+}
+
+.grid-col-2 {
+    width: 34%;
+    display: flex;
+    align-items: baseline;
+}
+
+.grid-col-3 {
+    width: 34%;
+    display: flex;
+    align-items: baseline;
+}
+
+.meta-label {
+    font-weight: 700;
+}
+
+.sign-label {
+    margin-left: 6px;
+    font-size: 9pt;
+    color: #000000;
+}
+
+/* Name field minimum width to ensure handwritten space for blank document printing */
+.meta-field-name {
+    display: inline-block;
+    min-width: 65px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.meta-field-val {
+    font-weight: 700;
+    color: #000000;
+}
+
+/* Divider Line */
+.meta-hr {
+    border-bottom: 1.5px solid #000000;
+    margin-top: 3mm;
+    margin-bottom: 3mm;
+}
+
+/* Document Body Text */
+.doc-body-text {
+    font-size: 9.2pt;
+    line-height: 1.48;
+    color: #000000;
+    text-align: justify;
+    word-break: keep-all;
+    flex: 1;
+}
+
+.doc-body-text p {
+    margin-bottom: 1.8mm;
+    text-indent: 0;
+}
+
+/* Bold paragraphs matching original document */
+.doc-body-text p.p-header-bold {
+    font-weight: 800;
+    font-size: 9.5pt;
+    margin-top: 2.5mm;
+    margin-bottom: 1.8mm;
+}
+
+.doc-body-text p.p-body-bold {
+    font-weight: 800;
+}
+
+/* Footer Date - Positioned cleanly at bottom */
+.doc-date-footer {
+    margin-top: 4mm;
+    margin-bottom: 2mm;
+    text-align: center;
+    font-size: 11pt;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: #000000;
+}
+
+
+/* Responsive Mobile & Tablet Layout */
+@media screen and (max-width: 1024px) {
+    body {
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .app-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .control-panel {
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .preview-canvas {
+        width: 100%;
+        padding: 16px 8px;
+        overflow-x: auto;
+        overflow-y: visible;
+        align-items: center;
+    }
+
+    .a4-page {
+        transform-origin: top center;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .panel-header {
+        padding: 14px 16px;
+    }
+
+    .panel-header h1 {
+        font-size: 1rem;
+    }
+
+    .panel-content {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .preview-canvas {
+        padding: 12px 4px;
+    }
+
+    /* Scale A4 paper down visually on mobile screens so it fits without overflow */
+    .a4-page {
+        width: 210mm;
+        transform: scale(0.85);
+        transform-origin: top center;
+        margin-bottom: -45mm; /* Compensate for blank space created by CSS scale */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .a4-page {
+        transform: scale(0.68);
+        margin-bottom: -95mm;
+    }
+}
+
+/* Print Specific Styles - ELIMINATES BLANK PAGE 2 COMPLETELY */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 0 !important;
+    }
+
+    html, body {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        overflow: hidden !important;
+    }
+
+    /* Hide everything in body */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Only show document page, positioned absolutely */
+    #petition-document, #petition-document * {
+        visibility: visible !important;
+    }
+
+    #petition-document {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        padding: 12mm 18mm 10mm 18mm !important;
+        box-sizing: border-box !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        page-break-after: avoid !important;
+        page-break-before: avoid !important;
+        page-break-inside: avoid !important;
+    }
+}
+
+
