@@ -339,6 +339,7 @@
         if (updateError) {
           alert('수정 실패: ' + updateError.message);
         } else {
+          localStorage.removeItem('ansan_notices_cache');
           alert('공지사항이 수정되었습니다!');
           cancelEditMode();
           loadAdminNotices();
@@ -351,6 +352,7 @@
         if (insertError) {
           alert('게시글 등록 실패: ' + insertError.message);
         } else {
+          localStorage.removeItem('ansan_notices_cache');
           alert('공지사항이 성공적으로 등록되었습니다!');
           document.getElementById('noticeForm').reset();
           loadAdminNotices();
@@ -375,6 +377,7 @@
       if (error) {
         alert('삭제 실패: ' + error.message);
       } else {
+        localStorage.removeItem('ansan_notices_cache');
         alert('공지사항이 삭제되었습니다.');
         if (editingNoticeId === id) {
           cancelEditMode();

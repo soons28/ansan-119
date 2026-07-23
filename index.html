@@ -291,9 +291,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.5.0) -->
+      <!-- VERSION BANNER (v3.5.1) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.5.0 - 첨부문서 인쇄 시 헤더/버튼 자동 숨김 및 순수 첨부파일 1:1 맞춤 A4 출력을 위한 프린트 전용 스타일(@media print) 적용 완료
+          🔥 v3.5.1 - 공지사항 수정/삭제 시 로컬 캐시 즉시 비우기 및 메인 포털 실시간 동기화 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -715,9 +715,21 @@
         return;
       }
 
-      // 3️⃣ 최신 데이터로 화면 업데이트 및 캐시 저장
+      // 3️⃣ 사용자가 현재 열어둔 아코디언 항목 ID 보존
+      const expandedItem = document.querySelector('.notice-accordion-item.expanded');
+      const expandedId = expandedItem ? expandedItem.id.replace('notice-item-', '') : null;
+
+      // 4️⃣ 최신 데이터로 화면 업데이트 및 캐시 저장
       localStorage.setItem('ansan_notices_cache', JSON.stringify(data));
       container.innerHTML = renderNoticesHtml(data);
+
+      // 5️⃣ 사용자가 이전에 열어둔 항목이 있었다면 유지
+      if (expandedId) {
+        const targetEl = document.getElementById(`notice-item-${expandedId}`);
+        if (targetEl && !targetEl.classList.contains('expanded')) {
+          toggleNoticeAccordion(expandedId);
+        }
+      }
     }
 
     loadNotices();
