@@ -270,9 +270,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.1.0) -->
+      <!-- VERSION BANNER (v3.2.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.1.0 - 공지사항 첨부문서/이미지 '🖨️ 즉시 인쇄하기' 버튼 (팝업 뷰어 및 포털 본문) 추가 완료
+          🔥 v3.2.0 - 미리보기 팝업창 내 '🔍+ 확대 / 🔍- 축소 / ↺ 원본' 줌 컨트롤러 추가 완료 (어르신 가독성 개선)
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -519,29 +519,68 @@
           <meta charset="UTF-8">
           <title>미리보기 - ${name}</title>
           <style>
-            body { margin: 0; padding: 0; background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
-            .header { padding: 16px 24px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-            .title { font-weight: bold; font-size: 16px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 50%; color: #f8fafc; }
-            .btn-group { display: flex; gap: 10px; align-items: center; }
-            .btn-action { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13.5px; transition: 0.2s; }
+            body { margin: 0; padding: 0; background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+            .header { padding: 14px 24px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; }
+            .title { font-weight: bold; font-size: 16px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 35%; color: #f8fafc; }
+            .btn-group { display: flex; gap: 8px; align-items: center; }
+            .btn-zoom { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+            .btn-zoom:hover { background: rgba(56, 189, 248, 0.3); color: white; }
+            .zoom-level { font-size: 13px; font-weight: bold; color: #a5b4fc; min-width: 45px; text-align: center; }
+            .btn-action { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13.5px; transition: 0.2s; }
             .btn-action:hover { background: rgba(255,255,255,0.2); }
             .btn-download { background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); color: white; border: none; padding: 9px 18px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13.5px; box-shadow: 0 4px 14px rgba(14,165,233,0.35); }
-            .content { flex: 1; display: flex; justify-content: center; align-items: center; overflow: auto; padding: 20px; background: #090d16; }
-            img { max-width: 100%; max-height: 88vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-            iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
+            .content-wrapper { flex: 1; overflow: auto; padding: 20px; background: #090d16; display: flex; justify-content: center; align-items: flex-start; }
+            .zoom-target { transition: transform 0.15s ease-out; transform-origin: top center; display: block; margin: 0 auto; }
+            img.zoom-target { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            iframe.zoom-target { width: 100%; height: 85vh; border: none; border-radius: 8px; }
           </style>
         </head>
         <body>
           <div class="header">
             <div class="title">🔍 미리보기: ${name}</div>
+            
+            <!-- 🔍 확대 / 축소 컨트롤러 -->
+            <div class="btn-group">
+              <button onclick="changeZoom(-0.2)" class="btn-zoom" title="축소">🔍- 축소</button>
+              <span id="zoomVal" class="zoom-level">100%</span>
+              <button onclick="changeZoom(0.2)" class="btn-zoom" title="확대">🔍+ 확대</button>
+              <button onclick="resetZoom()" class="btn-zoom" style="background: rgba(255,255,255,0.08); color: #cbd5e1; border-color: rgba(255,255,255,0.15);" title="원래대로">↺ 원본</button>
+            </div>
+
             <div class="btn-group">
               <button onclick="window.print()" class="btn-action">🖨️ 바로 인쇄하기</button>
               <button onclick="window.opener.forceDownloadFile('${url}', '${name.replace(/'/g, "\\'")}')" class="btn-download">📥 파일 다운로드</button>
             </div>
           </div>
-          <div class="content">
-            ${isImg ? `<img src="${url}" alt="미리보기" />` : (isPdf ? `<iframe src="${url}#toolbar=0"></iframe>` : `<div style="text-align:center; padding: 40px;"><p style="font-size: 16px; color: #cbd5e1; margin-bottom: 20px;">이 파일 형식은 팝업 미리보기를 지원하지 않습니다.</p><button onclick="window.opener.forceDownloadFile('${url}', '${name.replace(/'/g, "\\'")}')" class="btn-download">📥 파일 직접 다운로드하기</button></div>`)}
+
+          <div class="content-wrapper" id="contentWrapper">
+            ${isImg ? `<img id="targetMedia" class="zoom-target" src="${url}" alt="미리보기" />` : (isPdf ? `<iframe id="targetMedia" class="zoom-target" src="${url}#toolbar=0"></iframe>` : `<div style="text-align:center; padding: 40px;"><p style="font-size: 16px; color: #cbd5e1; margin-bottom: 20px;">이 파일 형식은 팝업 미리보기를 지원하지 않습니다.</p><button onclick="window.opener.forceDownloadFile('${url}', '${name.replace(/'/g, "\\'")}')" class="btn-download">📥 파일 직접 다운로드하기</button></div>`)}
           </div>
+
+          <script>
+            let currentScale = 1.0;
+            function changeZoom(delta) {
+              currentScale = Math.min(Math.max(0.4, currentScale + delta), 3.0);
+              applyScale();
+            }
+            function resetZoom() {
+              currentScale = 1.0;
+              applyScale();
+            }
+            function applyScale() {
+              const target = document.getElementById('targetMedia');
+              const valLabel = document.getElementById('zoomVal');
+              if (target) {
+                target.style.transform = \`scale(\${currentScale})\`;
+                if (currentScale > 1.0) {
+                  target.style.transformOrigin = 'top center';
+                }
+              }
+              if (valLabel) {
+                valLabel.innerText = Math.round(currentScale * 100) + '%';
+              }
+            }
+          </script>
         </body>
         </html>
       `;
