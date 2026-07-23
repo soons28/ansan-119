@@ -450,31 +450,67 @@
       document.getElementById('filePreviewModal').classList.remove('active');
     }
 
-    function renderAttachmentPreview(url, fileName) {
-      if (!url) return '';
-      const name = fileName || '';
+    function openPreviewPopup(url, fileName) {
+      const name = fileName || '첨부파일';
       const ext = name.split('.').pop().toLowerCase();
       const isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || url.match(/\.(jpg|jpeg|png|gif|webp)/i);
       const isPdf = ext === 'pdf' || url.toLowerCase().includes('.pdf');
 
-      let previewHtml = '';
-      if (isImg) {
-        previewHtml = `
-          <div style="margin-top: 10px; border-radius: 12px; overflow: hidden; height: 350px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
-            <iframe src="${url}#toolbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
-          </div>
-        `;
+      const width = 900;
+      const height = 920;
+      const left = (screen.width / 2) - (width / 2);
+      const top = (screen.height / 2) - (height / 2);
+
+      const popup = window.open('', '_blank', `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`);
+      if (!popup) {
+        alert('팝업 차단이 설정되어 있습니다. 브라우저에서 팝업을 허용해주세요.');
+        return;
       }
 
-      return `
-        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <a href="${url}" target="_blank" download style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #38bdf8; text-decoration: none; background: rgba(56, 189, 248, 0.1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
-              📥 첨부파일 다운로드 (${name || '파일'})
-            </a>
-            ${isImg || isPdf ? `<span style="font-size: 12px; color: #94a3b8;">🔍 아래에서 파일 미리보기를 확인할 수 있습니다</span>` : ''}
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="ko">
+        <head>
+          <meta charset="UTF-8">
+          <title>미리보기 - ${name}</title>
+          <style>
+            body { margin: 0; padding: 0; background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+            .header { padding: 16px 24px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .title { font-weight: bold; font-size: 16px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 65%; color: #f8fafc; }
+            .btn-download { background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 10px; text-decoration: none; font-size: 14px; box-shadow: 0 4px 14px rgba(14,165,233,0.35); }
+            .content { flex: 1; display: flex; justify-content: center; align-items: center; overflow: auto; padding: 20px; background: #090d16; }
+            img { max-width: 100%; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="title">🔍 미리보기: ${name}</div>
+            <a href="${url}" download="${name}" class="btn-download">📥 파일 다운로드 받기</a>
           </div>
-          ${previewHtml}
+          <div class="content">
+            ${isImg ? `<img src="${url}" alt="미리보기" />` : (isPdf ? `<iframe src="${url}#toolbar=0"></iframe>` : `<div style="text-align:center; padding: 40px;"><p style="font-size: 16px; color: #cbd5e1; margin-bottom: 20px;">이 파일 형식은 팝업 미리보기를 지원하지 않습니다.</p><a href="${url}" download="${name}" class="btn-download">📥 파일 직접 다운로드하기</a></div>`)}
+          </div>
+        </body>
+        </html>
+      `;
+
+      popup.document.write(htmlContent);
+      popup.document.close();
+    }
+
+    function renderAttachmentPreview(url, fileName) {
+      if (!url) return '';
+      const name = fileName || '파일';
+
+      return `
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(255, 255, 255, 0.08); display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button onclick="openPreviewPopup('${url}', '${name.replace(/'/g, "\\'")}')" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.3); cursor: pointer; transition: 0.2s;">
+            🔍 첨부파일 미리보기 (새창 팝업)
+          </button>
+          <a href="${url}" download="${name}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #a5b4fc; text-decoration: none; background: rgba(165, 180, 252, 0.1); padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(165, 180, 252, 0.2);">
+            📥 직접 다운로드 (${name})
+          </a>
         </div>
       `;
     }
