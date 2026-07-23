@@ -51,7 +51,7 @@
       grid-template-columns: 1.4fr 1fr;
       gap: 28px;
       margin-top: 20px;
-      align-items: stretch;
+      align-items: start;
     }
 
     .notice-section {
@@ -62,9 +62,6 @@
       text-align: left;
       backdrop-filter: blur(20px);
       box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
     }
 
     .portal-grid {
@@ -273,9 +270,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v2.9.0) -->
+      <!-- VERSION BANNER (v3.0.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v2.9.0 - 미리보기 크기 대폭 확대 (700px) & 강제 파일 다운로드 (Blob 처리) 적용 완료
+          🔥 v3.0.0 - 아코디언 공지사항 목록(최신글 1건만 자동 열림 + 클릭 시 해당글만 펼침) & 레이아웃 정렬 완벽 적용
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -552,13 +549,36 @@
       `;
     }
 
+    function toggleNoticeAccordion(id) {
+      const itemEl = document.getElementById(`notice-item-${id}`);
+      const isExpanded = itemEl.classList.contains('expanded');
+
+      // 모든 공지 접기
+      document.querySelectorAll('.notice-accordion-item').forEach(el => {
+        el.classList.remove('expanded');
+        const body = el.querySelector('.notice-body');
+        const arrow = el.querySelector('.accordion-arrow');
+        if (body) body.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+      });
+
+      // 클릭한 항목이 닫혀있었다면 펼치기
+      if (!isExpanded) {
+        itemEl.classList.add('expanded');
+        const body = itemEl.querySelector('.notice-body');
+        const arrow = itemEl.querySelector('.accordion-arrow');
+        if (body) body.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+      }
+    }
+
     async function loadNotices() {
       const container = document.getElementById('noticeContainer');
       const { data, error } = await supabaseClient
         .from('notices')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(10);
 
       if (error) {
         container.innerHTML = `<div style="color: #f87171; font-size: 13.5px;">공지사항을 로드할 수 없습니다.</div>`;
@@ -574,16 +594,31 @@
         return;
       }
 
-      container.innerHTML = data.map(item => `
-        <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 18px 20px; transition: 0.2s;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px;">
-            <div style="font-size: 16px; font-weight: 700; color: #f8fafc;">${item.title}</div>
-            <div style="font-size: 12px; color: #64748b; white-space: nowrap;">${new Date(item.created_at).toLocaleDateString('ko-KR')}</div>
+      container.innerHTML = data.map((item, index) => {
+        const isLatest = index === 0;
+        return `
+          <div id="notice-item-${item.id}" class="notice-accordion-item ${isLatest ? 'expanded' : ''}" style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; overflow: hidden; transition: all 0.25s ease;">
+            <!-- 제목 헤더 (클릭 시 토글) -->
+            <div onclick="toggleNoticeAccordion(${item.id})" style="padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: ${isLatest ? 'rgba(30, 41, 59, 0.6)' : 'transparent'}; user-select: none;">
+              <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden;">
+                ${isLatest ? `<span style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; white-space: nowrap;">최신</span>` : ''}
+                <div style="font-size: 15.5px; font-weight: 700; color: #f8fafc; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${item.title}</div>
+                ${item.file_name ? `<span style="font-size: 12px; color: #38bdf8; white-space: nowrap;">📁 첨부</span>` : ''}
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 12px; color: #64748b; white-space: nowrap;">${new Date(item.created_at).toLocaleDateString('ko-KR')}</span>
+                <span class="accordion-arrow" style="font-size: 14px; color: #94a3b8; transition: transform 0.25s ease; transform: ${isLatest ? 'rotate(180deg)' : 'rotate(0deg)'};">▼</span>
+              </div>
+            </div>
+
+            <!-- 내용 & 첨부파일 (펼쳐질 때 표시) -->
+            <div class="notice-body" style="padding: 18px 20px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: ${isLatest ? 'block' : 'none'}; background: rgba(15, 23, 42, 0.3);">
+              <div style="font-size: 14px; color: #cbd5e1; line-height: 1.65; white-space: pre-wrap; margin-bottom: 8px;">${item.content}</div>
+              ${renderAttachmentPreview(item.file_url, item.file_name)}
+            </div>
           </div>
-          <div style="font-size: 14px; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; margin-bottom: 8px;">${item.content}</div>
-          ${renderAttachmentPreview(item.file_url, item.file_name)}
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     loadNotices();
