@@ -270,9 +270,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.3.3) -->
+      <!-- VERSION BANNER (v3.3.4) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.3.3 - 공지사항 자바스크립트 구문 정상 복구 및 로딩속도 0초 즉시 출력 적용 완료
+          🔥 v3.3.4 - 자바스크립트 스크립트 블록 구문 완전 정돈 및 공지사항 즉시 출력 검증 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -512,9 +512,6 @@
         return;
       }
 
-      // </script> 태그를 문자열 분할로 조각내어 브라우저 HTML 파서가 스크립트 블록을 중단하지 않도록 완전 방지
-      const endScriptTag = '<\/script>';
-
       popup.document.write(`
         <!DOCTYPE html>
         <html lang="ko">
@@ -558,26 +555,29 @@
           <div class="content-wrapper" id="contentWrapper">
             ${isImg ? `<img id="targetMedia" class="zoom-target" src="${url}" alt="미리보기" />` : (isPdf ? `<iframe id="targetMedia" class="zoom-target" src="${url}#toolbar=0"></iframe>` : `<div style="text-align:center; padding: 40px;"><p style="font-size: 16px; color: #cbd5e1; margin-bottom: 20px;">이 파일 형식은 팝업 미리보기를 지원하지 않습니다.</p><button id="btnDownloadPopupDirect" class="btn-download">📥 파일 직접 다운로드하기</button></div>`)}
           </div>
-
-          <script>
-            let currentScale = 1.0;
-            const target = document.getElementById('targetMedia');
-            const valLabel = document.getElementById('zoomVal');
-            function applyScale() {
-              if (target) {
-                target.style.transform = "scale(" + currentScale + ")";
-                if (currentScale > 1.0) target.style.transformOrigin = "top center";
-              }
-              if (valLabel) valLabel.innerText = Math.round(currentScale * 100) + "%";
-            }
-            document.getElementById('btnZoomIn').onclick = function() { currentScale = Math.min(3.0, currentScale + 0.2); applyScale(); };
-            document.getElementById('btnZoomOut').onclick = function() { currentScale = Math.max(0.4, currentScale - 0.2); applyScale(); };
-            document.getElementById('btnZoomReset').onclick = function() { currentScale = 1.0; applyScale(); };
-          ${endScriptTag}
         </body>
         </html>
       `);
       popup.document.close();
+
+      // DOM 요소 제어를 onload 시점에 스크립트 태그 생성으로 부착
+      const scriptEl = popup.document.createElement('script');
+      scriptEl.textContent = `
+        let currentScale = 1.0;
+        const target = document.getElementById('targetMedia');
+        const valLabel = document.getElementById('zoomVal');
+        function applyScale() {
+          if (target) {
+            target.style.transform = "scale(" + currentScale + ")";
+            if (currentScale > 1.0) target.style.transformOrigin = "top center";
+          }
+          if (valLabel) valLabel.innerText = Math.round(currentScale * 100) + "%";
+        }
+        document.getElementById('btnZoomIn').onclick = function() { currentScale = Math.min(3.0, currentScale + 0.2); applyScale(); };
+        document.getElementById('btnZoomOut').onclick = function() { currentScale = Math.max(0.4, currentScale - 0.2); applyScale(); };
+        document.getElementById('btnZoomReset').onclick = function() { currentScale = 1.0; applyScale(); };
+      `;
+      popup.document.body.appendChild(scriptEl);
     }
 
     function renderAttachmentPreview(url, fileName, noticeTitle) {
