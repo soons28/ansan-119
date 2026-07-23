@@ -291,9 +291,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.4.0) -->
+      <!-- VERSION BANNER (v3.5.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.4.0 - 작성기 메뉴 카드 6종 상하좌우 여백 균형 및 중앙 정렬(Center Alignment) 디자인 개편 완료
+          🔥 v3.5.0 - 첨부문서 인쇄 시 헤더/버튼 자동 숨김 및 순수 첨부파일 1:1 맞춤 A4 출력을 위한 프린트 전용 스타일(@media print) 적용 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -484,39 +484,10 @@
     }
 
     function printNoticeAttachment(url, title, fileName) {
-      const ext = (fileName || '').split('.').pop().toLowerCase();
-      const isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || url.match(/\.(jpg|jpeg|png|gif|webp)/i);
-      const isPdf = ext === 'pdf' || url.toLowerCase().includes('.pdf');
-
-      const printWindow = window.open('', '_blank');
-      if (!printWindow) {
-        alert('팝업 차단이 설정되어 있습니다. 팝업을 허용해주세요.');
-        return;
-      }
-
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>인쇄 - ${title || fileName}</title>
-          <style>
-            @page { margin: 10mm; }
-            body { margin: 0; padding: 20px; font-family: sans-serif; text-align: center; }
-            h2 { margin-bottom: 20px; color: #1e293b; }
-            img { max-width: 100%; height: auto; }
-            iframe { width: 100%; height: 90vh; border: none; }
-          </style>
-        </head>
-        <body>
-          <h2>${title || fileName}</h2>
-          ${isImg ? `<img src="${url}" onload="window.print(); window.close();" />` : (isPdf ? `<iframe src="${url}" onload="setTimeout(function(){ window.print(); }, 500);"></iframe>` : `<p>인쇄할 수 없는 파일 형식을 포함하고 있습니다.</p>`)}
-        </body>
-        </html>
-      `);
-      printWindow.document.close();
+      openPreviewPopup(url, fileName, title, true);
     }
 
-    function openPreviewPopup(url, fileName, title) {
+    function openPreviewPopup(url, fileName, title, autoPrint = false) {
       const name = fileName || '첨부파일';
       const ext = name.split('.').pop().toLowerCase();
       const isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || url.match(/\.(jpg|jpeg|png|gif|webp)/i);
@@ -554,6 +525,16 @@
             .zoom-target { transition: transform 0.15s ease-out; transform-origin: top center; display: block; margin: 0 auto; }
             img.zoom-target { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
             iframe.zoom-target { width: 100%; height: 85vh; border: none; border-radius: 8px; }
+
+            /* 🖨️ 인쇄 시 헤더/버튼 완전히 숨기고 순수 첨부파일만 A4 전체화면 인쇄 */
+            @media print {
+              @page { size: auto; margin: 0; }
+              body { background: white !important; color: black !important; overflow: visible !important; height: auto !important; }
+              .header { display: none !important; }
+              .content-wrapper { padding: 0 !important; background: transparent !important; overflow: visible !important; display: block !important; }
+              .zoom-target { transform: none !important; box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; width: 100% !important; height: auto !important; margin: 0 !important; }
+              iframe.zoom-target { height: 100vh !important; }
+            }
           </style>
         </head>
         <body>
@@ -581,7 +562,6 @@
       `);
       popup.document.close();
 
-      // DOM 요소 제어를 onload 시점에 스크립트 태그 생성으로 부착
       const scriptEl = popup.document.createElement('script');
       scriptEl.textContent = `
         let currentScale = 1.0;
@@ -597,6 +577,14 @@
         document.getElementById('btnZoomIn').onclick = function() { currentScale = Math.min(3.0, currentScale + 0.2); applyScale(); };
         document.getElementById('btnZoomOut').onclick = function() { currentScale = Math.max(0.4, currentScale - 0.2); applyScale(); };
         document.getElementById('btnZoomReset').onclick = function() { currentScale = 1.0; applyScale(); };
+        
+        ${autoPrint ? `
+          if (target && target.tagName === 'IMG') {
+            target.onload = function() { setTimeout(function(){ window.print(); }, 200); };
+          } else {
+            setTimeout(function(){ window.print(); }, 500);
+          }
+        ` : ''}
       `;
       popup.document.body.appendChild(scriptEl);
     }
