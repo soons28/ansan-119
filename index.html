@@ -270,9 +270,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.3.0) -->
+      <!-- VERSION BANNER (v3.3.1) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.3.0 - 로컬 캐싱(0초 즉시 로딩) & 비동기 이미지 디코딩 속도 최적화 완료
+          🔥 v3.3.1 - 공지사항 로딩 구문 정상 렌더링 버그 수정 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -716,6 +716,10 @@
       }
 
       // 3️⃣ 최신 데이터로 화면 업데이트 및 캐시 저장
+      localStorage.setItem('ansan_notices_cache', JSON.stringify(data));
+      container.innerHTML = renderNoticesHtml(data);
+    }
+
     loadNotices();
   </script>
 </body>
