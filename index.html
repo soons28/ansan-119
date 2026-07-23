@@ -135,15 +135,17 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 24px;
-      padding: 40px 30px;
-      text-align: left;
+      padding: 36px 28px;
+      text-align: center;
       text-decoration: none;
       color: var(--text);
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
+      align-items: center;
       justify-content: space-between;
-      height: 300px;
+      min-height: 310px;
+      height: 100%;
       box-sizing: border-box;
       backdrop-filter: blur(20px);
       position: relative;
@@ -182,16 +184,23 @@
       box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
     }
 
+    .card-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
     .card-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 16px;
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      font-size: 26px;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     }
 
     .type-1 .card-icon {
@@ -210,12 +219,16 @@
       background: var(--primary-gradient-4);
     }
 
-    .card-content h2 {
+    .card-content {
+      text-align: center;
+    }
 
-      margin: 0 0 10px 0;
-      font-size: 20px;
+    .card-content h2 {
+      margin: 0 0 12px 0;
+      font-size: 19.5px;
       font-weight: 700;
       letter-spacing: -0.5px;
+      line-height: 1.35;
     }
 
     .card-content p {
@@ -224,16 +237,23 @@
       color: var(--text-light);
       line-height: 1.6;
       font-weight: 300;
+      word-break: keep-all;
     }
 
     .card-footer {
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
+      gap: 6px;
       font-size: 13.5px;
       font-weight: 700;
-      margin-top: 24px;
+      margin-top: 20px;
+      padding: 8px 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: #a5b4fc;
-      transition: color 0.2s;
+      transition: all 0.25s ease;
     }
 
     .type-2 .card-footer {
@@ -249,8 +269,9 @@
     }
 
     .portal-card:hover .card-footer {
-
       color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .card-footer span {
@@ -270,9 +291,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.3.4) -->
+      <!-- VERSION BANNER (v3.4.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.3.4 - 자바스크립트 스크립트 블록 구문 완전 정돈 및 공지사항 즉시 출력 검증 완료
+          🔥 v3.4.0 - 작성기 메뉴 카드 6종 상하좌우 여백 균형 및 중앙 정렬(Center Alignment) 디자인 개편 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -299,7 +320,7 @@
       <div class="portal-grid">
         <!-- 카드 1: 채권신고 취하서 -->
         <a href="withdrawal/" class="portal-card type-1">
-          <div>
+          <div class="card-top">
             <div class="card-icon">🖨️</div>
             <div class="card-content">
               <h2>채권신고 취하서 작성기</h2>
@@ -313,7 +334,7 @@
 
         <!-- 카드 2: 소집동의서 -->
         <a href="consent/" class="portal-card type-2">
-          <div>
+          <div class="card-top">
             <div class="card-icon">📧</div>
             <div class="card-content">
               <h2>소집동의서(위임장) 작성기</h2>
@@ -327,7 +348,7 @@
 
         <!-- 카드 3: 내용증명 답변서 및 연명부 -->
         <a href="complaint/" class="portal-card type-3">
-          <div>
+          <div class="card-top">
             <div class="card-icon">🛡️</div>
             <div class="card-content">
               <h2>내용증명 및 연명부 작성기</h2>
@@ -341,7 +362,7 @@
 
         <!-- 카드 4: 시청제출 탄원서 및 연명부 -->
         <a href="petition/" class="portal-card type-4">
-          <div>
+          <div class="card-top">
             <div class="card-icon">✍️</div>
             <div class="card-content">
               <h2>시청제출 탄원서 작성기</h2>
@@ -355,7 +376,7 @@
 
         <!-- 카드 5: 법원제출 탄원서 및 연명부 -->
         <a href="petition-court/" class="portal-card type-1">
-          <div>
+          <div class="card-top">
             <div class="card-icon">⚖️</div>
             <div class="card-content">
               <h2>법원제출 탄원서 작성기</h2>
@@ -369,7 +390,7 @@
 
         <!-- 카드 6: 법원제출 탄원서 (개인별 미리보기 & PDF 다운로드) -->
         <a href="petition-court-paper/" class="portal-card type-2">
-          <div>
+          <div class="card-top">
             <div class="card-icon">📄</div>
             <div class="card-content">
               <h2>법원제출 탄원서 다운로드</h2>
