@@ -38,7 +38,7 @@
     }
 
     .container {
-      max-width: 1320px;
+      max-width: 1400px;
       width: 100%;
       padding: 40px 20px;
       box-sizing: border-box;
@@ -48,7 +48,7 @@
 
     .split-layout {
       display: grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: 1.4fr 1fr;
       gap: 28px;
       margin-top: 20px;
       align-items: start;
@@ -58,7 +58,7 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 24px;
-      padding: 28px;
+      padding: 32px;
       text-align: left;
       backdrop-filter: blur(20px);
       box-sizing: border-box;
@@ -67,7 +67,53 @@
     .portal-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+      gap: 18px;
+    }
+
+    /* 🔍 미리보기 팝업 모달 스타일 */
+    .preview-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .preview-modal.active {
+      display: flex;
+    }
+    .preview-content {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+    .preview-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.8);
+    }
+    .preview-body {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      background: rgba(15, 23, 42, 0.9);
     }
 
     @media (max-width: 1100px) {
@@ -224,9 +270,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v2.4.0) -->
+      <!-- VERSION BANNER (v2.5.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v2.4.0 - 공지사항(좌측) & 작성기 메뉴(우측) 화면 2분할 분리 레이아웃 적용 완료
+          🔥 v2.5.0 - 공지사항 넓이 확장(1.4:1) & 클릭 시 다운로드 전용 팝업 뷰어 적용 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -360,6 +406,24 @@
     </footer>
   </div>
 
+  <!-- 🔍 미리보기 팝업 모달 -->
+  <div id="filePreviewModal" class="preview-modal" onclick="closePreviewModal(event)">
+    <div class="preview-content" onclick="event.stopPropagation()">
+      <div class="preview-header">
+        <span id="previewModalTitle" style="font-weight: 700; font-size: 15px; color: #f8fafc;">첨부파일 미리보기</span>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a id="previewDownloadBtn" href="#" target="_blank" download style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: white; background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); padding: 8px 16px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);">
+            📥 파일 다운로드 받기
+          </a>
+          <button onclick="closePreviewModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
+        </div>
+      </div>
+      <div class="preview-body" id="previewModalBody">
+        <!-- 미리보기 컨텐츠가 삽입됩니다 -->
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://faibppvwdtppowvcfxfr.supabase.co';
@@ -376,6 +440,41 @@
       }
     }
 
+    function openPreviewModal(url, fileName) {
+      const modal = document.getElementById('filePreviewModal');
+      const titleEl = document.getElementById('previewModalTitle');
+      const bodyEl = document.getElementById('previewModalBody');
+      const downloadBtn = document.getElementById('previewDownloadBtn');
+
+      titleEl.innerText = `🔍 미리보기: ${fileName || '첨부파일'}`;
+      downloadBtn.href = url;
+      downloadBtn.setAttribute('download', fileName || 'file');
+
+      const ext = (fileName || '').split('.').pop().toLowerCase();
+      const isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || url.match(/\.(jpg|jpeg|png|gif|webp)/i);
+      const isPdf = ext === 'pdf' || url.toLowerCase().includes('.pdf');
+
+      if (isImg) {
+        bodyEl.innerHTML = `<img src="${url}" alt="미리보기 이미지" style="width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px;" />`;
+      } else if (isPdf) {
+        bodyEl.innerHTML = `<iframe src="${url}#toolbar=0" style="width: 100%; height: 70vh; border: none; border-radius: 8px;"></iframe>`;
+      } else {
+        bodyEl.innerHTML = `
+          <div style="text-align: center; color: #cbd5e1; padding: 40px;">
+            <p style="font-size: 16px; margin-bottom: 20px;">이 파일 형식은 팝업 미리보기를 지원하지 않는 확장자입니다.</p>
+            <a href="${url}" download style="color: #38bdf8; font-weight: 700; text-decoration: underline;">[📥 파일 바로 다운로드하기]</a>
+          </div>
+        `;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closePreviewModal(e) {
+      if (e && e.target !== e.currentTarget && e.type === 'click') return;
+      document.getElementById('filePreviewModal').classList.remove('active');
+    }
+
     function renderAttachmentPreview(url, fileName) {
       if (!url) return '';
       const name = fileName || '';
@@ -385,12 +484,6 @@
 
       let previewHtml = '';
       if (isImg) {
-        previewHtml = `
-          <div style="margin-top: 10px; border-radius: 12px; overflow: hidden; max-height: 350px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
-            <img src="${url}" alt="첨부 이미지 미리보기" style="width: 100%; height: auto; max-height: 350px; object-fit: contain; display: block;" />
-          </div>
-        `;
-      } else if (isPdf) {
         previewHtml = `
           <div style="margin-top: 10px; border-radius: 12px; overflow: hidden; height: 350px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
             <iframe src="${url}#toolbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
