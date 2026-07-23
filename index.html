@@ -239,7 +239,7 @@
         <h2 style="font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px;">
           <span>📢</span> 주요 공지사항
         </h2>
-        <a href="notice/" style="color: #a5b4fc; text-decoration: none; font-size: 13.5px; font-weight: 700; padding: 6px 14px; border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 20px; background: rgba(99, 102, 241, 0.1); transition: 0.2s;">
+        <a href="#" onclick="openNoticeAdmin(event)" style="color: #a5b4fc; text-decoration: none; font-size: 13.5px; font-weight: 700; padding: 6px 14px; border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 20px; background: rgba(99, 102, 241, 0.1); transition: 0.2s;">
           공지사항 작성 / 관리 &rarr;
         </a>
       </div>
@@ -363,6 +363,51 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhaWJwcHZ3ZHRwcG93dmNmeGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4Mjg1MjIsImV4cCI6MjEwMDQwNDUyMn0.tz8Sn-nTSQoPRLtZDjoZLa5L86WOC3JU9SWU3YPzlO0';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    function openNoticeAdmin(e) {
+      e.preventDefault();
+      const pw = prompt('관리자 비밀번호를 입력하세요:');
+      if (pw === '1234' || pw === 'ansan1234') {
+        window.location.href = 'notice/';
+      } else if (pw !== null) {
+        alert('비밀번호가 올바르지 않습니다.');
+      }
+    }
+
+    function renderAttachmentPreview(url, fileName) {
+      if (!url) return '';
+      const name = fileName || '';
+      const ext = name.split('.').pop().toLowerCase();
+      const isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) || url.match(/\.(jpg|jpeg|png|gif|webp)/i);
+      const isPdf = ext === 'pdf' || url.toLowerCase().includes('.pdf');
+
+      let previewHtml = '';
+      if (isImg) {
+        previewHtml = `
+          <div style="margin-top: 10px; border-radius: 12px; overflow: hidden; max-height: 350px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
+            <img src="${url}" alt="첨부 이미지 미리보기" style="width: 100%; height: auto; max-height: 350px; object-fit: contain; display: block;" />
+          </div>
+        `;
+      } else if (isPdf) {
+        previewHtml = `
+          <div style="margin-top: 10px; border-radius: 12px; overflow: hidden; height: 350px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
+            <iframe src="${url}#toolbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
+          </div>
+        `;
+      }
+
+      return `
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <a href="${url}" target="_blank" download style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #38bdf8; text-decoration: none; background: rgba(56, 189, 248, 0.1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
+              📥 첨부파일 다운로드 (${name || '파일'})
+            </a>
+            ${isImg || isPdf ? `<span style="font-size: 12px; color: #94a3b8;">🔍 아래에서 파일 미리보기를 확인할 수 있습니다</span>` : ''}
+          </div>
+          ${previewHtml}
+        </div>
+      `;
+    }
+
     async function loadNotices() {
       const container = document.getElementById('noticeContainer');
       const { data, error } = await supabaseClient
@@ -391,14 +436,8 @@
             <div style="font-size: 16px; font-weight: 700; color: #f8fafc;">${item.title}</div>
             <div style="font-size: 12px; color: #64748b; white-space: nowrap;">${new Date(item.created_at).toLocaleDateString('ko-KR')}</div>
           </div>
-          <div style="font-size: 14px; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; margin-bottom: 12px;">${item.content}</div>
-          ${item.file_url ? `
-            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
-              <a href="${item.file_url}" target="_blank" download style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #38bdf8; text-decoration: none; background: rgba(56, 189, 248, 0.1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
-                📥 첨부파일 다운로드 (${item.file_name || '파일'})
-              </a>
-            </div>
-          ` : ''}
+          <div style="font-size: 14px; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; margin-bottom: 8px;">${item.content}</div>
+          ${renderAttachmentPreview(item.file_url, item.file_name)}
         </div>
       `).join('');
     }
