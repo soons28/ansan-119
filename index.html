@@ -38,7 +38,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1320px;
       width: 100%;
       padding: 40px 20px;
       box-sizing: border-box;
@@ -46,37 +46,36 @@
       z-index: 2;
     }
 
-    header {
-      margin-bottom: 50px;
+    .split-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 28px;
+      margin-top: 20px;
+      align-items: start;
     }
 
-    header h1 {
-      font-size: 32px;
-      font-weight: 900;
-      margin: 0;
-      letter-spacing: -1px;
-      background: linear-gradient(to right, #ffffff, #cbd5e1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    header p {
-      font-size: 15px;
-      color: var(--text-light);
-      margin: 10px 0 0 0;
-      font-weight: 300;
+    .notice-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px;
+      text-align: left;
+      backdrop-filter: blur(20px);
+      box-sizing: border-box;
     }
 
     .portal-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
     }
 
-    @media (max-width: 968px) {
-      .portal-grid {
-        grid-template-columns: repeat(2, 1fr);
+    @media (max-width: 1100px) {
+      .split-layout {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        max-width: 900px;
       }
     }
 
@@ -225,113 +224,117 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v2.3.1) -->
+      <!-- VERSION BANNER (v2.4.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v2.3.1 - 이미지/PDF 미리보기 및 관리자 비밀번호 접근 설정 완료
+          🔥 v2.4.0 - 공지사항(좌측) & 작성기 메뉴(우측) 화면 2분할 분리 레이아웃 적용 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
     </header>
 
-    <!-- 📢 공지사항 라이브 섹션 -->
-    <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 30px; margin-bottom: 40px; text-align: left; backdrop-filter: blur(20px);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px;">
-          <span>📢</span> 주요 공지사항
-        </h2>
-        <a href="#" onclick="openNoticeAdmin(event)" style="color: #a5b4fc; text-decoration: none; font-size: 13.5px; font-weight: 700; padding: 6px 14px; border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 20px; background: rgba(99, 102, 241, 0.1); transition: 0.2s;">
-          공지사항 작성 / 관리 &rarr;
+    <!-- 화면 분할 레이아웃 (좌: 공지사항 / 우: 작성기 카드 그리드) -->
+    <div class="split-layout">
+      <!-- 📢 좌측: 주요 공지사항 라이브 섹션 -->
+      <div class="notice-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px;">
+            <span>📢</span> 주요 공지사항
+          </h2>
+          <a href="#" onclick="openNoticeAdmin(event)" style="color: #a5b4fc; text-decoration: none; font-size: 13px; font-weight: 700; padding: 6px 12px; border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 20px; background: rgba(99, 102, 241, 0.1); transition: 0.2s; white-space: nowrap;">
+            작성 / 관리 &rarr;
+          </a>
+        </div>
+        <div id="noticeContainer" style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="color: var(--text-light); font-size: 14px;">공지사항을 불러오는 중...</div>
+        </div>
+      </div>
+
+      <!-- 🛠️ 우측: 작성기 메뉴 그리드 -->
+      <div class="portal-grid">
+        <!-- 카드 1: 채권신고 취하서 -->
+        <a href="withdrawal/" class="portal-card type-1">
+          <div>
+            <div class="card-icon">🖨️</div>
+            <div class="card-content">
+              <h2>채권신고 취하서 작성기</h2>
+              <p>시부인표 데이터를 활용하여 채권자 정보를 실시간으로 조회하고 인쇄 서식 위에 자동으로 작성하여 출력합니다.</p>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>작성기 실행하기</span> &rarr;
+          </div>
+        </a>
+
+        <!-- 카드 2: 소집동의서 -->
+        <a href="consent/" class="portal-card type-2">
+          <div>
+            <div class="card-icon">📧</div>
+            <div class="card-content">
+              <h2>소집동의서(위임장) 작성기</h2>
+              <p>임시총회 위임장 서식을 직접 입력하여 실시간으로 PDF를 채워넣고, 인쇄 및 이메일 전송 기능을 활용합니다.</p>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>작성기 실행하기</span> &rarr;
+          </div>
+        </a>
+
+        <!-- 카드 3: 내용증명 답변서 및 연명부 -->
+        <a href="complaint/" class="portal-card type-3">
+          <div>
+            <div class="card-icon">🛡️</div>
+            <div class="card-content">
+              <h2>내용증명 및 연명부 작성기</h2>
+              <p>관리비 미납 독촉에 대한 단체 답변서를 실시간으로 검토하고, 동의 서명을 수집하여 연명부를 즉시 인쇄합니다.</p>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>작성기 실행하기</span> &rarr;
+          </div>
+        </a>
+
+        <!-- 카드 4: 시청제출 탄원서 및 연명부 -->
+        <a href="petition/" class="portal-card type-4">
+          <div>
+            <div class="card-icon">✍️</div>
+            <div class="card-content">
+              <h2>시청제출 탄원서 작성기</h2>
+              <p>안산유통상가 정상화 촉구 및 집회소집허가를 위한 탄원 서식을 자동으로 채우고, 자필 서명을 받아 연명부를 생성합니다.</p>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>작성기 실행하기</span> &rarr;
+          </div>
+        </a>
+
+        <!-- 카드 5: 법원제출 탄원서 및 연명부 -->
+        <a href="petition-court/" class="portal-card type-1">
+          <div>
+            <div class="card-icon">⚖️</div>
+            <div class="card-content">
+              <h2>법원제출 탄원서 작성기</h2>
+              <p>임시관리인 선임결정 취소를 촉구하는 법원 제출용 탄원 서식을 작성하고, 자필 서명을 받아 연명부를 생성합니다.</p>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>작성기 실행하기</span> &rarr;
+          </div>
+        </a>
+
+        <!-- 카드 6: 법원제출 탄원서 (개인별 미리보기 & PDF 다운로드) -->
+        <a href="petition-court-paper/" class="portal-card type-2">
+          <div>
+            <div class="card-icon">📄</div>
+            <div class="card-content">
+              <h2>법원제출 탄원서 다운로드</h2>
+              <p>전자서명 없이 1페이지 법원 탄원서 양식을 실시간 미리보고, 인적사항을 채워 PDF 다운로드 및 A4 인쇄합니다.</p>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>양식/다운로드 실행</span> &rarr;
+          </div>
         </a>
       </div>
-      <div id="noticeContainer" style="display: flex; flex-direction: column; gap: 12px;">
-        <div style="color: var(--text-light); font-size: 14px;">공지사항을 불러오는 중...</div>
-      </div>
-    </div>
-
-    <div class="portal-grid">
-      <!-- 카드 1: 채권신고 취하서 -->
-      <a href="withdrawal/" class="portal-card type-1">
-        <div>
-          <div class="card-icon">🖨️</div>
-          <div class="card-content">
-            <h2>채권신고 취하서 작성기</h2>
-            <p>시부인표 데이터를 활용하여 채권자 정보를 실시간으로 조회하고 인쇄 서식 위에 자동으로 작성하여 출력합니다.</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span>작성기 실행하기</span> &rarr;
-        </div>
-      </a>
-
-      <!-- 카드 2: 소집동의서 -->
-      <a href="consent/" class="portal-card type-2">
-        <div>
-          <div class="card-icon">📧</div>
-          <div class="card-content">
-            <h2>소집동의서(위임장) 작성기</h2>
-            <p>임시총회 위임장 서식을 직접 입력하여 실시간으로 PDF를 채워넣고, 인쇄 및 이메일 전송 기능을 활용합니다.</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span>작성기 실행하기</span> &rarr;
-        </div>
-      </a>
-
-      <!-- 카드 3: 내용증명 답변서 및 연명부 -->
-      <a href="complaint/" class="portal-card type-3">
-        <div>
-          <div class="card-icon">🛡️</div>
-          <div class="card-content">
-            <h2>내용증명 및 연명부 작성기</h2>
-            <p>관리비 미납 독촉에 대한 단체 답변서를 실시간으로 검토하고, 동의 서명을 수집하여 연명부를 즉시 인쇄합니다.</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span>작성기 실행하기</span> &rarr;
-        </div>
-      </a>
-
-      <!-- 카드 4: 시청제출 탄원서 및 연명부 -->
-      <a href="petition/" class="portal-card type-4">
-        <div>
-          <div class="card-icon">✍️</div>
-          <div class="card-content">
-            <h2>시청제출 탄원서 작성기</h2>
-            <p>안산유통상가 정상화 촉구 및 집회소집허가를 위한 탄원 서식을 자동으로 채우고, 자필 서명을 받아 연명부를 생성합니다.</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span>작성기 실행하기</span> &rarr;
-        </div>
-      </a>
-
-      <!-- 카드 5: 법원제출 탄원서 및 연명부 -->
-      <a href="petition-court/" class="portal-card type-1">
-        <div>
-          <div class="card-icon">⚖️</div>
-          <div class="card-content">
-            <h2>법원제출 탄원서 작성기</h2>
-            <p>임시관리인 선임결정 취소를 촉구하는 법원 제출용 탄원 서식을 작성하고, 자필 서명을 받아 연명부를 생성합니다.</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span>작성기 실행하기</span> &rarr;
-        </div>
-      </a>
-
-      <!-- 카드 6: 법원제출 탄원서 (개인별 미리보기 & PDF 다운로드) -->
-      <a href="petition-court-paper/" class="portal-card type-2">
-        <div>
-          <div class="card-icon">📄</div>
-          <div class="card-content">
-            <h2>법원제출 탄원서 다운로드</h2>
-            <p>전자서명 없이 1페이지 법원 탄원서 양식을 실시간 미리보고, 인적사항을 채워 PDF 다운로드 및 A4 인쇄합니다.</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span>양식/다운로드 실행</span> &rarr;
-        </div>
-      </a>
     </div>
 
 
