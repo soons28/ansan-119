@@ -225,13 +225,28 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v2.2.4) -->
+      <!-- VERSION BANNER (v2.3.0) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v2.2.4 - 탄원서 구글드라이브 다이렉트 저장 패치 완료 (테스트 전 강력 새로고침 권장)
+          🔥 v2.3.0 - 공지사항 및 첨부파일 다운로드 수파베이스 연동 완료
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
     </header>
+
+    <!-- 📢 공지사항 라이브 섹션 -->
+    <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 30px; margin-bottom: 40px; text-align: left; backdrop-filter: blur(20px);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <span>📢</span> 주요 공지사항
+        </h2>
+        <a href="notice/" style="color: #a5b4fc; text-decoration: none; font-size: 13.5px; font-weight: 700; padding: 6px 14px; border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 20px; background: rgba(99, 102, 241, 0.1); transition: 0.2s;">
+          공지사항 작성 / 관리 &rarr;
+        </a>
+      </div>
+      <div id="noticeContainer" style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="color: var(--text-light); font-size: 14px;">공지사항을 불러오는 중...</div>
+      </div>
+    </div>
 
     <div class="portal-grid">
       <!-- 카드 1: 채권신고 취하서 -->
@@ -342,5 +357,53 @@
     </footer>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://faibppvwdtppowvcfxfr.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhaWJwcHZ3ZHRwcG93dmNmeGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4Mjg1MjIsImV4cCI6MjEwMDQwNDUyMn0.tz8Sn-nTSQoPRLtZDjoZLa5L86WOC3JU9SWU3YPzlO0';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadNotices() {
+      const container = document.getElementById('noticeContainer');
+      const { data, error } = await supabaseClient
+        .from('notices')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) {
+        container.innerHTML = `<div style="color: #f87171; font-size: 13.5px;">공지사항을 로드할 수 없습니다.</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        container.innerHTML = `
+          <div style="background: rgba(255,255,255,0.03); border: 1px dashed var(--card-border); border-radius: 12px; padding: 20px; text-align: center; color: var(--text-light); font-size: 14px;">
+            등록된 공지사항이 없습니다.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = data.map(item => `
+        <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 18px 20px; transition: 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px;">
+            <div style="font-size: 16px; font-weight: 700; color: #f8fafc;">${item.title}</div>
+            <div style="font-size: 12px; color: #64748b; white-space: nowrap;">${new Date(item.created_at).toLocaleDateString('ko-KR')}</div>
+          </div>
+          <div style="font-size: 14px; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; margin-bottom: 12px;">${item.content}</div>
+          ${item.file_url ? `
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
+              <a href="${item.file_url}" target="_blank" download style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #38bdf8; text-decoration: none; background: rgba(56, 189, 248, 0.1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                📥 첨부파일 다운로드 (${item.file_name || '파일'})
+              </a>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    loadNotices();
+  </script>
 </body>
 </html>

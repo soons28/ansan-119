@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공지사항 관리 | 안산유통상가 포털</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-light: #94a3b8;
+      --accent: #6366f1;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0;
+    }
+    .btn-back {
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 16px;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      transition: 0.2s;
+    }
+    .btn-back:hover {
+      color: white;
+      border-color: rgba(255,255,255,0.3);
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(20px);
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      box-sizing: border-box;
+      outline: none;
+      transition: 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--accent);
+    }
+    textarea.form-control {
+      height: 150px;
+      resize: vertical;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      transition: 0.2s;
+    }
+    .btn-submit:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    .notice-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .notice-list-item:last-child {
+      border-bottom: none;
+    }
+    .btn-del {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-del:hover {
+      background: rgba(239, 68, 68, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>📢 공지사항 작성 및 관리</h1>
+      <a href="../" class="btn-back">&larr; 메인으로 돌아가기</a>
+    </header>
+
+    <div class="card">
+      <h2 style="font-size: 18px; margin-top: 0; margin-bottom: 20px; color: #a5b4fc;">새 공지사항 등록</h2>
+      <form id="noticeForm">
+        <div class="form-group">
+          <label for="title">공지 제목</label>
+          <input type="text" id="title" class="form-control" placeholder="제목을 입력하세요" required>
+        </div>
+        <div class="form-group">
+          <label for="content">공지 내용</label>
+          <textarea id="content" class="form-control" placeholder="상세 내용을 입력하세요" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="file">첨부파일 (선택사항)</label>
+          <input type="file" id="file" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="adminPw">관리자 비밀번호</label>
+          <input type="password" id="adminPw" class="form-control" placeholder="등록용 비밀번호 (기본: 1234)" required>
+        </div>
+        <button type="submit" id="submitBtn" class="btn-submit">공지사항 게시하기</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size: 18px; margin-top: 0; margin-bottom: 20px; color: #cbd5e1;">등록된 공지사항 목록</h2>
+      <div id="adminNoticeList">등록된 공지사항을 불러오는 중...</div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://faibppvwdtppowvcfxfr.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhaWJwcHZ3ZHRwcG93dmNmeGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4Mjg1MjIsImV4cCI6MjEwMDQwNDUyMn0.tz8Sn-nTSQoPRLtZDjoZLa5L86WOC3JU9SWU3YPzlO0';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadAdminNotices() {
+      const listEl = document.getElementById('adminNoticeList');
+      const { data, error } = await supabaseClient
+        .from('notices')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        listEl.innerHTML = `<p style="color: #f87171;">목록을 불러오지 못했습니다: ${error.message}</p>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        listEl.innerHTML = '<p style="color: #94a3b8;">등록된 공지사항이 없습니다.</p>';
+        return;
+      }
+
+      listEl.innerHTML = data.map(item => `
+        <div class="notice-list-item">
+          <div>
+            <strong style="color: #f8fafc; font-size: 15px;">${item.title}</strong>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+              ${new Date(item.created_at).toLocaleDateString('ko-KR')} 
+              ${item.file_name ? ` | 📁 ${item.file_name}` : ''}
+            </div>
+          </div>
+          <button class="btn-del" onclick="deleteNotice(${item.id})">삭제</button>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('noticeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      const adminPw = document.getElementById('adminPw').value.trim();
+      const fileInput = document.getElementById('file');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (adminPw !== '1234' && adminPw !== 'ansan1234') {
+        alert('관리자 비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = '업로드 및 게시 중...';
+
+      let file_url = null;
+      let file_name = null;
+
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        file_name = file.name;
+        const fileExt = file.name.split('.').pop();
+        const fileNameInBucket = `${Date.now()}_${Math.random().toString(36).substring(2,7)}.${fileExt}`;
+
+        const { data: uploadData, error: uploadError } = await supabaseClient
+          .storage
+          .from('notice-files')
+          .upload(fileNameInBucket, file);
+
+        if (uploadError) {
+          alert('파일 업로드 실패: ' + uploadError.message);
+          submitBtn.disabled = false;
+          submitBtn.innerText = '공지사항 게시하기';
+          return;
+        }
+
+        const { data: urlData } = supabaseClient
+          .storage
+          .from('notice-files')
+          .getPublicUrl(fileNameInBucket);
+
+        file_url = urlData.publicUrl;
+      }
+
+      const { error: insertError } = await supabaseClient
+        .from('notices')
+        .insert([{ title, content, file_url, file_name }]);
+
+      if (insertError) {
+        alert('게시글 등록 실패: ' + insertError.message);
+      } else {
+        alert('공지사항이 성공적으로 등록되었습니다!');
+        document.getElementById('noticeForm').reset();
+        loadAdminNotices();
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.innerText = '공지사항 게시하기';
+    });
+
+    async function deleteNotice(id) {
+      const adminPw = prompt('삭제하려면 관리자 비밀번호를 입력하세요:');
+      if (adminPw !== '1234' && adminPw !== 'ansan1234') {
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('notices')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert('삭제 실패: ' + error.message);
+      } else {
+        alert('공지사항이 삭제되었습니다.');
+        loadAdminNotices();
+      }
+    }
+
+    loadAdminNotices();
+  </script>
+</body>
+</html>
