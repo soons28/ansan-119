@@ -556,13 +556,22 @@ body {
         padding: 16px 8px;
         overflow-x: auto;
         overflow-y: visible;
+        display: flex;
+        flex-direction: column;
         align-items: center;
+    }
+
+    .document-pages {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        overflow-x: auto;
     }
 
     .a4-page {
         transform-origin: top center;
-        max-width: 100%;
         box-sizing: border-box;
+        max-width: 100%;
     }
 }
 
@@ -582,23 +591,29 @@ body {
 
     .preview-canvas {
         padding: 12px 4px;
+        overflow-x: auto;
     }
 
     /* Scale A4 paper down visually on mobile screens so it fits without overflow */
     .a4-page {
         width: 210mm;
-        transform: scale(0.85);
+        min-width: 210mm;
+        transform: scale(0.48);
         transform-origin: top center;
-        margin-bottom: -45mm; /* Compensate for blank space created by CSS scale */
+        margin-bottom: -145mm; /* Compensate for blank space created by CSS scale */
     }
 }
 
 @media screen and (max-width: 480px) {
     .a4-page {
-        transform: scale(0.68);
-        margin-bottom: -95mm;
+        width: 210mm;
+        min-width: 210mm;
+        transform: scale(0.42);
+        transform-origin: top center;
+        margin-bottom: -165mm;
     }
 }
+
 
 /* Print Specific Styles - ELIMINATES BLANK PAGE 2 COMPLETELY */
 @media print {
