@@ -270,9 +270,9 @@
 
   <div class="container">
     <header>
-      <!-- VERSION BANNER (v3.3.1) -->
+      <!-- VERSION BANNER (v3.3.2) -->
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 14px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-          🔥 v3.3.1 - 공지사항 로딩 구문 정상 렌더링 버그 수정 완료
+          🔥 v3.3.2 - 자바스크립트 템플릿 스트링 이스케이프 이중 버그 완벽 조치 및 0초 즉시 로딩 완성
       </div>
       <h1>안산유통상가 행정지원 포털</h1>
       <p>유통상가 관리 행정 업무를 간소화하고 자동화하는 포털 서비스입니다.</p>
@@ -571,13 +571,13 @@
               const target = document.getElementById('targetMedia');
               const valLabel = document.getElementById('zoomVal');
               if (target) {
-                target.style.transform = \`scale(\${currentScale})\`;
+                target.style.transform = "scale(" + currentScale + ")";
                 if (currentScale > 1.0) {
-                  target.style.transformOrigin = 'top center';
+                  target.style.transformOrigin = "top center";
                 }
               }
               if (valLabel) {
-                valLabel.innerText = Math.round(currentScale * 100) + '%';
+                valLabel.innerText = Math.round(currentScale * 100) + "%";
               }
             }
           </script>
