@@ -569,9 +569,12 @@ body {
     }
 
     .a4-page {
+        height: auto !important;
+        min-height: 297mm;
+        max-height: none !important;
+        overflow: visible !important;
         transform-origin: top center;
         box-sizing: border-box;
-        max-width: 100%;
     }
 }
 
@@ -598,9 +601,9 @@ body {
     .a4-page {
         width: 210mm;
         min-width: 210mm;
-        transform: scale(0.48);
+        transform: scale(0.46);
         transform-origin: top center;
-        margin-bottom: -145mm; /* Compensate for blank space created by CSS scale */
+        margin-bottom: -150mm;
     }
 }
 
@@ -608,11 +611,12 @@ body {
     .a4-page {
         width: 210mm;
         min-width: 210mm;
-        transform: scale(0.42);
+        transform: scale(0.40);
         transform-origin: top center;
-        margin-bottom: -165mm;
+        margin-bottom: -170mm;
     }
 }
+
 
 
 /* Print Specific Styles - ELIMINATES BLANK PAGE 2 COMPLETELY */
