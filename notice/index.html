@@ -121,6 +121,18 @@
     .notice-list-item:last-child {
       border-bottom: none;
     }
+    .btn-edit {
+      background: rgba(14, 165, 233, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-edit:hover {
+      background: rgba(14, 165, 233, 0.4);
+    }
     .btn-del {
       background: rgba(239, 68, 68, 0.2);
       color: #f87171;
@@ -133,6 +145,20 @@
     .btn-del:hover {
       background: rgba(239, 68, 68, 0.4);
     }
+    .btn-cancel {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: none;
+    }
+    .btn-cancel:hover {
+      background: rgba(148, 163, 184, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -144,7 +170,10 @@
     </header>
 
     <div class="card">
-      <h2 style="font-size: 18px; margin-top: 0; margin-bottom: 20px; color: #a5b4fc;">새 공지사항 등록</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 id="formCardTitle" style="font-size: 18px; margin: 0; color: #a5b4fc;">새 공지사항 등록</h2>
+        <span id="currentFileInfo" style="font-size: 12px; color: #38bdf8;"></span>
+      </div>
       <form id="noticeForm">
         <div class="form-group">
           <label for="title">공지 제목</label>
@@ -160,9 +189,12 @@
         </div>
         <div class="form-group">
           <label for="adminPw">관리자 비밀번호</label>
-          <input type="password" id="adminPw" class="form-control" placeholder="등록용 비밀번호 (기본: 1234)" required>
+          <input type="password" id="adminPw" class="form-control" placeholder="비밀번호 확인 (기본: 1234)" required>
         </div>
-        <button type="submit" id="submitBtn" class="btn-submit">공지사항 게시하기</button>
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" id="submitBtn" class="btn-submit" style="flex: 1;">공지사항 게시하기</button>
+          <button type="button" id="cancelEditBtn" class="btn-cancel" onclick="cancelEditMode()">수정 취소</button>
+        </div>
       </form>
     </div>
 
@@ -196,16 +228,61 @@
 
       listEl.innerHTML = data.map(item => `
         <div class="notice-list-item">
-          <div>
+          <div style="flex: 1; margin-right: 16px;">
             <strong style="color: #f8fafc; font-size: 15px;">${item.title}</strong>
             <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
               ${new Date(item.created_at).toLocaleDateString('ko-KR')} 
               ${item.file_name ? ` | 📁 ${item.file_name}` : ''}
             </div>
           </div>
-          <button class="btn-del" onclick="deleteNotice(${item.id})">삭제</button>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="btn-edit" onclick="startEditNotice(${item.id})">수정</button>
+            <button class="btn-del" onclick="deleteNotice(${item.id})">삭제</button>
+          </div>
         </div>
       `).join('');
+      noticeDataMap = new Map(data.map(i => [i.id, i]));
+    }
+
+    let editingNoticeId = null;
+    let currentNoticeFileUrl = null;
+    let currentNoticeFileName = null;
+    let noticeDataMap = new Map();
+
+    function startEditNotice(id) {
+      const item = noticeDataMap.get(id);
+      if (!item) return;
+
+      editingNoticeId = item.id;
+      currentNoticeFileUrl = item.file_url;
+      currentNoticeFileName = item.file_name;
+
+      document.getElementById('formCardTitle').innerText = '✏️ 공지사항 수정하기';
+      document.getElementById('title').value = item.title;
+      document.getElementById('content').value = item.content;
+      document.getElementById('submitBtn').innerText = '공지사항 수정 완료';
+      document.getElementById('cancelEditBtn').style.display = 'inline-block';
+      
+      const fileInfoEl = document.getElementById('currentFileInfo');
+      if (item.file_name) {
+        fileInfoEl.innerHTML = `현재 첨부파일: <strong>${item.file_name}</strong> (새 파일 선택 시 교체됨)`;
+      } else {
+        fileInfoEl.innerHTML = '현재 첨부된 파일 없음 (새 파일 선택 시 추가됨)';
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelEditMode() {
+      editingNoticeId = null;
+      currentNoticeFileUrl = null;
+      currentNoticeFileName = null;
+
+      document.getElementById('noticeForm').reset();
+      document.getElementById('formCardTitle').innerText = '새 공지사항 등록';
+      document.getElementById('submitBtn').innerText = '공지사항 게시하기';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+      document.getElementById('currentFileInfo').innerText = '';
     }
 
     document.getElementById('noticeForm').addEventListener('submit', async (e) => {
@@ -222,10 +299,10 @@
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerText = '업로드 및 게시 중...';
+      submitBtn.innerText = editingNoticeId ? '수정 사항 저장 중...' : '업로드 및 게시 중...';
 
-      let file_url = null;
-      let file_name = null;
+      let file_url = editingNoticeId ? currentNoticeFileUrl : null;
+      let file_name = editingNoticeId ? currentNoticeFileName : null;
 
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
@@ -241,7 +318,7 @@
         if (uploadError) {
           alert('파일 업로드 실패: ' + uploadError.message);
           submitBtn.disabled = false;
-          submitBtn.innerText = '공지사항 게시하기';
+          submitBtn.innerText = editingNoticeId ? '공지사항 수정 완료' : '공지사항 게시하기';
           return;
         }
 
@@ -253,20 +330,34 @@
         file_url = urlData.publicUrl;
       }
 
-      const { error: insertError } = await supabaseClient
-        .from('notices')
-        .insert([{ title, content, file_url, file_name }]);
+      if (editingNoticeId) {
+        const { error: updateError } = await supabaseClient
+          .from('notices')
+          .update({ title, content, file_url, file_name })
+          .eq('id', editingNoticeId);
 
-      if (insertError) {
-        alert('게시글 등록 실패: ' + insertError.message);
+        if (updateError) {
+          alert('수정 실패: ' + updateError.message);
+        } else {
+          alert('공지사항이 수정되었습니다!');
+          cancelEditMode();
+          loadAdminNotices();
+        }
       } else {
-        alert('공지사항이 성공적으로 등록되었습니다!');
-        document.getElementById('noticeForm').reset();
-        loadAdminNotices();
+        const { error: insertError } = await supabaseClient
+          .from('notices')
+          .insert([{ title, content, file_url, file_name }]);
+
+        if (insertError) {
+          alert('게시글 등록 실패: ' + insertError.message);
+        } else {
+          alert('공지사항이 성공적으로 등록되었습니다!');
+          document.getElementById('noticeForm').reset();
+          loadAdminNotices();
+        }
       }
 
       submitBtn.disabled = false;
-      submitBtn.innerText = '공지사항 게시하기';
     });
 
     async function deleteNotice(id) {
@@ -285,6 +376,9 @@
         alert('삭제 실패: ' + error.message);
       } else {
         alert('공지사항이 삭제되었습니다.');
+        if (editingNoticeId === id) {
+          cancelEditMode();
+        }
         loadAdminNotices();
       }
     }
