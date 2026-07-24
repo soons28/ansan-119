@@ -331,10 +331,11 @@
       }
 
       if (editingNoticeId) {
-        const { error: updateError } = await supabaseClient
+        const { data: updatedData, error: updateError } = await supabaseClient
           .from('notices')
           .update({ title, content, file_url, file_name })
-          .eq('id', editingNoticeId);
+          .eq('id', editingNoticeId)
+          .select();
 
         if (updateError) {
           alert('수정 실패: ' + updateError.message);
@@ -342,7 +343,7 @@
           localStorage.removeItem('ansan_notices_cache');
           alert('공지사항이 수정되었습니다!');
           cancelEditMode();
-          loadAdminNotices();
+          await loadAdminNotices();
         }
       } else {
         const { error: insertError } = await supabaseClient
